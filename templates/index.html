@@ -160,36 +160,13 @@ p: EKG, troponin, inc lisinopril to 20mg, f/u 1wk"></textarea>
 
       <!-- Cheat sheet -->
       <div>
-        <button class="cheat-toggle" onclick="toggleCheatSheet()">▸ Section prefix reference</button>
+        <button class="cheat-toggle" onclick="toggleCheatSheet()">▸ Code reference</button>
         <div id="cheat-sheet" class="cheat-sheet" style="display:none;">
-          <div class="cheat-row"><span class="cheat-key">cc:</span><span>Chief Complaint</span></div>
-          <div class="cheat-row"><span class="cheat-key">hpi:</span><span>History of Present Illness</span></div>
-          <div class="cheat-row"><span class="cheat-key">pmh:</span><span>Past Medical History</span></div>
-          <div class="cheat-row"><span class="cheat-key">psh:</span><span>Past Surgical History</span></div>
-          <div class="cheat-row"><span class="cheat-key">fh:</span><span>Family History</span></div>
-          <div class="cheat-row"><span class="cheat-key">sh:</span><span>Social History</span></div>
-          <div class="cheat-row"><span class="cheat-key">meds:</span><span>Medications</span></div>
-          <div class="cheat-row"><span class="cheat-key">allergies:</span><span>Allergies</span></div>
-          <div class="cheat-row"><span class="cheat-key">ros:</span><span>Review of Systems</span></div>
-          <div class="cheat-row"><span class="cheat-key">vitals:</span><span>Vital Signs</span></div>
-          <div class="cheat-row"><span class="cheat-key">exam:</span><span>Physical Exam</span></div>
-          <div class="cheat-row"><span class="cheat-key">a:</span><span>Assessment / Diagnosis</span></div>
-          <div class="cheat-row"><span class="cheat-key">p:</span><span>Plan / Treatment</span></div>
-          <div class="cheat-row"><span class="cheat-key">f/u:</span><span>Follow-Up</span></div>
-          <div class="cheat-row"><span class="cheat-key">interval:</span><span>Interval History (A2/A4)</span></div>
-          <div class="cheat-row"><span class="cheat-key">proc:</span><span>Procedure (A3)</span></div>
-          <div class="cheat-row"><span class="cheat-key">ind:</span><span>Indication (A3)</span></div>
-          <div class="cheat-row"><span class="cheat-key">technique:</span><span>Technique (A3)</span></div>
-          <div class="cheat-row"><span class="cheat-key">findings:</span><span>Findings (A3)</span></div>
-          <div class="cheat-row"><span class="cheat-key">mse:</span><span>Mental Status Exam (A4)</span></div>
-          <div class="cheat-row"><span class="cheat-key">risk:</span><span>Risk Assessment (A4)</span></div>
-          <div class="cheat-row"><span class="cheat-key">screens:</span><span>Screenings (A5)</span></div>
-          <div class="cheat-row"><span class="cheat-key">labs:</span><span>Labs / Studies</span></div>
-          <hr style="margin:4px 0;">
-          <div style="color:#64748b;margin-top:4px;">
-            Separate sections with <strong>newlines</strong> or <strong> / </strong> (space-slash-space).<br>
-            Vitals auto-extracted: BP 140/88, HR 82, RR 16, T 98.6, O2 97%
+          <div id="cheat-sheet-content">
+            <div style="color:#64748b;font-size:0.72rem;">Select a template to see its code reference.</div>
           </div>
+          <hr style="margin:6px 0;">
+          <div style="color:#64748b;font-size:0.7rem;">Separate each code with a <strong>newline</strong>.<br>e.g. <code>B1: yes</code></div>
         </div>
       </div>
 

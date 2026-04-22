@@ -34,6 +34,7 @@ async function selectTemplate(templateId) {
   document.getElementById('btn-print').disabled = false;
 
   renderTemplateSections(currentTemplate);
+  renderCheatSheet(currentTemplate);
   setTodayDates();
   clearFillStatus();
 }
@@ -109,6 +110,7 @@ function buildInput(field) {
     el = document.createElement('textarea');
     el.rows = field.rows || 3;
     el.className = 'chart-field';
+    if (field.default) el.value = field.default;
   } else if (field.type === 'select' && field.options) {
     el = document.createElement('select');
     el.className = 'chart-field';
@@ -140,6 +142,23 @@ function toggleSection(header) {
   const body = header.nextElementSibling;
   const collapsed = body.classList.toggle('collapsed');
   header.classList.toggle('collapsed', collapsed);
+}
+
+// ── Cheat Sheet ────────────────────────────────────────────────────────────
+function renderCheatSheet(template) {
+  const container = document.getElementById('cheat-sheet-content');
+  if (!template.abn_schema) {
+    container.innerHTML = '<div style="color:#64748b;font-size:0.72rem;">No code reference for this template.</div>';
+    return;
+  }
+  let html = '';
+  for (const [series, group] of Object.entries(template.abn_schema)) {
+    html += `<div style="font-weight:700;font-size:0.7rem;color:#1a3a5c;text-transform:uppercase;margin:6px 0 3px;">${group.label}</div>`;
+    for (const [code, label] of Object.entries(group.codes)) {
+      html += `<div class="cheat-row"><span class="cheat-key">${code}:</span><span>${label}</span></div>`;
+    }
+  }
+  container.innerHTML = html;
 }
 
 // ── ABN Parsing & Auto-fill ────────────────────────────────────────────────

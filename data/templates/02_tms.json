@@ -1,6 +1,321 @@
 {
   "id": "TMS",
   "name": "Transcranial Magnetic Stimulation",
-  "description": "Transcranial Magnetic Stimulation session",
-  "sections": []
+  "description": "TMS follow-up and progress note",
+  "abn_schema": {
+    "B": {
+      "label": "Yes / No",
+      "codes": {
+        "B1": "Stable",
+        "B2": "Helping",
+        "B3": "Side effects",
+        "B4": "Suicidal ideation",
+        "B5": "Self harm",
+        "B6": "Fatigue",
+        "B7": "Age",
+        "B8": "Gender"
+      }
+    },
+    "C": {
+      "label": "Short Answer",
+      "codes": {
+        "C1": "Treatment type",
+        "C2": "Symptom update",
+        "C3": "Socially isolating",
+        "C4": "Productive",
+        "C5": "Sleeping more or less",
+        "C6": "Friend / family comments",
+        "C7": "Anhedonia"
+      }
+    },
+    "D": {
+      "label": "Complex",
+      "codes": {
+        "D1": "Recent physical health change",
+        "D2": "Medication change",
+        "D3": "Challenges at work",
+        "D4": "Past medical history"
+      }
+    },
+    "F": {
+      "label": "Treatment Data",
+      "codes": {
+        "F1": "Number of treatments",
+        "F2": "Protocol used",
+        "F3": "Frequency of treatment",
+        "F4": "Increased to prescribed MT (yes/no)",
+        "F5": "Should frequency be changed"
+      }
+    }
+  },
+  "sections": [
+    {
+      "id": "treatment_data",
+      "label": "Treatment Data",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "session_number",
+          "label": "# of Treatments (F1)",
+          "type": "text",
+          "abn_key": "f1",
+          "placeholder": "e.g. #79"
+        },
+        {
+          "id": "protocol",
+          "label": "Protocol (F2)",
+          "type": "text",
+          "abn_key": "f2",
+          "placeholder": "e.g. iTBS L DLPFC, bilateral, HF R DLPFC"
+        },
+        {
+          "id": "cadence",
+          "label": "Treatment Frequency (F3)",
+          "type": "text",
+          "abn_key": "f3",
+          "placeholder": "e.g. q 10 days, 2x/week, intensive"
+        },
+        {
+          "id": "mt_increased",
+          "label": "Increased to Prescribed MT% (F4)",
+          "type": "select",
+          "options": ["Yes", "No", "Partial"],
+          "abn_key": "f4"
+        },
+        {
+          "id": "frequency_change",
+          "label": "Frequency Change Needed (F5)",
+          "type": "text",
+          "abn_key": "f5",
+          "placeholder": "e.g. extend to q 2 weeks / no change / increase to weekly"
+        }
+      ]
+    },
+    {
+      "id": "patient_report",
+      "label": "Patient Report",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "stable",
+          "label": "Stable (B1)",
+          "type": "text",
+          "abn_key": "b1",
+          "placeholder": "Yes / No / notes"
+        },
+        {
+          "id": "helping",
+          "label": "TMS Helping (B2)",
+          "type": "text",
+          "abn_key": "b2",
+          "placeholder": "Yes / No / notes"
+        },
+        {
+          "id": "symptom_update",
+          "label": "Symptom Update (C2)",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "c2",
+          "placeholder": "Overall symptom changes since last visit"
+        },
+        {
+          "id": "anhedonia",
+          "label": "Anhedonia (C7)",
+          "type": "text",
+          "abn_key": "c7",
+          "placeholder": "e.g. improving, ongoing, resolved"
+        },
+        {
+          "id": "fatigue",
+          "label": "Fatigue (B6)",
+          "type": "text",
+          "abn_key": "b6",
+          "placeholder": "Yes / No / describe"
+        }
+      ]
+    },
+    {
+      "id": "functional_status",
+      "label": "Functional Status",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "sleep",
+          "label": "Sleep (C5)",
+          "type": "text",
+          "abn_key": "c5",
+          "placeholder": "e.g. sleeping more, less, stable"
+        },
+        {
+          "id": "productive",
+          "label": "Productivity (C4)",
+          "type": "text",
+          "abn_key": "c4",
+          "placeholder": "e.g. more productive, difficulty motivating"
+        },
+        {
+          "id": "social_isolation",
+          "label": "Social Isolation (C3)",
+          "type": "text",
+          "abn_key": "c3",
+          "placeholder": "Yes / No / describe"
+        },
+        {
+          "id": "collateral",
+          "label": "Friend / Family Comments (C6)",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "c6",
+          "placeholder": "e.g. partner reports patient seems lighter, more engaged"
+        },
+        {
+          "id": "work_challenges",
+          "label": "Challenges at Work (D3)",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "d3",
+          "placeholder": "Work stressors, changes, functioning at work"
+        }
+      ]
+    },
+    {
+      "id": "safety",
+      "label": "Safety",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "si",
+          "label": "Suicidal Ideation (B4)",
+          "type": "text",
+          "abn_key": "b4",
+          "placeholder": "e.g. Denies SI / minimal passive SI since last visit"
+        },
+        {
+          "id": "si_plan_intent",
+          "label": "Plan / Intent",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. Denies suicide plan or intent"
+        },
+        {
+          "id": "sib",
+          "label": "Self-Injurious Behavior (B5)",
+          "type": "text",
+          "abn_key": "b5",
+          "placeholder": "e.g. Denies recent self-harm"
+        }
+      ]
+    },
+    {
+      "id": "side_effects",
+      "label": "Side Effects & Tolerance",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "side_effects_text",
+          "label": "Side Effects (B3)",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "b3",
+          "placeholder": "e.g. None / referred eye pain / post-treatment fatigue (resolved)"
+        },
+        {
+          "id": "adjustments",
+          "label": "Adjustments Made",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. medial tilt applied, increased to 110% MT"
+        }
+      ]
+    },
+    {
+      "id": "history",
+      "label": "History",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "pmh",
+          "label": "Past Medical History (D4)",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "d4",
+          "placeholder": "e.g. treatment resistant depression, anxiety, PTSD, gender dysphoria"
+        },
+        {
+          "id": "med_changes",
+          "label": "Medication Changes (D2)",
+          "type": "text",
+          "abn_key": "d2",
+          "placeholder": "e.g. Denies changes in medications since last visit"
+        },
+        {
+          "id": "physical_health",
+          "label": "Physical Health Changes (D1)",
+          "type": "text",
+          "abn_key": "d1",
+          "placeholder": "e.g. Denies changes in physical health since last visit"
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "label": "Assessment",
+      "abn_key": "assessment",
+      "fields": [
+        {
+          "id": "assessment_text",
+          "label": "Clinical Assessment",
+          "type": "textarea",
+          "rows": 4,
+          "abn_key": "assessment",
+          "placeholder": "Overall response to TMS, trajectory, clinical impression"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "abn_key": "plan",
+      "fields": [
+        {
+          "id": "plan_text",
+          "label": "Treatment Plan",
+          "type": "textarea",
+          "rows": 4,
+          "abn_key": "plan",
+          "placeholder": "Continue/adjust TMS, cadence changes, authorization, referrals, billing, follow-up"
+        },
+        {
+          "id": "authorization",
+          "label": "Authorization / Billing",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. Will request further TMS auth / OOP / billing team to reach out"
+        },
+        {
+          "id": "followup",
+          "label": "Follow-Up",
+          "type": "text",
+          "abn_key": "followup",
+          "placeholder": "e.g. Follow up in 2 weeks / return PRN"
+        }
+      ]
+    },
+    {
+      "id": "relapse_prevention",
+      "label": "Relapse Prevention & Education",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "relapse_text",
+          "label": "Discussion",
+          "type": "textarea",
+          "rows": 5,
+          "abn_key": null,
+          "default": "Reviewed patient's TMS course to date, including their response, side effects experienced, and treatment plan going forward. Reviewed relapse prevention, including importance of remaining on antidepressant medication and continuing in psychotherapy to reduce the likelihood of relapse and maximize antidepressant effect. Should relapse occur despite maintenance medication, discussed returning to TMS treatment sooner rather than later, with consideration given to maintenance TMS once depressive symptoms are again under control. All questions were answered to patient's satisfaction, with treatment plan agreed upon as below.",
+          "placeholder": "Relapse prevention discussion documented here"
+        }
+      ]
+    }
+  ]
 }

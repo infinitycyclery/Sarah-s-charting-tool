@@ -88,32 +88,36 @@ EXAM_SYSTEM_KEYWORDS = {
 }
 
 SECTION_ALIASES = {
-    'cc': 'cc', 'chief complaint': 'cc', 'c/c': 'cc', 'chief c': 'cc',
-    'hpi': 'hpi', 'history': 'hpi', 'hist': 'hpi',
-    'pmh': 'pmh', 'past medical': 'pmh', 'past hx': 'pmh', 'medical hx': 'pmh',
-    'psh': 'psh', 'past surgical': 'psh', 'surgical hx': 'psh',
+    # Standard clinical prefixes
+    'cc': 'cc', 'chief complaint': 'cc', 'c/c': 'cc',
+    'hpi': 'hpi', 'history': 'hpi',
+    'pmh': 'pmh', 'past medical': 'pmh', 'past hx': 'pmh',
+    'psh': 'psh', 'past surgical': 'psh',
     'fh': 'fh', 'family hx': 'fh', 'family history': 'fh',
     'sh': 'sh', 'social hx': 'sh', 'social history': 'sh',
-    'meds': 'meds', 'medications': 'meds', 'medication': 'meds', 'rx': 'meds',
+    'meds': 'meds', 'medications': 'meds', 'rx': 'meds',
     'allergies': 'allergies', 'allergy': 'allergies', 'nkda': 'allergies',
-    'ros': 'ros', 'review of systems': 'ros',
-    'vitals': 'vitals', 'vs': 'vitals', 'vital signs': 'vitals', 'vital': 'vitals',
-    'exam': 'exam', 'pe': 'exam', 'physical exam': 'exam', 'physical': 'exam',
-    'a': 'assessment', 'assessment': 'assessment', 'dx': 'assessment', 'impression': 'assessment',
+    'ros': 'ros',
+    'vitals': 'vitals', 'vs': 'vitals',
+    'exam': 'exam', 'pe': 'exam',
+    'a': 'assessment', 'assessment': 'assessment', 'dx': 'assessment',
     'p': 'plan', 'plan': 'plan', 'tx': 'plan',
-    'f/u': 'followup', 'fu': 'followup', 'follow-up': 'followup', 'follow up': 'followup',
-    'proc': 'procedure', 'procedure': 'procedure',
-    'indication': 'indication', 'ind': 'indication',
-    'technique': 'technique', 'tech': 'technique',
-    'findings': 'findings', 'finding': 'findings',
-    'complications': 'complications', 'comp': 'complications',
-    'interval': 'interval', 'interval hx': 'interval',
-    'mse': 'mse', 'mental status': 'mse',
+    'f/u': 'followup', 'fu': 'followup', 'follow-up': 'followup',
+    'interval': 'interval',
+    'mse': 'mse',
     'risk': 'risk',
-    'screens': 'screens', 'screenings': 'screens',
-    'labs': 'labs', 'lab': 'labs',
-    'course': 'course', 'hospital course': 'course',
+    'labs': 'labs',
     'dispo': 'dispo', 'disposition': 'dispo',
+    # TMS B-series (yes/no)
+    'b1': 'b1', 'b2': 'b2', 'b3': 'b3', 'b4': 'b4',
+    'b5': 'b5', 'b6': 'b6', 'b7': 'b7', 'b8': 'b8',
+    # TMS C-series (short answer)
+    'c1': 'c1', 'c2': 'c2', 'c3': 'c3', 'c4': 'c4',
+    'c5': 'c5', 'c6': 'c6', 'c7': 'c7',
+    # TMS D-series (complex)
+    'd1': 'd1', 'd2': 'd2', 'd3': 'd3', 'd4': 'd4',
+    # TMS F-series (treatment data)
+    'f1': 'f1', 'f2': 'f2', 'f3': 'f3', 'f4': 'f4', 'f5': 'f5',
 }
 
 
