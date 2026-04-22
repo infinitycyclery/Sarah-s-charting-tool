@@ -1,25 +1,9 @@
 'use strict';
 
-// ── State ──────────────────────────────────────────────────────────────────
 let currentTemplate = null;
-let filledFields = new Set();
-
-// ── Init ───────────────────────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => {
-  setTodayDates();
-});
-
-function setTodayDates() {
-  const today = new Date().toISOString().split('T')[0];
-  ['date_of_service', 'sig_date'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el && !el.value) el.value = today;
-  });
-}
 
 // ── Template Selection ─────────────────────────────────────────────────────
 async function selectTemplate(templateId) {
-  // Update button states
   document.querySelectorAll('.btn-tpl').forEach(btn => {
     btn.classList.toggle('active', btn.dataset.templateId === templateId);
   });
@@ -28,264 +12,135 @@ async function selectTemplate(templateId) {
   if (!resp.ok) { alert('Failed to load template'); return; }
   currentTemplate = await resp.json();
 
-  document.getElementById('empty-state').style.display = 'none';
-  document.getElementById('chart-form').style.display = 'block';
-  document.getElementById('current-tpl-label').textContent = `${currentTemplate.id} — ${currentTemplate.name}`;
-  document.getElementById('btn-print').disabled = false;
-
-  renderTemplateSections(currentTemplate);
-  renderCheatSheet(currentTemplate);
-  setTodayDates();
-  clearFillStatus();
+  renderAbnForm(currentTemplate);
+  clearChart();
+  document.getElementById('btn-generate').disabled = false;
 }
 
-function renderTemplateSections(template) {
-  const container = document.getElementById('template-sections');
-  container.innerHTML = '';
-  filledFields.clear();
+// ── Render ABN Form (Left Panel) ──────────────────────────────────────────
+function renderAbnForm(template) {
+  const body = document.getElementById('abn-form-body');
+  body.innerHTML = '';
 
-  template.sections.forEach(section => {
-    container.appendChild(buildSection(section));
+  if (!template.abn_groups) {
+    body.innerHTML = '<div class="empty-hint">No notes template defined for this chart type yet.</div>';
+    return;
+  }
+
+  template.abn_groups.forEach(group => {
+    const groupEl = document.createElement('div');
+    groupEl.className = 'abn-group';
+
+    const labelEl = document.createElement('div');
+    labelEl.className = 'abn-group-label';
+    labelEl.textContent = group.label;
+    groupEl.appendChild(labelEl);
+
+    group.fields.forEach(field => {
+      const fieldEl = document.createElement('div');
+      fieldEl.className = 'abn-field';
+
+      const lbl = document.createElement('label');
+      lbl.className = 'abn-label';
+      lbl.textContent = field.label;
+      lbl.setAttribute('for', `abn_${field.key}`);
+      fieldEl.appendChild(lbl);
+
+      const isTextarea = field.type === 'textarea';
+      const input = document.createElement(isTextarea ? 'textarea' : 'input');
+      input.className = 'abn-input';
+      input.id = `abn_${field.key}`;
+      input.dataset.key = field.key;
+      if (!isTextarea) input.type = 'text';
+      if (field.default) input.value = field.default;
+
+      fieldEl.appendChild(input);
+      groupEl.appendChild(fieldEl);
+    });
+
+    body.appendChild(groupEl);
   });
 }
 
-function buildSection(section) {
-  const wrapper = document.createElement('div');
-  wrapper.className = 'chart-section';
-  wrapper.dataset.sectionId = section.id;
+// ── Generate Chart ─────────────────────────────────────────────────────────
+async function generateChart() {
+  if (!currentTemplate) return;
 
-  const header = document.createElement('div');
-  header.className = 'section-header';
-  header.innerHTML = `<span>${section.label}</span><span class="collapse-icon">▾</span>`;
-  header.addEventListener('click', () => toggleSection(header));
+  const fields = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const key = el.dataset.key;
+    const val = el.value.trim();
+    if (val) fields[key] = val;
+  });
 
-  const body = document.createElement('div');
-  body.className = 'section-body';
+  const patientName = document.getElementById('patient-name').value.trim();
+  if (patientName) fields['patient_name'] = patientName;
 
-  const isVitals = section.id === 'vitals';
-  const isExam = section.id === 'exam' || (section.fields && section.fields.length > 4 && section.fields.every(f => f.type === 'text'));
-
-  if (isVitals) {
-    const grid = document.createElement('div');
-    grid.className = 'vitals-grid';
-    section.fields.forEach(field => {
-      grid.appendChild(buildFieldWrapper(field));
-    });
-    body.appendChild(grid);
-  } else if (isExam && section.fields.length >= 4) {
-    const grid = document.createElement('div');
-    grid.className = 'exam-grid';
-    section.fields.forEach(field => {
-      grid.appendChild(buildFieldWrapper(field));
-    });
-    body.appendChild(grid);
-  } else {
-    section.fields.forEach(field => {
-      body.appendChild(buildFieldWrapper(field));
-    });
-  }
-
-  wrapper.appendChild(header);
-  wrapper.appendChild(body);
-  return wrapper;
-}
-
-function buildFieldWrapper(field) {
-  const wrap = document.createElement('div');
-  wrap.className = 'mb-2';
-
-  const label = document.createElement('label');
-  label.className = 'field-label';
-  label.textContent = field.label;
-  label.setAttribute('for', `field_${field.id}`);
-  wrap.appendChild(label);
-
-  wrap.appendChild(buildInput(field));
-  return wrap;
-}
-
-function buildInput(field) {
-  let el;
-  if (field.type === 'textarea') {
-    el = document.createElement('textarea');
-    el.rows = field.rows || 3;
-    el.className = 'chart-field';
-    if (field.default) el.value = field.default;
-  } else if (field.type === 'select' && field.options) {
-    el = document.createElement('select');
-    el.className = 'chart-field';
-    const blank = document.createElement('option');
-    blank.value = '';
-    blank.textContent = '— select —';
-    el.appendChild(blank);
-    field.options.forEach(opt => {
-      const o = document.createElement('option');
-      o.value = opt;
-      o.textContent = opt;
-      el.appendChild(o);
-    });
-  } else {
-    el = document.createElement('input');
-    el.type = 'text';
-    el.className = 'chart-field';
-  }
-
-  el.id = `field_${field.id}`;
-  el.dataset.fieldId = field.id;
-  if (field.abn_key) el.dataset.abnKey = field.abn_key;
-  if (field.placeholder) el.placeholder = field.placeholder;
-
-  return el;
-}
-
-function toggleSection(header) {
-  const body = header.nextElementSibling;
-  const collapsed = body.classList.toggle('collapsed');
-  header.classList.toggle('collapsed', collapsed);
-}
-
-// ── Cheat Sheet ────────────────────────────────────────────────────────────
-function renderCheatSheet(template) {
-  const container = document.getElementById('cheat-sheet-content');
-  if (!template.abn_schema) {
-    container.innerHTML = '<div style="color:#64748b;font-size:0.72rem;">No code reference for this template.</div>';
-    return;
-  }
-  let html = '';
-  for (const [series, group] of Object.entries(template.abn_schema)) {
-    html += `<div style="font-weight:700;font-size:0.7rem;color:#1a3a5c;text-transform:uppercase;margin:6px 0 3px;">${group.label}</div>`;
-    for (const [code, label] of Object.entries(group.codes)) {
-      html += `<div class="cheat-row"><span class="cheat-key">${code}:</span><span>${label}</span></div>`;
-    }
-  }
-  container.innerHTML = html;
-}
-
-// ── ABN Parsing & Auto-fill ────────────────────────────────────────────────
-async function parseABN() {
-  const abnText = document.getElementById('abn-notes').value.trim();
-  if (!abnText) { alert('Please enter some ABN notes first.'); return; }
-  if (!currentTemplate) { alert('Please select a template first.'); return; }
-
-  const btn = document.getElementById('btn-parse');
+  const btn = document.getElementById('btn-generate');
+  btn.textContent = 'Generating...';
   btn.disabled = true;
-  btn.textContent = '⏳ Parsing...';
 
   try {
-    const resp = await fetch('/api/parse-abn', {
+    const resp = await fetch('/api/generate-chart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ abn_text: abnText }),
+      body: JSON.stringify({ template_id: currentTemplate.id, fields }),
     });
-    const { sections } = await resp.json();
-    fillFromParsed(sections);
+    const data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+    showChart(data.chart, patientName);
   } catch (e) {
-    alert('Error parsing notes: ' + e.message);
+    alert('Error generating chart: ' + e.message);
   } finally {
+    btn.textContent = 'Generate Chart →';
     btn.disabled = false;
-    btn.innerHTML = '✦ Parse &amp; Fill Chart';
   }
 }
 
-function fillFromParsed(sections) {
-  const filled = [];
-  const skipped = [];
+function showChart(text, patientName) {
+  const placeholder = document.getElementById('chart-placeholder');
+  const output = document.getElementById('chart-output');
 
-  // Find all fields with an abn_key
-  document.querySelectorAll('[data-abn-key]').forEach(el => {
-    const abnKey = el.dataset.abnKey; // e.g. "vitals.bp" or "cc"
-    const value = resolveAbnValue(sections, abnKey);
-    if (value) {
-      if (el.value && el.value.trim()) {
-        skipped.push(el.dataset.fieldId);
-      } else {
-        el.value = value;
-        el.classList.add('filled');
-        filledFields.add(el.dataset.fieldId);
-        filled.push(el.dataset.fieldId);
-      }
-    }
-  });
+  placeholder.style.display = 'none';
+  output.style.display = 'block';
+  output.textContent = text;
 
-  showFillStatus(filled, skipped);
+  document.getElementById('btn-copy').disabled = false;
+  document.getElementById('btn-print').disabled = false;
 
-  // Ensure sections containing filled fields are expanded
-  document.querySelectorAll('.section-body.collapsed').forEach(body => {
-    if (body.querySelector('.chart-field.filled')) {
-      body.classList.remove('collapsed');
-      body.previousElementSibling.classList.remove('collapsed');
-    }
-  });
+  // Print header
+  const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
+  document.getElementById('print-patient-name').textContent = patientName || '';
+  document.getElementById('print-template-name').textContent = currentTemplate ? currentTemplate.name : '';
+  document.getElementById('print-date').textContent = today;
+  document.getElementById('print-header').style.display = 'flex';
 }
 
-function resolveAbnValue(sections, abnKey) {
-  if (!abnKey) return null;
-  const [section, subKey] = abnKey.split('.');
+function clearChart() {
+  document.getElementById('chart-placeholder').style.display = 'block';
+  document.getElementById('chart-output').style.display = 'none';
+  document.getElementById('chart-output').textContent = '';
+  document.getElementById('btn-copy').disabled = true;
+  document.getElementById('btn-print').disabled = true;
+  document.getElementById('print-header').style.display = 'none';
+}
 
-  if (!sections[section]) return null;
+// ── New Chart ──────────────────────────────────────────────────────────────
+function newChart() {
+  document.querySelectorAll('.abn-input').forEach(el => el.value = '');
+  document.getElementById('patient-name').value = '';
+  clearChart();
+}
 
-  if (!subKey) {
-    const val = sections[section];
-    return typeof val === 'string' ? val : (val._raw || null);
+// ── Copy to Clipboard ──────────────────────────────────────────────────────
+async function copyChart() {
+  const text = document.getElementById('chart-output').innerText;
+  try {
+    await navigator.clipboard.writeText(text);
+    const btn = document.getElementById('btn-copy');
+    btn.textContent = '✓ Copied';
+    setTimeout(() => btn.textContent = '⎘ Copy', 2000);
+  } catch {
+    alert('Could not copy — try selecting the text manually.');
   }
-
-  // Sub-key (e.g. vitals.bp, exam.general)
-  const obj = sections[section];
-  if (typeof obj === 'object' && obj[subKey]) return obj[subKey];
-
-  // Fallback: try _raw
-  if (obj._raw) return obj._raw;
-  return null;
-}
-
-function showFillStatus(filled, skipped) {
-  const statusEl = document.getElementById('fill-status');
-  if (filled.length === 0 && skipped.length === 0) {
-    statusEl.innerHTML = '<span style="color:#ef4444;font-size:0.8rem;">⚠ No matching sections found in notes. Check section prefixes (cc:, hpi:, etc.)</span>';
-    statusEl.style.display = 'block';
-    return;
-  }
-
-  let html = `<div class="fill-header">✓ ${filled.length} field${filled.length !== 1 ? 's' : ''} filled</div><div>`;
-  filled.forEach(id => { html += `<span class="fill-badge">${id.replace(/_/g, ' ')}</span>`; });
-  if (skipped.length) {
-    html += `<br><span style="color:#d97706;font-size:0.72rem;">⚠ ${skipped.length} skipped (already had content): `;
-    skipped.forEach(id => { html += `<span class="fill-badge skipped">${id.replace(/_/g, ' ')}</span>`; });
-    html += '</span>';
-  }
-  html += '</div>';
-
-  statusEl.innerHTML = html;
-  statusEl.style.display = 'block';
-}
-
-function clearFillStatus() {
-  const el = document.getElementById('fill-status');
-  el.style.display = 'none';
-  el.innerHTML = '';
-}
-
-// ── Clear Form ─────────────────────────────────────────────────────────────
-function clearForm() {
-  if (!confirm('Clear all chart fields?')) return;
-  document.querySelectorAll('.chart-field').forEach(el => {
-    el.value = '';
-    el.classList.remove('filled');
-  });
-  document.getElementById('abn-notes').value = '';
-  filledFields.clear();
-  clearFillStatus();
-  setTodayDates();
-}
-
-// ── Print ──────────────────────────────────────────────────────────────────
-function printChart() {
-  if (!currentTemplate) return;
-  window.print();
-}
-
-// ── Cheat Sheet Toggle ─────────────────────────────────────────────────────
-function toggleCheatSheet() {
-  const el = document.getElementById('cheat-sheet');
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }

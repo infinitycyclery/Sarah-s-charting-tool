@@ -216,7 +216,144 @@ def load_template(template_id):
 TEMPLATE_LIST = load_template_list()
 
 
-@app.route('/')
+# ── Chart Generators ──────────────────────────────────────────────────────────
+
+def _v(fields, key, default=''):
+    return fields.get(key, default).strip()
+
+def _yn(fields, key, yes_text, no_text, other_fmt=None, default=''):
+    v = _v(fields, key).lower()
+    if v in ('yes', 'y'):
+        return yes_text
+    if v in ('no', 'n'):
+        return no_text
+    raw = _v(fields, key)
+    if raw:
+        return other_fmt.format(raw) if other_fmt else raw
+    return default
+
+def generate_tms(fields):
+    paragraphs = []
+
+    # ── Opening ──
+    age        = _v(fields, 'age')
+    gender     = _v(fields, 'gender')
+    pmh        = _v(fields, 'pmh')
+    session    = _v(fields, 'session_num')
+    protocol   = _v(fields, 'protocol')
+    frequency  = _v(fields, 'frequency')
+
+    demo = ' '.join(filter(None, [f'{age} yo' if age else '', gender, 'adult patient']))
+    if pmh:
+        demo += f' with past medical history significant for {pmh}'
+    line = demo + ' presents in follow-up for TMS.'
+
+    details = ', '.join(filter(None, [
+        f'#{session} treatments' if session else '',
+        protocol,
+        f'{frequency} frequency' if frequency else '',
+    ]))
+    if details:
+        line += f' Continued TMS — {details}.'
+    paragraphs.append(line)
+
+    # ── Patient Report ──
+    p2 = []
+    symptom  = _v(fields, 'symptom_update')
+    sleep    = _v(fields, 'sleep')
+    fatigue  = _v(fields, 'fatigue')
+    anhedonia = _v(fields, 'anhedonia')
+    productive = _v(fields, 'productive')
+    social   = _v(fields, 'socially_isolating')
+    collateral = _v(fields, 'collateral')
+    work     = _v(fields, 'work')
+
+    if symptom:
+        p2.append(f'Patient reports {symptom}.')
+    p2.append(_yn(fields, 'stable',
+        'Overall mood and functioning remain stable.',
+        'Patient reports decreased stability in mood or functioning.',
+        'Stability: {}.'))
+    p2.append(_yn(fields, 'helping',
+        'Patient endorses continued benefit from TMS.',
+        'Patient does not currently feel TMS is helping.',
+        'Regarding TMS effectiveness: {}.'))
+    if sleep:
+        p2.append(f'Sleep: {sleep}.')
+    p2.append(_yn(fields, 'fatigue', 'Endorses fatigue.', 'Denies significant fatigue.', 'Fatigue: {}.'))
+    if anhedonia:
+        p2.append(f'Anhedonia: {anhedonia}.')
+    if productive:
+        p2.append(f'Productivity and motivation: {productive}.')
+    p2.append(_yn(fields, 'socially_isolating', 'Reports social isolation.', 'Denies social isolation.', 'Social: {}.'))
+    if work:
+        p2.append(f'Work: {work}.')
+    if collateral:
+        p2.append(f'Collateral: {collateral}.')
+    paragraphs.append(' '.join(s for s in p2 if s))
+
+    # ── Safety ──
+    si = _yn(fields, 'suicidal',
+        'Reports suicidal ideation.',
+        'Denies suicidal ideation, suicide plan, or intent.',
+        'Suicidal ideation: {}.',
+        'Denies suicidal ideation, suicide plan, or intent.')
+    sib = _yn(fields, 'self_harm',
+        'Reports recent self-injurious behavior.',
+        'Denies recent self-injurious behavior.',
+        'Self-harm: {}.',
+        'Denies recent self-injurious behavior.')
+    paragraphs.append(f'{si} {sib}')
+
+    # ── Side effects ──
+    p4 = []
+    se = _yn(fields, 'side_effects',
+        'Reports side effects to TMS treatment.',
+        'Denies side effects to TMS.',
+        'Side effects: {}.')
+    if se:
+        p4.append(se)
+    mt = _yn(fields, 'mt_increased',
+        'Treatment delivered at prescribed motor threshold.',
+        'Not yet at prescribed motor threshold.',
+        'Motor threshold: {}.')
+    if mt:
+        p4.append(mt)
+    if p4:
+        paragraphs.append(' '.join(p4))
+
+    # ── Meds / Physical health ──
+    med = _v(fields, 'med_change')
+    phx = _v(fields, 'physical_health')
+    med_line = f'Medication changes: {med}.' if med and med.lower() not in ('no','n','none') else 'Denies changes in medications since last visit.'
+    phx_line = f'Physical health changes: {phx}.' if phx and phx.lower() not in ('no','n','none') else 'Denies changes in physical health since last visit.'
+    paragraphs.append(f'{med_line} {phx_line}')
+
+    # ── Plan ──
+    freq_change = _v(fields, 'freq_change')
+    plan_line = f'Treatment plan: {freq_change}.' if freq_change and freq_change.lower() not in ('no','n','none') else 'Will continue TMS at current frequency.'
+    paragraphs.append(plan_line)
+
+    # ── Relapse prevention (standard) ──
+    paragraphs.append(
+        "Reviewed patient's TMS course to date, including their response, side effects experienced, "
+        "and treatment plan going forward. Reviewed relapse prevention, including importance of remaining "
+        "on antidepressant medication and continuing in psychotherapy to reduce the likelihood of relapse "
+        "and maximize antidepressant effect. Should relapse occur despite maintenance medication, discussed "
+        "returning to TMS treatment sooner rather than later, with consideration given to maintenance TMS "
+        "once depressive symptoms are again under control. All questions were answered to patient's "
+        "satisfaction, with treatment plan agreed upon as below."
+    )
+
+    return '\n\n'.join(paragraphs)
+
+
+GENERATORS = {
+    'tms': generate_tms,
+}
+
+
+
 def index():
     return render_template('index.html',
                            templates=TEMPLATE_LIST,
@@ -237,6 +374,22 @@ def parse_abn_route():
     abn_text = data.get('abn_text', '')
     sections = parse_abn(abn_text)
     return jsonify({'sections': sections})
+
+
+@app.route('/api/generate-chart', methods=['POST'])
+def generate_chart():
+    data = request.get_json(silent=True) or {}
+    template_id = data.get('template_id', '')
+    fields = data.get('fields', {})
+    template = load_template(template_id)
+    if not template:
+        return jsonify({'error': 'Template not found'}), 404
+    generator_key = template.get('generator')
+    fn = GENERATORS.get(generator_key)
+    if not fn:
+        return jsonify({'error': f'No generator for template {template_id}'}), 400
+    chart_text = fn(fields)
+    return jsonify({'chart': chart_text})
 
 
 @app.route('/api/abbreviations')

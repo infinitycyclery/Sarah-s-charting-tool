@@ -1,228 +1,205 @@
-/* ── Layout ── */
-html, body { height: 100%; margin: 0; }
-body { display: flex; flex-direction: column; font-family: 'Segoe UI', system-ui, sans-serif; background: #f8f9fa; }
+/* ── Reset & Base ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; font-family: 'Segoe UI', system-ui, sans-serif; background: #f0f2f5; }
+body { display: flex; flex-direction: column; overflow: hidden; }
 
-.main-row { flex: 1; display: flex; overflow: hidden; }
-
-/* ── Navbar ── */
-.navbar { background: #1a3a5c !important; }
-.navbar-brand { font-weight: 700; letter-spacing: 0.02em; font-size: 1.1rem; }
-
-/* ── Template Selector Bar ── */
-.template-bar {
-  background: #fff;
-  border-bottom: 2px solid #e2e8f0;
-  padding: 10px 16px;
+/* ── Top Bar ── */
+.topbar {
   display: flex;
   align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-.template-bar label { font-size: 0.8rem; font-weight: 600; color: #64748b; text-transform: uppercase; letter-spacing: 0.05em; margin: 0; white-space: nowrap; }
-.btn-tpl {
-  border: 2px solid #cbd5e1;
-  background: #fff;
-  border-radius: 8px;
-  padding: 6px 14px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: #334155;
-  cursor: pointer;
-  transition: all .15s;
-  white-space: nowrap;
-}
-.btn-tpl:hover { border-color: #1a3a5c; color: #1a3a5c; background: #f0f4ff; }
-.btn-tpl.active { border-color: #1a3a5c; background: #1a3a5c; color: #fff; }
-.btn-tpl .tpl-id { font-size: 1rem; font-weight: 800; display: block; line-height: 1; }
-.btn-tpl .tpl-name { font-size: 0.7rem; font-weight: 400; opacity: 0.8; display: block; }
-
-/* ── Chart Panel (scrollable) ── */
-.chart-panel {
-  flex: 1;
-  overflow-y: auto;
-  padding: 20px 24px 40px;
-}
-
-/* ── Patient Info Header ── */
-.patient-info-card {
+  justify-content: space-between;
   background: #1a3a5c;
-  color: #fff;
-  border-radius: 10px;
-  padding: 16px 20px;
-  margin-bottom: 16px;
+  padding: 10px 18px;
+  gap: 12px;
+  flex-shrink: 0;
 }
-.patient-info-card label { color: rgba(255,255,255,0.75); font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
-.patient-info-card .form-control {
+.topbar-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
+
+.app-title { color: #fff; font-weight: 700; font-size: 1rem; white-space: nowrap; }
+
+.patient-name-input {
   background: rgba(255,255,255,0.15);
   border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
   color: #fff;
-  font-size: 0.9rem;
+  padding: 5px 14px;
+  font-size: 0.85rem;
+  width: 180px;
 }
-.patient-info-card .form-control::placeholder { color: rgba(255,255,255,0.45); }
-.patient-info-card .form-control:focus { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.6); box-shadow: none; color: #fff; }
+.patient-name-input::placeholder { color: rgba(255,255,255,0.5); }
+.patient-name-input:focus { outline: none; border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.2); }
 
-/* ── Chart Sections ── */
-.chart-section {
-  background: #fff;
-  border: 1px solid #e2e8f0;
-  border-radius: 10px;
-  margin-bottom: 14px;
+.btn-top {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  border-radius: 20px;
+  color: #fff;
+  padding: 5px 14px;
+  font-size: 0.82rem;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.btn-top:hover { background: rgba(255,255,255,0.25); }
+
+/* ── Template Buttons ── */
+.btn-tpl {
+  background: rgba(255,255,255,0.1);
+  border: 2px solid rgba(255,255,255,0.25);
+  border-radius: 22px;
+  color: #fff;
+  padding: 5px 16px;
+  cursor: pointer;
+  text-align: center;
+  transition: all .15s;
+  min-width: 80px;
+}
+.btn-tpl:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.5); }
+.btn-tpl.active { background: #fff; border-color: #fff; color: #1a3a5c; }
+.tpl-id { display: block; font-weight: 800; font-size: 0.95rem; line-height: 1.1; }
+.tpl-name { display: block; font-size: 0.6rem; opacity: 0.8; line-height: 1.2; max-width: 100px; white-space: normal; }
+.btn-tpl.active .tpl-name { opacity: 0.7; }
+
+/* ── Main Split ── */
+.main-split {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+  gap: 0;
+}
+
+/* ── Panels ── */
+.left-panel, .right-panel {
+  display: flex;
+  flex-direction: column;
   overflow: hidden;
 }
-.section-header {
+.left-panel  { width: 38%; border-right: 2px solid #d1d9e6; background: #fff; }
+.right-panel { flex: 1; background: #fafbfc; }
+
+.panel-header {
   background: #f1f5f9;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 9px 16px;
-  font-size: 0.75rem;
+  border-bottom: 1px solid #d1d9e6;
+  padding: 10px 16px;
+  font-size: 0.8rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: #475569;
   display: flex;
   align-items: center;
-  gap: 6px;
-  cursor: pointer;
-  user-select: none;
+  justify-content: space-between;
+  flex-shrink: 0;
 }
-.section-header:hover { background: #e8edf3; }
-.section-header .collapse-icon { margin-left: auto; transition: transform .2s; font-size: 0.9rem; }
-.section-header.collapsed .collapse-icon { transform: rotate(-90deg); }
-.section-body { padding: 14px 16px; }
-.section-body.collapsed { display: none; }
+.panel-header-actions { display: flex; gap: 8px; }
 
-/* ── Form Fields ── */
-.field-label {
-  font-size: 0.73rem;
+.panel-body {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+}
+
+.panel-footer {
+  border-top: 1px solid #d1d9e6;
+  padding: 12px 16px;
+  flex-shrink: 0;
+  background: #fff;
+}
+
+/* ── Empty State ── */
+.empty-hint {
+  text-align: center;
+  color: #94a3b8;
+  font-size: 0.88rem;
+  margin-top: 40px;
+  line-height: 1.8;
+}
+
+/* ── ABN Form Groups ── */
+.abn-group { margin-bottom: 18px; }
+.abn-group-label {
+  font-size: 0.68rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #1a3a5c;
+  border-bottom: 2px solid #e2e8f0;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+}
+.abn-field { margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
+.abn-label {
+  font-size: 0.72rem;
   font-weight: 600;
   color: #64748b;
   text-transform: uppercase;
   letter-spacing: 0.04em;
-  margin-bottom: 3px;
-  display: block;
 }
-.chart-field {
+.abn-input {
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  font-size: 0.88rem;
-  padding: 6px 10px;
+  padding: 6px 9px;
+  font-size: 0.85rem;
+  font-family: inherit;
+  width: 100%;
+  resize: none;
   transition: border-color .15s;
+}
+.abn-input:focus { outline: none; border-color: #1a3a5c; box-shadow: 0 0 0 2px rgba(26,58,92,.1); }
+textarea.abn-input { min-height: 56px; resize: vertical; }
+
+/* ── Generate Button ── */
+.btn-generate {
   width: 100%;
-}
-.chart-field:focus { border-color: #1a3a5c; box-shadow: 0 0 0 2px rgba(26,58,92,0.12); outline: none; }
-.chart-field.filled { border-color: #16a34a; background: #f0fdf4; }
-textarea.chart-field { resize: vertical; min-height: 60px; }
-
-/* Vitals inline grid */
-.vitals-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
-.vitals-grid .field-unit { font-size: 0.7rem; color: #94a3b8; margin-top: 2px; }
-
-/* Exam 2-column grid */
-.exam-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-
-/* Select fields */
-select.chart-field { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23343a40' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e"); background-repeat: no-repeat; background-position: right 8px center; background-size: 12px; padding-right: 28px; appearance: none; }
-
-/* Signature section */
-.signature-section { border-top: 2px dashed #cbd5e1; margin-top: 8px; }
-
-/* ── Empty State ── */
-.empty-state {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  height: 60vh; color: #94a3b8; text-align: center;
-}
-.empty-state svg { width: 64px; height: 64px; margin-bottom: 16px; opacity: 0.4; }
-
-/* ── ABN Sidebar ── */
-.abn-panel {
-  width: 340px;
-  min-width: 300px;
-  max-width: 380px;
-  background: #fff;
-  border-left: 2px solid #e2e8f0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-.abn-panel-header {
-  background: #f8fafc;
-  border-bottom: 1px solid #e2e8f0;
-  padding: 12px 16px;
-}
-.abn-panel-header h6 { margin: 0; font-weight: 700; color: #1a3a5c; font-size: 0.9rem; }
-.abn-panel-body { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 10px; }
-
-.abn-textarea {
-  width: 100%;
-  flex: 1;
-  min-height: 220px;
-  max-height: 40vh;
-  resize: vertical;
-  font-family: 'Courier New', monospace;
-  font-size: 0.82rem;
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 10px;
-  line-height: 1.6;
-}
-.abn-textarea:focus { border-color: #1a3a5c; outline: none; box-shadow: 0 0 0 2px rgba(26,58,92,0.1); }
-
-.btn-parse {
   background: #1a3a5c;
   color: #fff;
   border: none;
-  border-radius: 6px;
-  padding: 9px 14px;
-  font-size: 0.85rem;
-  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px;
+  font-size: 0.9rem;
+  font-weight: 700;
   cursor: pointer;
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 6px;
   transition: background .15s;
 }
-.btn-parse:hover { background: #0f2540; }
-.btn-parse:disabled { opacity: 0.5; cursor: not-allowed; }
+.btn-generate:hover:not(:disabled) { background: #0f2540; }
+.btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
 
-.btn-expand {
+/* ── Action Buttons ── */
+.btn-action {
   background: #fff;
-  color: #475569;
   border: 1px solid #cbd5e1;
   border-radius: 6px;
-  padding: 7px 14px;
-  font-size: 0.82rem;
+  padding: 4px 12px;
+  font-size: 0.78rem;
   cursor: pointer;
-  width: 100%;
+  color: #475569;
   transition: all .15s;
 }
-.btn-expand:hover { border-color: #1a3a5c; color: #1a3a5c; }
+.btn-action:hover:not(:disabled) { border-color: #1a3a5c; color: #1a3a5c; }
+.btn-action:disabled { opacity: 0.35; cursor: not-allowed; }
 
-/* Fill status */
-.fill-status { font-size: 0.78rem; }
-.fill-status .fill-header { font-weight: 700; color: #16a34a; display: flex; align-items: center; gap: 4px; margin-bottom: 4px; }
-.fill-badge { display: inline-block; background: #dcfce7; color: #16a34a; border-radius: 4px; padding: 1px 7px; font-size: 0.72rem; font-weight: 600; margin: 2px; }
-.fill-badge.skipped { background: #fef3c7; color: #d97706; }
+/* ── Chart Output ── */
+.chart-output {
+  font-family: 'Times New Roman', Times, serif;
+  font-size: 0.95rem;
+  line-height: 1.8;
+  color: #1a202c;
+  white-space: pre-wrap;
+  min-height: 200px;
+  outline: none;
+}
+.chart-output:focus { outline: none; }
 
-/* Cheat sheet */
-.cheat-toggle { font-size: 0.75rem; color: #64748b; cursor: pointer; text-decoration: underline; border: none; background: none; padding: 0; }
-.cheat-sheet { font-size: 0.72rem; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px; margin-top: 4px; }
-.cheat-row { display: flex; justify-content: space-between; padding: 1px 0; border-bottom: 1px solid #f1f5f9; }
-.cheat-row:last-child { border-bottom: none; }
-.cheat-key { font-family: monospace; font-weight: 700; color: #1a3a5c; min-width: 70px; }
-
-/* ── Print Styles ── */
+/* ── Print ── */
 @media print {
-  .navbar, .template-bar, .abn-panel, .no-print, .btn-parse, .btn-expand { display: none !important; }
-  body { background: #fff; }
-  .main-row { display: block; }
-  .chart-panel { overflow: visible; padding: 0; }
-  .chart-section { break-inside: avoid; border: 1px solid #ccc; margin-bottom: 10px; box-shadow: none; }
-  .section-body.collapsed { display: block !important; }
-  .patient-info-card { background: #1a3a5c !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-  .chart-field { border: none; background: transparent !important; padding: 2px 0; font-size: 0.9rem; }
-  .chart-field.filled { background: transparent !important; }
-  select.chart-field { background-image: none; }
-  .print-header { display: block !important; text-align: center; margin-bottom: 20px; font-size: 1.1rem; font-weight: bold; border-bottom: 2px solid #000; padding-bottom: 8px; }
+  .topbar, .panel-footer, .panel-header-actions, .no-print { display: none !important; }
+  body { overflow: visible; background: #fff; }
+  .main-split { display: block; }
+  .left-panel { display: none; }
+  .right-panel { width: 100%; border: none; background: #fff; }
+  .panel-body { overflow: visible; padding: 0; }
+  .panel-header { border: none; background: none; color: #000; padding: 0 0 8px 0; }
+  .chart-output { font-size: 11pt; line-height: 1.6; }
+  .print-header { display: flex !important; justify-content: space-between; font-size: 10pt; border-bottom: 1px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
 }
 .print-header { display: none; }
