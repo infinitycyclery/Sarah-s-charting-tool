@@ -5,6 +5,8 @@ from pathlib import Path
 
 app = Flask(__name__)
 
+VERSION = '1.0'
+
 BASE_DIR = Path(__file__).parent
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
 ABBREVIATIONS_FILE = BASE_DIR / 'data' / 'abbreviations.json'
@@ -472,7 +474,8 @@ GENERATORS = {
 def index():
     return render_template('index.html',
                            templates=TEMPLATE_LIST,
-                           abbreviations_json=json.dumps(ABBREVIATIONS))
+                           abbreviations_json=json.dumps(ABBREVIATIONS),
+                           version=VERSION)
 
 
 @app.route('/api/template/<template_id>')
