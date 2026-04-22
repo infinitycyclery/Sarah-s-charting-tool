@@ -341,6 +341,113 @@ async function loadChartRecord(chartId, patientName) {
   }
 }
 
+// ── Patient Name Autocomplete ─────────────────────────────────────────────
+let _pdTimer = null;
+
+function onPatientInput(val) {
+  clearTimeout(_pdTimer);
+  if (!val.trim()) { closePatientDropdownNow(); return; }
+  _pdTimer = setTimeout(() => fetchPatientSuggestions(val.trim()), 250);
+}
+
+async function fetchPatientSuggestions(q) {
+  try {
+    const data = await (await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`)).json();
+    renderPatientDropdown(data);
+  } catch { closePatientDropdownNow(); }
+}
+
+function renderPatientDropdown(patients) {
+  const dd = document.getElementById('patient-dropdown');
+  dd.innerHTML = '';
+
+  if (!patients.length) {
+    dd.innerHTML = '<div class="pd-empty">No matching patients — will create new on save.</div>';
+  } else {
+    const lbl = document.createElement('div');
+    lbl.className = 'pd-section-label';
+    lbl.textContent = 'Existing patients';
+    dd.appendChild(lbl);
+
+    patients.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'pd-patient-row';
+      const lastVisit = p.last_visit
+        ? new Date(p.last_visit.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : '—';
+      row.innerHTML = `
+        <div>
+          <div class="pd-patient-name">${esc(p.name)}</div>
+          <div class="pd-patient-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} · Last: ${lastVisit}</div>
+        </div>
+        <span class="pd-chevron">›</span>`;
+      // mousedown fires before blur, so the click registers before dropdown closes
+      row.onmousedown = (e) => { e.preventDefault(); showChartsInDropdown(p.id, p.name); };
+      dd.appendChild(row);
+    });
+  }
+
+  dd.classList.add('open');
+}
+
+async function showChartsInDropdown(patientId, patientName) {
+  const dd = document.getElementById('patient-dropdown');
+  dd.innerHTML = '<div class="pd-empty">Loading…</div>';
+  dd.classList.add('open');
+
+  try {
+    const charts = await (await fetch(`/api/patient/${patientId}/charts`)).json();
+    dd.innerHTML = '';
+
+    const back = document.createElement('div');
+    back.className = 'pd-back';
+    back.innerHTML = `‹ &nbsp;<strong>${esc(patientName)}</strong>`;
+    back.onmousedown = (e) => { e.preventDefault(); fetchPatientSuggestions(document.getElementById('patient-name').value.trim()); };
+    dd.appendChild(back);
+
+    if (!charts.length) {
+      // No prior charts — just set the name and close
+      dd.innerHTML += '<div class="pd-empty">No saved charts — ready for new chart.</div>';
+      document.getElementById('patient-name').value = patientName;
+      setTimeout(closePatientDropdownNow, 1200);
+      return;
+    }
+
+    const lbl = document.createElement('div');
+    lbl.className = 'pd-section-label';
+    lbl.textContent = 'Select a chart to resume';
+    dd.appendChild(lbl);
+
+    charts.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'pd-chart-row';
+      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleDateString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric',
+      });
+      row.innerHTML = `
+        <div class="pd-chart-header">
+          <span class="pd-chart-tpl">${esc(c.template_id)} · ${esc(c.template_name)}</span>
+          <span class="pd-chart-date">${d}</span>
+        </div>
+        <div class="pd-chart-preview">${esc(c.preview)}</div>`;
+      row.onmousedown = (e) => { e.preventDefault(); loadChartRecord(c.id, patientName); closePatientDropdownNow(); };
+      dd.appendChild(row);
+    });
+  } catch {
+    dd.innerHTML = '<div class="pd-empty">Error loading charts.</div>';
+  }
+}
+
+function closePatientDropdown() {
+  // Small delay so mousedown on a row fires first
+  setTimeout(closePatientDropdownNow, 150);
+}
+
+function closePatientDropdownNow() {
+  const dd = document.getElementById('patient-dropdown');
+  if (dd) { dd.classList.remove('open'); dd.innerHTML = ''; }
+}
+
 function esc(str) {
   return String(str)
     .replace(/&/g, '&amp;')

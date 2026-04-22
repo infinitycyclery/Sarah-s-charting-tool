@@ -13,7 +13,14 @@
   <div class="topbar-left">
     <span class="app-title">✚ Sarah's Charting Tool</span>
     <span class="app-version">v{{ version }}</span>
-    <input class="patient-name-input" id="patient-name" type="text" placeholder="Patient name">
+    <div class="patient-lookup">
+      <input class="patient-name-input" id="patient-name" type="text"
+             placeholder="Patient name" autocomplete="off"
+             oninput="onPatientInput(this.value)"
+             onfocus="onPatientInput(this.value)"
+             onblur="closePatientDropdown()">
+      <div class="patient-dropdown" id="patient-dropdown"></div>
+    </div>
     <button class="btn-top" onclick="newChart()">+ New Chart</button>
     <button class="btn-top" onclick="openPatientHistory()">⏱ History</button>
     <span class="save-status" id="save-status"></span>
