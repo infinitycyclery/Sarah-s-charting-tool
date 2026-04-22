@@ -19,10 +19,10 @@ SERVER_PID=$!
 
 # Wait a moment then open browser
 sleep 2
-open http://localhost:5000
+open http://localhost:8080
 
 # Show a notification
-osascript -e 'display notification "App is running at localhost:5000" with title "Sarah'\''s Charting Tool"'
+osascript -e 'display notification "App is running at localhost:8080" with title "Sarah'\''s Charting Tool"'
 
 # Keep this window open so the server stays running
 echo ""
