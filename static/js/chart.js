@@ -108,6 +108,7 @@ function showChart(text, patientName) {
   output.style.display = 'block';
   output.textContent = text;
 
+  document.getElementById('btn-save').disabled = false;
   document.getElementById('btn-copy').disabled = false;
   document.getElementById('btn-print').disabled = false;
 
@@ -122,6 +123,7 @@ function clearChart() {
   document.getElementById('chart-placeholder').style.display = 'block';
   document.getElementById('chart-output').style.display = 'none';
   document.getElementById('chart-output').textContent = '';
+  document.getElementById('btn-save').disabled = true;
   document.getElementById('btn-copy').disabled = true;
   document.getElementById('btn-print').disabled = true;
   document.getElementById('print-header').style.display = 'none';
@@ -147,6 +149,22 @@ async function copyChart() {
   } catch {
     alert('Could not copy — try selecting the text manually.');
   }
+}
+
+// ── Manual Save ───────────────────────────────────────────────────────────
+async function manualSave() {
+  const name = document.getElementById('patient-name').value.trim();
+  const text = document.getElementById('chart-output').innerText;
+  if (!name) { alert('Enter a patient name before saving.'); return; }
+
+  const btn = document.getElementById('btn-save');
+  btn.textContent = 'Saving…';
+  btn.disabled = true;
+
+  await persistChart(name, text);
+
+  btn.textContent = '✓ Saved';
+  setTimeout(() => { btn.textContent = '💾 Save'; btn.disabled = false; }, 2000);
 }
 
 // ── Auto-save ──────────────────────────────────────────────────────────────
