@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sarah's Charting Tool</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/chart.css') }}">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar no-print" style="display:flex;align-items:center;padding:10px 20px;gap:16px;">
+  <span class="navbar-brand" style="color:#fff;font-size:1.1rem;font-weight:700;">
+    ✚ Sarah's Charting Tool
+  </span>
+  <span id="current-tpl-label" style="color:rgba(255,255,255,0.6);font-size:0.85rem;flex:1;"></span>
+  <button id="btn-print" class="no-print" onclick="printChart()" disabled
+          style="background:#fff;color:#1a3a5c;border:none;border-radius:6px;padding:7px 14px;font-size:0.83rem;font-weight:600;cursor:pointer;">
+    🖨 Print Chart
+  </button>
+  <button onclick="clearForm()" class="no-print"
+          style="background:transparent;color:rgba(255,255,255,0.75);border:1px solid rgba(255,255,255,0.3);border-radius:6px;padding:7px 14px;font-size:0.83rem;cursor:pointer;">
+    ↺ Clear
+  </button>
+</nav>
+
+<!-- Template Selector Bar -->
+<div class="template-bar no-print">
+  <label>Select Template:</label>
+  {% for tpl in templates %}
+  <button class="btn-tpl" data-template-id="{{ tpl.id }}" onclick="selectTemplate('{{ tpl.id }}')"
+          title="{{ tpl.description }}">
+    <span class="tpl-id">{{ tpl.id }}</span>
+    <span class="tpl-name">{{ tpl.name }}</span>
+  </button>
+  {% endfor %}
+</div>
+
+<!-- Main Layout -->
+<div class="main-row">
+
+  <!-- ── Chart Panel ── -->
+  <div class="chart-panel">
+
+    <!-- Print header (only shows when printing) -->
+    <div class="print-header">
+      Sarah's Charting Tool &mdash; Patient Medical Record
+    </div>
+
+    <!-- Empty State -->
+    <div id="empty-state" class="empty-state">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round"
+              d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <h4 style="margin-bottom:6px;color:#64748b;">Select a Template to Begin</h4>
+      <p style="font-size:0.88rem;color:#94a3b8;margin:0;">
+        Choose a chart type above (A1–A5), then enter your ABN notes<br>in the right panel and click <strong>Parse &amp; Fill Chart</strong>.
+      </p>
+    </div>
+
+    <!-- Chart Form -->
+    <div id="chart-form" style="display:none;">
+
+      <!-- Patient Info (always present) -->
+      <div class="patient-info-card">
+        <div style="font-size:0.7rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;opacity:0.7;margin-bottom:10px;">Patient Information</div>
+        <div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr 1fr 1fr;gap:10px;align-items:start;">
+          <div>
+            <label class="field-label" for="patient_name">Patient Name *</label>
+            <input class="form-control chart-field" id="patient_name" type="text" placeholder="Last, First Middle">
+          </div>
+          <div>
+            <label class="field-label" for="dob">Date of Birth</label>
+            <input class="form-control chart-field" id="dob" type="date">
+          </div>
+          <div>
+            <label class="field-label" for="mrn">MRN</label>
+            <input class="form-control chart-field" id="mrn" type="text" placeholder="Record #">
+          </div>
+          <div>
+            <label class="field-label" for="age_sex">Age / Sex</label>
+            <input class="form-control chart-field" id="age_sex" type="text" placeholder="45M, 32F">
+          </div>
+          <div>
+            <label class="field-label" for="date_of_service">Date of Service *</label>
+            <input class="form-control chart-field" id="date_of_service" type="date">
+          </div>
+          <div>
+            <label class="field-label" for="provider">Provider</label>
+            <input class="form-control chart-field" id="provider" type="text" placeholder="Name, Credentials">
+          </div>
+        </div>
+      </div>
+
+      <!-- Dynamic template sections -->
+      <div id="template-sections"></div>
+
+      <!-- Signature (always at bottom) -->
+      <div class="chart-section signature-section">
+        <div class="section-header">
+          <span>Provider Signature</span>
+          <span class="collapse-icon">▾</span>
+        </div>
+        <div class="section-body" style="display:grid;grid-template-columns:2fr 1fr 1fr;gap:12px;">
+          <div>
+            <label class="field-label" for="sig_provider">Provider Name</label>
+            <input class="chart-field" id="sig_provider" type="text" placeholder="Full name">
+          </div>
+          <div>
+            <label class="field-label" for="sig_credentials">Credentials</label>
+            <input class="chart-field" id="sig_credentials" type="text" placeholder="MD, DO, PA-C, NP…">
+          </div>
+          <div>
+            <label class="field-label" for="sig_date">Date Signed</label>
+            <input class="chart-field" id="sig_date" type="date">
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /chart-form -->
+  </div><!-- /chart-panel -->
+
+  <!-- ── ABN Notes Sidebar ── -->
+  <div class="abn-panel no-print">
+    <div class="abn-panel-header">
+      <h6>✎ ABN Notes</h6>
+      <div style="font-size:0.72rem;color:#64748b;margin-top:2px;">Abbreviated notes taken during visit</div>
+    </div>
+
+    <div class="abn-panel-body">
+
+      <div>
+        <label style="font-size:0.72rem;font-weight:700;color:#64748b;text-transform:uppercase;letter-spacing:0.04em;display:block;margin-bottom:4px;">
+          Notes Input
+        </label>
+        <textarea id="abn-notes" class="abn-textarea"
+          placeholder="Type abbreviated notes here. Use section labels followed by colon.
+
+One line per section (or use  /  to separate):
+
+cc: SOB, CP x 3d
+hpi: 58yo M, onset sudden, worse w/ exertion
+pmh: HTN, DM2, HLD
+meds: lisinopril 10mg QD, metformin 500mg BID
+allergies: NKDA
+vitals: BP 140/88, HR 82, RR 16, T 98.6, O2 97%
+exam: NAD, A&Ox3, CTAB, RRR NMR, NT ND BS+
+a: r/o ACS, HTN uncontrolled
+p: EKG, troponin, inc lisinopril to 20mg, f/u 1wk"></textarea>
+      </div>
+
+      <button id="btn-parse" class="btn-parse" onclick="parseABN()">
+        ✦ Parse &amp; Fill Chart
+      </button>
+
+      <div id="fill-status" class="fill-status" style="display:none;"></div>
+
+      <hr style="margin:4px 0;">
+
+      <!-- Cheat sheet -->
+      <div>
+        <button class="cheat-toggle" onclick="toggleCheatSheet()">▸ Section prefix reference</button>
+        <div id="cheat-sheet" class="cheat-sheet" style="display:none;">
+          <div class="cheat-row"><span class="cheat-key">cc:</span><span>Chief Complaint</span></div>
+          <div class="cheat-row"><span class="cheat-key">hpi:</span><span>History of Present Illness</span></div>
+          <div class="cheat-row"><span class="cheat-key">pmh:</span><span>Past Medical History</span></div>
+          <div class="cheat-row"><span class="cheat-key">psh:</span><span>Past Surgical History</span></div>
+          <div class="cheat-row"><span class="cheat-key">fh:</span><span>Family History</span></div>
+          <div class="cheat-row"><span class="cheat-key">sh:</span><span>Social History</span></div>
+          <div class="cheat-row"><span class="cheat-key">meds:</span><span>Medications</span></div>
+          <div class="cheat-row"><span class="cheat-key">allergies:</span><span>Allergies</span></div>
+          <div class="cheat-row"><span class="cheat-key">ros:</span><span>Review of Systems</span></div>
+          <div class="cheat-row"><span class="cheat-key">vitals:</span><span>Vital Signs</span></div>
+          <div class="cheat-row"><span class="cheat-key">exam:</span><span>Physical Exam</span></div>
+          <div class="cheat-row"><span class="cheat-key">a:</span><span>Assessment / Diagnosis</span></div>
+          <div class="cheat-row"><span class="cheat-key">p:</span><span>Plan / Treatment</span></div>
+          <div class="cheat-row"><span class="cheat-key">f/u:</span><span>Follow-Up</span></div>
+          <div class="cheat-row"><span class="cheat-key">interval:</span><span>Interval History (A2/A4)</span></div>
+          <div class="cheat-row"><span class="cheat-key">proc:</span><span>Procedure (A3)</span></div>
+          <div class="cheat-row"><span class="cheat-key">ind:</span><span>Indication (A3)</span></div>
+          <div class="cheat-row"><span class="cheat-key">technique:</span><span>Technique (A3)</span></div>
+          <div class="cheat-row"><span class="cheat-key">findings:</span><span>Findings (A3)</span></div>
+          <div class="cheat-row"><span class="cheat-key">mse:</span><span>Mental Status Exam (A4)</span></div>
+          <div class="cheat-row"><span class="cheat-key">risk:</span><span>Risk Assessment (A4)</span></div>
+          <div class="cheat-row"><span class="cheat-key">screens:</span><span>Screenings (A5)</span></div>
+          <div class="cheat-row"><span class="cheat-key">labs:</span><span>Labs / Studies</span></div>
+          <hr style="margin:4px 0;">
+          <div style="color:#64748b;margin-top:4px;">
+            Separate sections with <strong>newlines</strong> or <strong> / </strong> (space-slash-space).<br>
+            Vitals auto-extracted: BP 140/88, HR 82, RR 16, T 98.6, O2 97%
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /abn-panel-body -->
+  </div><!-- /abn-panel -->
+
+</div><!-- /main-row -->
+
+<script src="{{ url_for('static', filename='js/chart.js') }}"></script>
+
+</body>
+</html>

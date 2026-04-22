@@ -1,0 +1,359 @@
+{
+  "id": "A5",
+  "name": "Annual Wellness Exam",
+  "description": "Preventive care visit / annual physical examination",
+  "sections": [
+    {
+      "id": "chief_complaint",
+      "label": "Reason for Visit",
+      "abn_key": "cc",
+      "fields": [
+        {
+          "id": "cc_text",
+          "label": "Reason for Visit",
+          "type": "text",
+          "abn_key": "cc",
+          "placeholder": "Annual wellness exam / preventive visit"
+        }
+      ]
+    },
+    {
+      "id": "pmh",
+      "label": "Past Medical History",
+      "abn_key": "pmh",
+      "fields": [
+        {
+          "id": "pmh_text",
+          "label": "Medical Conditions",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "pmh",
+          "placeholder": "Chronic and significant past medical conditions"
+        }
+      ]
+    },
+    {
+      "id": "psh",
+      "label": "Past Surgical History",
+      "abn_key": "psh",
+      "fields": [
+        {
+          "id": "psh_text",
+          "label": "Surgeries / Procedures",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "psh",
+          "placeholder": "Prior surgeries with approximate dates"
+        }
+      ]
+    },
+    {
+      "id": "family_history",
+      "label": "Family History",
+      "abn_key": "fh",
+      "fields": [
+        {
+          "id": "fh_text",
+          "label": "Family History",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "fh",
+          "placeholder": "Significant conditions in first-degree relatives"
+        }
+      ]
+    },
+    {
+      "id": "social_history",
+      "label": "Social History",
+      "abn_key": "sh",
+      "fields": [
+        {
+          "id": "tobacco",
+          "label": "Tobacco",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Non-smoker / former smoker / current smoker (PPD x years)"
+        },
+        {
+          "id": "alcohol",
+          "label": "Alcohol",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Drinks per week / none / social"
+        },
+        {
+          "id": "drugs",
+          "label": "Recreational Drugs",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "None / describe"
+        },
+        {
+          "id": "exercise",
+          "label": "Exercise",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Frequency and type"
+        },
+        {
+          "id": "diet",
+          "label": "Diet",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "General diet description"
+        },
+        {
+          "id": "occupation",
+          "label": "Occupation",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Current employment"
+        },
+        {
+          "id": "marital",
+          "label": "Marital Status",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Married / single / divorced / widowed"
+        }
+      ]
+    },
+    {
+      "id": "medications",
+      "label": "Current Medications",
+      "abn_key": "meds",
+      "fields": [
+        {
+          "id": "med_list",
+          "label": "Medications",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "meds",
+          "placeholder": "List all current medications, supplements, and OTC medications"
+        },
+        {
+          "id": "allergy_text",
+          "label": "Allergies",
+          "type": "text",
+          "abn_key": "allergies",
+          "placeholder": "NKDA or list allergens and reactions"
+        }
+      ]
+    },
+    {
+      "id": "preventive_screens",
+      "label": "Preventive Screenings",
+      "abn_key": "screens",
+      "fields": [
+        {
+          "id": "screens_due",
+          "label": "Screenings Due / Discussed",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "screens",
+          "placeholder": "Mammogram, colonoscopy, Pap smear, PSA, bone density, depression screen, etc."
+        },
+        {
+          "id": "immunizations",
+          "label": "Immunizations Review",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": null,
+          "placeholder": "Up to date / due: flu, COVID, Tdap, shingles, pneumococcal, etc."
+        }
+      ]
+    },
+    {
+      "id": "vitals",
+      "label": "Vital Signs",
+      "abn_key": "vitals",
+      "fields": [
+        {
+          "id": "bp",
+          "label": "BP",
+          "type": "text",
+          "abn_key": "vitals.bp",
+          "placeholder": "mmHg"
+        },
+        {
+          "id": "hr",
+          "label": "HR",
+          "type": "text",
+          "abn_key": "vitals.hr",
+          "placeholder": "bpm"
+        },
+        {
+          "id": "rr",
+          "label": "RR",
+          "type": "text",
+          "abn_key": "vitals.rr",
+          "placeholder": "/min"
+        },
+        {
+          "id": "temp",
+          "label": "Temp",
+          "type": "text",
+          "abn_key": "vitals.temp",
+          "placeholder": "°F"
+        },
+        {
+          "id": "o2sat",
+          "label": "O2 Sat",
+          "type": "text",
+          "abn_key": "vitals.o2sat",
+          "placeholder": "%"
+        },
+        {
+          "id": "weight",
+          "label": "Weight",
+          "type": "text",
+          "abn_key": "vitals.weight",
+          "placeholder": "lbs"
+        },
+        {
+          "id": "height",
+          "label": "Height",
+          "type": "text",
+          "abn_key": "vitals.height",
+          "placeholder": "in / cm"
+        },
+        {
+          "id": "bmi",
+          "label": "BMI",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Calculated"
+        }
+      ]
+    },
+    {
+      "id": "exam",
+      "label": "Complete Physical Exam",
+      "abn_key": "exam",
+      "fields": [
+        {
+          "id": "general",
+          "label": "General",
+          "type": "text",
+          "abn_key": "exam.general",
+          "placeholder": "General appearance"
+        },
+        {
+          "id": "heent",
+          "label": "HEENT",
+          "type": "text",
+          "abn_key": "exam.heent",
+          "placeholder": "Head, eyes, ears, nose, throat"
+        },
+        {
+          "id": "neck",
+          "label": "Neck",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Thyroid, lymph nodes, JVD"
+        },
+        {
+          "id": "cardiovascular",
+          "label": "Cardiovascular",
+          "type": "text",
+          "abn_key": "exam.cv",
+          "placeholder": "Heart sounds, rate, rhythm"
+        },
+        {
+          "id": "respiratory",
+          "label": "Respiratory",
+          "type": "text",
+          "abn_key": "exam.resp",
+          "placeholder": "Breath sounds bilaterally"
+        },
+        {
+          "id": "abdomen",
+          "label": "Abdomen",
+          "type": "text",
+          "abn_key": "exam.abd",
+          "placeholder": "Soft, non-tender, bowel sounds"
+        },
+        {
+          "id": "extremities",
+          "label": "Extremities",
+          "type": "text",
+          "abn_key": "exam.ext",
+          "placeholder": "Pulses, edema, skin"
+        },
+        {
+          "id": "skin",
+          "label": "Skin",
+          "type": "text",
+          "abn_key": "exam.skin",
+          "placeholder": "Lesions, rashes, changes"
+        },
+        {
+          "id": "neuro",
+          "label": "Neurological",
+          "type": "text",
+          "abn_key": "exam.neuro",
+          "placeholder": "CN, sensation, strength, gait"
+        },
+        {
+          "id": "musculo",
+          "label": "Musculoskeletal",
+          "type": "text",
+          "abn_key": "exam.musculo",
+          "placeholder": "ROM, joints, gait"
+        }
+      ]
+    },
+    {
+      "id": "labs",
+      "label": "Labs / Studies",
+      "abn_key": "labs",
+      "fields": [
+        {
+          "id": "labs_ordered",
+          "label": "Labs Ordered",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "labs",
+          "placeholder": "CBC, CMP, lipid panel, A1C, TSH, etc."
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "label": "Assessment",
+      "abn_key": "assessment",
+      "fields": [
+        {
+          "id": "assessment_text",
+          "label": "Assessment",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "assessment",
+          "placeholder": "Overall health status, active problems, risk factors identified"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "abn_key": "plan",
+      "fields": [
+        {
+          "id": "plan_text",
+          "label": "Plan",
+          "type": "textarea",
+          "rows": 4,
+          "abn_key": "plan",
+          "placeholder": "Counseling provided, orders placed, referrals, medications adjusted, health maintenance"
+        },
+        {
+          "id": "followup_text",
+          "label": "Follow-Up",
+          "type": "text",
+          "abn_key": "followup",
+          "placeholder": "Return in ___ for annual wellness visit"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,193 @@
+{
+  "id": "A3",
+  "name": "Procedure Note",
+  "description": "In-office or bedside procedure documentation",
+  "sections": [
+    {
+      "id": "procedure_info",
+      "label": "Procedure",
+      "abn_key": "procedure",
+      "fields": [
+        {
+          "id": "procedure_name",
+          "label": "Procedure Name",
+          "type": "text",
+          "abn_key": "procedure",
+          "placeholder": "e.g. Joint injection, I&D, laceration repair, Pap smear"
+        },
+        {
+          "id": "cpt_code",
+          "label": "CPT Code",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. 20610"
+        },
+        {
+          "id": "site",
+          "label": "Site / Location",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. Right knee, left forearm, etc."
+        }
+      ]
+    },
+    {
+      "id": "indication",
+      "label": "Indication",
+      "abn_key": "indication",
+      "fields": [
+        {
+          "id": "indication_text",
+          "label": "Indication / Diagnosis",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "indication",
+          "placeholder": "Clinical reason for the procedure"
+        }
+      ]
+    },
+    {
+      "id": "consent",
+      "label": "Consent",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "consent_type",
+          "label": "Consent Obtained",
+          "type": "select",
+          "options": ["Written informed consent obtained", "Verbal consent obtained", "Implied consent (emergency)", "Consent waived"],
+          "abn_key": null
+        },
+        {
+          "id": "consent_risks",
+          "label": "Risks Discussed",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Risks, benefits, and alternatives discussed with patient"
+        }
+      ]
+    },
+    {
+      "id": "pre_procedure",
+      "label": "Pre-Procedure",
+      "abn_key": null,
+      "fields": [
+        {
+          "id": "timeout",
+          "label": "Time-Out Performed",
+          "type": "select",
+          "options": ["Yes", "No", "N/A"],
+          "abn_key": null
+        },
+        {
+          "id": "pre_vitals",
+          "label": "Pre-Procedure Vitals",
+          "type": "text",
+          "abn_key": "vitals",
+          "placeholder": "BP, HR, O2 sat"
+        },
+        {
+          "id": "anesthesia",
+          "label": "Anesthesia",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. 1% lidocaine 5mL local, no anesthesia, topical benzocaine"
+        }
+      ]
+    },
+    {
+      "id": "technique",
+      "label": "Procedure Description",
+      "abn_key": "technique",
+      "fields": [
+        {
+          "id": "technique_text",
+          "label": "Technique / Description",
+          "type": "textarea",
+          "rows": 5,
+          "abn_key": "technique",
+          "placeholder": "Detailed description of technique, approach, materials used, and steps performed"
+        }
+      ]
+    },
+    {
+      "id": "findings",
+      "label": "Findings",
+      "abn_key": "findings",
+      "fields": [
+        {
+          "id": "findings_text",
+          "label": "Intraoperative / Procedural Findings",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "findings",
+          "placeholder": "What was found during the procedure"
+        },
+        {
+          "id": "specimens",
+          "label": "Specimens Sent",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. Tissue to pathology, culture swab, or None"
+        },
+        {
+          "id": "ebl",
+          "label": "Estimated Blood Loss",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "e.g. Minimal, <5mL, None"
+        }
+      ]
+    },
+    {
+      "id": "complications",
+      "label": "Complications",
+      "abn_key": "complications",
+      "fields": [
+        {
+          "id": "complications_text",
+          "label": "Complications",
+          "type": "text",
+          "abn_key": "complications",
+          "placeholder": "None / describe any complications"
+        },
+        {
+          "id": "post_condition",
+          "label": "Post-Procedure Condition",
+          "type": "text",
+          "abn_key": null,
+          "placeholder": "Patient tolerated procedure well, stable vital signs, etc."
+        }
+      ]
+    },
+    {
+      "id": "dispo",
+      "label": "Disposition & Instructions",
+      "abn_key": "dispo",
+      "fields": [
+        {
+          "id": "dispo_text",
+          "label": "Disposition",
+          "type": "select",
+          "options": ["Discharged home", "Admitted", "Transferred", "Observation"],
+          "abn_key": null
+        },
+        {
+          "id": "instructions",
+          "label": "Post-Procedure Instructions",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "dispo",
+          "placeholder": "Wound care, activity restrictions, medications, return precautions"
+        },
+        {
+          "id": "followup_text",
+          "label": "Follow-Up",
+          "type": "text",
+          "abn_key": "followup",
+          "placeholder": "Follow up in ___ days/weeks"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,267 @@
+{
+  "id": "A1",
+  "name": "Urgent Care / Acute Visit",
+  "description": "Acute illness, injury, or unscheduled visit requiring full evaluation",
+  "sections": [
+    {
+      "id": "chief_complaint",
+      "label": "Chief Complaint",
+      "abn_key": "cc",
+      "fields": [
+        {
+          "id": "cc_text",
+          "label": "Chief Complaint",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "cc",
+          "placeholder": "Primary reason for today's visit"
+        }
+      ]
+    },
+    {
+      "id": "hpi",
+      "label": "History of Present Illness",
+      "abn_key": "hpi",
+      "fields": [
+        {
+          "id": "hpi_text",
+          "label": "HPI",
+          "type": "textarea",
+          "rows": 4,
+          "abn_key": "hpi",
+          "placeholder": "Onset, duration, character, location, radiation, severity, modifying factors, associated symptoms"
+        }
+      ]
+    },
+    {
+      "id": "pmh",
+      "label": "Past Medical History",
+      "abn_key": "pmh",
+      "fields": [
+        {
+          "id": "pmh_text",
+          "label": "Conditions",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "pmh",
+          "placeholder": "Active medical conditions and diagnoses"
+        }
+      ]
+    },
+    {
+      "id": "psh",
+      "label": "Past Surgical History",
+      "abn_key": "psh",
+      "fields": [
+        {
+          "id": "psh_text",
+          "label": "Surgeries / Procedures",
+          "type": "textarea",
+          "rows": 2,
+          "abn_key": "psh",
+          "placeholder": "Prior surgeries and significant procedures"
+        }
+      ]
+    },
+    {
+      "id": "medications",
+      "label": "Current Medications",
+      "abn_key": "meds",
+      "fields": [
+        {
+          "id": "med_list",
+          "label": "Medications",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "meds",
+          "placeholder": "List medications with dose and frequency"
+        }
+      ]
+    },
+    {
+      "id": "allergies",
+      "label": "Allergies",
+      "abn_key": "allergies",
+      "fields": [
+        {
+          "id": "allergy_text",
+          "label": "Drug Allergies / Reactions",
+          "type": "text",
+          "abn_key": "allergies",
+          "placeholder": "NKDA or list allergens and reactions"
+        }
+      ]
+    },
+    {
+      "id": "ros",
+      "label": "Review of Systems",
+      "abn_key": "ros",
+      "fields": [
+        {
+          "id": "ros_text",
+          "label": "Review of Systems",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "ros",
+          "placeholder": "Pertinent positives and negatives by system"
+        }
+      ]
+    },
+    {
+      "id": "vitals",
+      "label": "Vital Signs",
+      "abn_key": "vitals",
+      "fields": [
+        {
+          "id": "bp",
+          "label": "BP",
+          "type": "text",
+          "abn_key": "vitals.bp",
+          "placeholder": "e.g. 120/80"
+        },
+        {
+          "id": "hr",
+          "label": "HR",
+          "type": "text",
+          "abn_key": "vitals.hr",
+          "placeholder": "bpm"
+        },
+        {
+          "id": "rr",
+          "label": "RR",
+          "type": "text",
+          "abn_key": "vitals.rr",
+          "placeholder": "/min"
+        },
+        {
+          "id": "temp",
+          "label": "Temp",
+          "type": "text",
+          "abn_key": "vitals.temp",
+          "placeholder": "°F"
+        },
+        {
+          "id": "o2sat",
+          "label": "O2 Sat",
+          "type": "text",
+          "abn_key": "vitals.o2sat",
+          "placeholder": "%"
+        },
+        {
+          "id": "weight",
+          "label": "Weight",
+          "type": "text",
+          "abn_key": "vitals.weight",
+          "placeholder": "lbs / kg"
+        }
+      ]
+    },
+    {
+      "id": "exam",
+      "label": "Physical Examination",
+      "abn_key": "exam",
+      "fields": [
+        {
+          "id": "general",
+          "label": "General",
+          "type": "text",
+          "abn_key": "exam.general",
+          "placeholder": "General appearance"
+        },
+        {
+          "id": "heent",
+          "label": "HEENT",
+          "type": "text",
+          "abn_key": "exam.heent",
+          "placeholder": "Head, eyes, ears, nose, throat"
+        },
+        {
+          "id": "cardiovascular",
+          "label": "Cardiovascular",
+          "type": "text",
+          "abn_key": "exam.cv",
+          "placeholder": "Heart exam"
+        },
+        {
+          "id": "respiratory",
+          "label": "Respiratory",
+          "type": "text",
+          "abn_key": "exam.resp",
+          "placeholder": "Lung exam"
+        },
+        {
+          "id": "abdomen",
+          "label": "Abdomen",
+          "type": "text",
+          "abn_key": "exam.abd",
+          "placeholder": "Abdominal exam"
+        },
+        {
+          "id": "extremities",
+          "label": "Extremities",
+          "type": "text",
+          "abn_key": "exam.ext",
+          "placeholder": "Extremity exam"
+        },
+        {
+          "id": "neuro",
+          "label": "Neurological",
+          "type": "text",
+          "abn_key": "exam.neuro",
+          "placeholder": "Neurological exam"
+        },
+        {
+          "id": "skin",
+          "label": "Skin",
+          "type": "text",
+          "abn_key": "exam.skin",
+          "placeholder": "Skin exam"
+        }
+      ]
+    },
+    {
+      "id": "assessment",
+      "label": "Assessment",
+      "abn_key": "assessment",
+      "fields": [
+        {
+          "id": "assessment_text",
+          "label": "Assessment / Diagnosis",
+          "type": "textarea",
+          "rows": 3,
+          "abn_key": "assessment",
+          "placeholder": "Clinical impression and diagnoses (include ICD codes if applicable)"
+        }
+      ]
+    },
+    {
+      "id": "plan",
+      "label": "Plan",
+      "abn_key": "plan",
+      "fields": [
+        {
+          "id": "plan_text",
+          "label": "Treatment Plan",
+          "type": "textarea",
+          "rows": 4,
+          "abn_key": "plan",
+          "placeholder": "Orders, medications, referrals, patient education, return precautions"
+        }
+      ]
+    },
+    {
+      "id": "followup",
+      "label": "Follow-Up",
+      "abn_key": "followup",
+      "fields": [
+        {
+          "id": "followup_text",
+          "label": "Follow-Up Instructions",
+          "type": "text",
+          "abn_key": "followup",
+          "placeholder": "Return to clinic in ___, or go to ED if ___"
+        }
+      ]
+    }
+  ]
+}
