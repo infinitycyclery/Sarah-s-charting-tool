@@ -3,6 +3,10 @@
 
 cd "$(dirname "$0")"
 
+# Pull latest updates from GitHub
+echo "Checking for updates..."
+git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
+
 # First-time setup: create virtual environment and install Flask
 if [ ! -d "venv" ]; then
     osascript -e 'display notification "Setting up for first time... this takes about 30 seconds." with title "Sarah'\''s Charting Tool"'
