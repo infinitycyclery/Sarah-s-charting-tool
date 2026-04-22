@@ -354,6 +354,7 @@ GENERATORS = {
 
 
 
+@app.route('/')
 def index():
     return render_template('index.html',
                            templates=TEMPLATE_LIST,
