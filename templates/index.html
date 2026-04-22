@@ -82,6 +82,19 @@
   <span id="print-date"></span>
 </div>
 
+<!-- ── Overwrite Warning Dialog ── -->
+<div class="ow-overlay" id="ow-overlay"></div>
+<div class="ow-dialog" id="ow-dialog">
+  <div class="ow-icon">⚠️</div>
+  <div class="ow-title">Overwrite current chart?</div>
+  <div class="ow-body">Re-generating will overwrite the current chart and any manual edits you have made.</div>
+  <div class="ow-actions">
+    <button class="ow-btn-back"    onclick="owGoBack()">← Go Back</button>
+    <button class="ow-btn-keep"    onclick="owKeepOld()">Keep Old &amp; Create Fresh</button>
+    <button class="ow-btn-replace" onclick="owDeleteReplace()">Delete &amp; Replace</button>
+  </div>
+</div>
+
 <!-- ── Patient History Modal ── -->
 <div class="ph-overlay" id="ph-overlay" onclick="closePatientHistory()"></div>
 <div class="ph-modal" id="ph-modal">

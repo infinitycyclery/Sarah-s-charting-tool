@@ -69,6 +69,46 @@ function renderAbnForm(template) {
 async function generateChart() {
   if (!currentTemplate) return;
 
+  // If a chart is already showing, warn before overwriting
+  const output = document.getElementById('chart-output');
+  if (output.style.display !== 'none' && output.innerText.trim()) {
+    document.getElementById('ow-overlay').classList.add('open');
+    document.getElementById('ow-dialog').classList.add('open');
+    return;
+  }
+
+  await _doGenerate();
+}
+
+function _owClose() {
+  document.getElementById('ow-overlay').classList.remove('open');
+  document.getElementById('ow-dialog').classList.remove('open');
+}
+
+function owGoBack() { _owClose(); }
+
+async function owKeepOld() {
+  _owClose();
+  // Ensure the current chart is saved under its own record, then start fresh
+  const name = document.getElementById('patient-name').value.trim();
+  const text = document.getElementById('chart-output').innerText;
+  if (name && text) await persistChart(name, text);
+  currentChartId = null;
+  await _doGenerate();
+}
+
+async function owDeleteReplace() {
+  _owClose();
+  if (currentChartId) {
+    try { await fetch(`/api/chart/${currentChartId}`, { method: 'DELETE' }); } catch {}
+    currentChartId = null;
+  }
+  await _doGenerate();
+}
+
+async function _doGenerate() {
+  if (!currentTemplate) return;
+
   const fields = {};
   document.querySelectorAll('[data-key]').forEach(el => {
     const val = el.value.trim();
@@ -91,7 +131,7 @@ async function generateChart() {
     const data = await resp.json();
     if (data.error) { alert(data.error); return; }
 
-    currentChartId = null; // force a new DB record
+    currentChartId = null;
     showChart(data.chart, patientName);
     persistChart(patientName, data.chart, { ...fields });
   } catch (e) {

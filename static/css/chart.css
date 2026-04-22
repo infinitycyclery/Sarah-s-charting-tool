@@ -309,6 +309,63 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
 }
 .del-btn-confirm:hover { background: #dc2626; }
 
+/* ── Overwrite Warning Dialog ── */
+.ow-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 400;
+}
+.ow-overlay.open { display: block; }
+
+.ow-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 14px;
+  width: 460px;
+  max-width: 92vw;
+  z-index: 401;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  padding: 32px 28px 24px;
+  text-align: center;
+}
+.ow-dialog.open { display: block; }
+
+.ow-icon  { font-size: 2.2rem; margin-bottom: 12px; }
+.ow-title { font-size: 1.05rem; font-weight: 700; color: #1a202c; margin-bottom: 10px; }
+.ow-body  { font-size: 0.84rem; color: #64748b; line-height: 1.6; margin-bottom: 24px; }
+
+.ow-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.ow-btn-back {
+  background: #22c55e; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.ow-btn-back:hover { background: #16a34a; }
+
+.ow-btn-keep {
+  background: #f59e0b; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.ow-btn-keep:hover { background: #d97706; }
+
+.ow-btn-replace {
+  background: #ef4444; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.ow-btn-replace:hover { background: #dc2626; }
+
 /* ── Chart Output ── */
 .chart-output {
   font-family: 'Times New Roman', Times, serif;
