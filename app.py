@@ -218,125 +218,239 @@ TEMPLATE_LIST = load_template_list()
 
 # ── Chart Generators ──────────────────────────────────────────────────────────
 
+_YES = {'yes', 'y', 'yeah', 'yep', 'yup', 'ya', 'ye', 'true', 'correct', 'positive', 'affirm', 'affirmative'}
+_NO  = {'no', 'n', 'nope', 'nah', 'na', 'none', 'false', 'negative', 'deny', 'denies', 'denied'}
+_NONE_PMH = {'no', 'n', 'none', 'no history', 'no hx', 'no pmh', 'denies', 'n/a', 'na', 'negative', 'none reported'}
+_NO_CHANGE = ('no change', 'no changes', 'no new', 'unchanged', 'none', 'n/a', 'no updates')
+
+
 def _v(fields, key, default=''):
     return fields.get(key, default).strip()
 
+
+def _is_yes(val):
+    return val.lower().strip().rstrip('.') in _YES
+
+
+def _is_no(val):
+    return val.lower().strip().rstrip('.') in _NO
+
+
 def _yn(fields, key, yes_text, no_text, other_fmt=None, default=''):
-    v = _v(fields, key).lower()
-    if v in ('yes', 'y'):
-        return yes_text
-    if v in ('no', 'n'):
-        return no_text
     raw = _v(fields, key)
+    v = raw.lower().strip().rstrip('.')
+    if v in _YES:
+        return yes_text
+    if v in _NO:
+        return no_text
     if raw:
         return other_fmt.format(raw) if other_fmt else raw
     return default
 
+
 def generate_tms(fields):
     paragraphs = []
 
+    # ── Name / pronoun shorthand ──
+    full_name = _v(fields, 'patient_name')
+    first_name = full_name.split()[0] if full_name else ''
+    subj = first_name if first_name else 'Patient'   # "Dillon", or "Patient"
+    poss = f"{subj}'s" if first_name else "patient's"
+
     # ── Opening ──
-    age        = _v(fields, 'age')
-    gender     = _v(fields, 'gender')
-    pmh        = _v(fields, 'pmh')
-    session    = _v(fields, 'session_num')
-    protocol   = _v(fields, 'protocol')
-    frequency  = _v(fields, 'frequency')
+    age       = _v(fields, 'age')
+    gender    = _v(fields, 'gender')
+    pmh       = _v(fields, 'pmh')
+    session   = _v(fields, 'session_num')
+    protocol  = _v(fields, 'protocol')
+    frequency = _v(fields, 'frequency')
 
-    demo = ' '.join(filter(None, [f'{age} yo' if age else '', gender, 'adult patient']))
-    if pmh:
-        demo += f' with past medical history significant for {pmh}'
-    line = demo + ' presents in follow-up for TMS.'
+    demo_parts = [p for p in [f'{age} yo' if age else '', gender, 'adult patient'] if p]
+    demo = ' '.join(demo_parts)
 
-    details = ', '.join(filter(None, [
+    pmh_normalized = pmh.lower().strip().rstrip('.') if pmh else ''
+    if not pmh or pmh_normalized in _NONE_PMH:
+        pmh_phrase = 'with no significant past medical history'
+    else:
+        pmh_phrase = f'with past medical history significant for {pmh}'
+
+    line = f'{demo} {pmh_phrase} presents in follow-up for TMS.'
+
+    details_parts = [p for p in [
         f'#{session} treatments' if session else '',
         protocol,
-        f'{frequency} frequency' if frequency else '',
-    ]))
-    if details:
-        line += f' Continued TMS — {details}.'
+        f'{frequency} cadence' if frequency else '',
+    ] if p]
+    if details_parts:
+        line += f' Continued maintenance TMS — {", ".join(details_parts)}.'
     paragraphs.append(line)
 
     # ── Patient Report ──
     p2 = []
-    symptom  = _v(fields, 'symptom_update')
-    sleep    = _v(fields, 'sleep')
-    fatigue  = _v(fields, 'fatigue')
-    anhedonia = _v(fields, 'anhedonia')
+    symptom    = _v(fields, 'symptom_update')
+    sleep      = _v(fields, 'sleep')
+    fatigue    = _v(fields, 'fatigue')
+    anhedonia  = _v(fields, 'anhedonia')
     productive = _v(fields, 'productive')
-    social   = _v(fields, 'socially_isolating')
     collateral = _v(fields, 'collateral')
-    work     = _v(fields, 'work')
+    work       = _v(fields, 'work')
 
     if symptom:
-        p2.append(f'Patient reports {symptom}.')
-    p2.append(_yn(fields, 'stable',
-        'Overall mood and functioning remain stable.',
-        'Patient reports decreased stability in mood or functioning.',
-        'Stability: {}.'))
-    p2.append(_yn(fields, 'helping',
-        'Patient endorses continued benefit from TMS.',
-        'Patient does not currently feel TMS is helping.',
-        'Regarding TMS effectiveness: {}.'))
+        p2.append(f'{subj} reports {symptom}.')
+
+    stable_v = _v(fields, 'stable')
+    if stable_v:
+        if _is_yes(stable_v):
+            p2.append(f'Overall mood and functioning remain stable.')
+        elif _is_no(stable_v):
+            p2.append(f'{subj} reports decreased stability in mood or functioning.')
+        else:
+            p2.append(f'Regarding stability, {subj} reports {stable_v}.')
+
+    helping_v = _v(fields, 'helping')
+    if helping_v:
+        if _is_yes(helping_v):
+            p2.append(f'{subj} endorses continued benefit from TMS.')
+        elif _is_no(helping_v):
+            p2.append(f'{subj} does not currently feel TMS is helping.')
+        else:
+            p2.append(f'Regarding TMS effectiveness, {subj} reports {helping_v}.')
+
     if sleep:
-        p2.append(f'Sleep: {sleep}.')
-    p2.append(_yn(fields, 'fatigue', 'Endorses fatigue.', 'Denies significant fatigue.', 'Fatigue: {}.'))
+        sleep_v = sleep.lower().strip()
+        if _is_no(sleep_v) or sleep_v in ('normal', 'good', 'fine', 'okay', 'ok', 'well', 'stable'):
+            p2.append(f'Sleep has been stable.')
+        else:
+            p2.append(f'{subj} reports difficulty with sleep: {sleep}.')
+
+    fatigue_v = fatigue.lower().strip().rstrip('.') if fatigue else ''
+    if fatigue_v:
+        if _is_yes(fatigue_v):
+            p2.append(f'{subj} endorses fatigue.')
+        elif _is_no(fatigue_v):
+            p2.append(f'{subj} denies significant fatigue.')
+        else:
+            p2.append(f'{subj} reports fatigue: {fatigue}.')
+
     if anhedonia:
-        p2.append(f'Anhedonia: {anhedonia}.')
+        anhedonia_v = anhedonia.lower().strip().rstrip('.')
+        if _is_yes(anhedonia_v):
+            p2.append(f'{subj} continues to endorse anhedonia.')
+        elif _is_no(anhedonia_v):
+            p2.append(f'{subj} denies anhedonia.')
+        else:
+            p2.append(f'Regarding anhedonia, {subj} reports {anhedonia}.')
+
     if productive:
-        p2.append(f'Productivity and motivation: {productive}.')
-    p2.append(_yn(fields, 'socially_isolating', 'Reports social isolation.', 'Denies social isolation.', 'Social: {}.'))
+        prod_v = productive.lower().strip().rstrip('.')
+        if _is_yes(prod_v):
+            p2.append(f'{subj} reports improved productivity and motivation.')
+        elif _is_no(prod_v):
+            p2.append(f'{subj} continues to have difficulty with productivity and motivation.')
+        else:
+            p2.append(f'Productivity and motivation: {subj} reports {productive}.')
+
+    social_v = _v(fields, 'socially_isolating')
+    if social_v:
+        if _is_yes(social_v):
+            p2.append(f'{subj} reports social isolation.')
+        elif _is_no(social_v):
+            p2.append(f'{subj} denies social isolation.')
+        else:
+            p2.append(f'Socially, {subj} reports {social_v}.')
+
     if work:
-        p2.append(f'Work: {work}.')
+        p2.append(f'Regarding work, {subj} reports {work}.')
+
     if collateral:
-        p2.append(f'Collateral: {collateral}.')
+        p2.append(f'Family and friends have noted {collateral}.')
+
     paragraphs.append(' '.join(s for s in p2 if s))
 
     # ── Safety ──
-    si = _yn(fields, 'suicidal',
-        'Reports suicidal ideation.',
-        'Denies suicidal ideation, suicide plan, or intent.',
-        'Suicidal ideation: {}.',
-        'Denies suicidal ideation, suicide plan, or intent.')
-    sib = _yn(fields, 'self_harm',
-        'Reports recent self-injurious behavior.',
-        'Denies recent self-injurious behavior.',
-        'Self-harm: {}.',
-        'Denies recent self-injurious behavior.')
+    si_v  = _v(fields, 'suicidal')
+    sib_v = _v(fields, 'self_harm')
+
+    if si_v:
+        if _is_yes(si_v):
+            si = f'{subj} reports suicidal ideation.'
+        elif _is_no(si_v):
+            si = 'Denies suicidal ideation, suicide plan, or intent.'
+        else:
+            si = f'Regarding suicidal ideation, {subj} reports {si_v}.'
+    else:
+        si = 'Denies suicidal ideation, suicide plan, or intent.'
+
+    if sib_v:
+        if _is_yes(sib_v):
+            sib = f'{subj} reports recent self-injurious behavior.'
+        elif _is_no(sib_v):
+            sib = f'Denies recent self-injurious behavior.'
+        else:
+            sib = f'Regarding self-harm, {subj} reports {sib_v}.'
+    else:
+        sib = 'Denies recent self-injurious behavior.'
+
     paragraphs.append(f'{si} {sib}')
 
-    # ── Side effects ──
+    # ── Side effects / Motor threshold ──
     p4 = []
-    se = _yn(fields, 'side_effects',
-        'Reports side effects to TMS treatment.',
-        'Denies side effects to TMS.',
-        'Side effects: {}.')
-    if se:
-        p4.append(se)
-    mt = _yn(fields, 'mt_increased',
-        'Treatment delivered at prescribed motor threshold.',
-        'Not yet at prescribed motor threshold.',
-        'Motor threshold: {}.')
-    if mt:
-        p4.append(mt)
+    se_v = _v(fields, 'side_effects')
+    if se_v:
+        if _is_yes(se_v):
+            p4.append(f'{subj} reports side effects to TMS treatment.')
+        elif _is_no(se_v):
+            p4.append(f'Denies side effects to TMS.')
+        else:
+            p4.append(f'{subj} reports the following side effects to TMS: {se_v}.')
+
+    mt_v = _v(fields, 'mt_increased')
+    if mt_v:
+        if _is_yes(mt_v):
+            p4.append('Treatment delivered at prescribed motor threshold.')
+        elif _is_no(mt_v):
+            p4.append('Not yet at prescribed motor threshold.')
+        else:
+            p4.append(f'Motor threshold: {mt_v}.')
+
     if p4:
         paragraphs.append(' '.join(p4))
 
     # ── Meds / Physical health ──
     med = _v(fields, 'med_change')
     phx = _v(fields, 'physical_health')
-    med_line = f'Medication changes: {med}.' if med and med.lower() not in ('no','n','none') else 'Denies changes in medications since last visit.'
-    phx_line = f'Physical health changes: {phx}.' if phx and phx.lower() not in ('no','n','none') else 'Denies changes in physical health since last visit.'
+    med_v = med.lower().strip().rstrip('.') if med else ''
+    phx_v = phx.lower().strip().rstrip('.') if phx else ''
+
+    def _is_no_change(v):
+        return not v or v in _NO or v in _NONE_PMH or any(v.startswith(p) for p in _NO_CHANGE)
+
+    if _is_no_change(med_v):
+        med_line = 'Denies changes in medications since last visit.'
+    else:
+        med_line = f'Medication changes since last visit: {med}.'
+
+    if _is_no_change(phx_v):
+        phx_line = 'Denies changes in physical health since last visit.'
+    else:
+        phx_line = f'Physical health update: {phx}.'
+
     paragraphs.append(f'{med_line} {phx_line}')
 
     # ── Plan ──
     freq_change = _v(fields, 'freq_change')
-    plan_line = f'Treatment plan: {freq_change}.' if freq_change and freq_change.lower() not in ('no','n','none') else 'Will continue TMS at current frequency.'
+    fc_v = freq_change.lower().strip().rstrip('.') if freq_change else ''
+    if not freq_change or fc_v in _NO or fc_v in _NONE_PMH or any(fc_v.startswith(p) for p in _NO_CHANGE):
+        plan_line = 'Will continue TMS at current frequency.'
+    else:
+        plan_line = freq_change.rstrip('.')
+        plan_line = plan_line[0].upper() + plan_line[1:] + '.'
+
     paragraphs.append(plan_line)
 
     # ── Relapse prevention (standard) ──
     paragraphs.append(
-        "Reviewed patient's TMS course to date, including their response, side effects experienced, "
+        f"Reviewed {poss} TMS course to date, including their response, side effects experienced, "
         "and treatment plan going forward. Reviewed relapse prevention, including importance of remaining "
         "on antidepressant medication and continuing in psychotherapy to reduce the likelihood of relapse "
         "and maximize antidepressant effect. Should relapse occur despite maintenance medication, discussed "
