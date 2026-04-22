@@ -381,8 +381,8 @@ async function showPatientCharts(patientId, patientName) {
     charts.forEach(c => {
       const row = document.createElement('div');
       row.className = 'ph-chart-row';
-      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
+      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
       });
       row.innerHTML = `
         <div class="ph-chart-header">
@@ -500,8 +500,8 @@ async function showChartsInDropdown(patientId, patientName) {
     charts.forEach(c => {
       const row = document.createElement('div');
       row.className = 'pd-chart-row';
-      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleDateString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric',
+      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
       });
       row.innerHTML = `
         <div class="pd-chart-header">
