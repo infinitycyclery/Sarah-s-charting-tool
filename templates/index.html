@@ -59,6 +59,7 @@
     <div class="panel-header">
       <span>Chart</span>
       <div class="panel-header-actions no-print">
+        <button class="btn-action btn-delete" onclick="promptDeleteChart()" id="btn-delete" disabled>🗑 Delete</button>
         <button class="btn-action" onclick="manualSave()" id="btn-save" disabled>💾 Save</button>
         <button class="btn-action" onclick="copyChart()" id="btn-copy" disabled>⎘ Copy</button>
         <button class="btn-action" onclick="window.print()" id="btn-print" disabled>🖨 Print</button>
@@ -94,6 +95,18 @@
            oninput="searchPatients(this.value)">
   </div>
   <div class="ph-body" id="ph-body"></div>
+</div>
+
+<!-- ── Delete Confirmation Dialog ── -->
+<div class="del-overlay" id="del-overlay"></div>
+<div class="del-dialog" id="del-dialog">
+  <div class="del-icon">🗑</div>
+  <div class="del-title">Delete this chart?</div>
+  <div class="del-body">This cannot be undone. The chart will be permanently removed from the patient's history.</div>
+  <div class="del-actions">
+    <button class="del-btn-back" onclick="cancelDeleteChart()">← Go Back</button>
+    <button class="del-btn-confirm" onclick="confirmDeleteChart()">Yes, Delete</button>
+  </div>
 </div>
 
 <script src="{{ url_for('static', filename='js/chart.js') }}"></script>

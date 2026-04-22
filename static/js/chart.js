@@ -108,6 +108,7 @@ function showChart(text, patientName) {
   output.style.display = 'block';
   output.textContent = text;
 
+  document.getElementById('btn-delete').disabled = false;
   document.getElementById('btn-save').disabled = false;
   document.getElementById('btn-copy').disabled = false;
   document.getElementById('btn-print').disabled = false;
@@ -123,6 +124,7 @@ function clearChart() {
   document.getElementById('chart-placeholder').style.display = 'block';
   document.getElementById('chart-output').style.display = 'none';
   document.getElementById('chart-output').textContent = '';
+  document.getElementById('btn-delete').disabled = true;
   document.getElementById('btn-save').disabled = true;
   document.getElementById('btn-copy').disabled = true;
   document.getElementById('btn-print').disabled = true;
@@ -136,6 +138,43 @@ function newChart() {
   clearChart();
   currentChartId = null;
   clearTimeout(autoSaveTimer);
+}
+
+// ── Delete Chart ──────────────────────────────────────────────────────────
+function promptDeleteChart() {
+  document.getElementById('del-overlay').classList.add('open');
+  document.getElementById('del-dialog').classList.add('open');
+}
+
+function cancelDeleteChart() {
+  document.getElementById('del-overlay').classList.remove('open');
+  document.getElementById('del-dialog').classList.remove('open');
+}
+
+async function confirmDeleteChart() {
+  if (!currentChartId) {
+    // Chart was never saved — just clear the view
+    cancelDeleteChart();
+    newChart();
+    return;
+  }
+
+  const btn = document.querySelector('.del-btn-confirm');
+  btn.textContent = 'Deleting…';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch(`/api/chart/${currentChartId}`, { method: 'DELETE' });
+    const data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+    cancelDeleteChart();
+    newChart();
+  } catch (e) {
+    alert('Error deleting chart: ' + e.message);
+  } finally {
+    btn.textContent = 'Yes, Delete';
+    btn.disabled = false;
+  }
 }
 
 // ── Copy to Clipboard ──────────────────────────────────────────────────────

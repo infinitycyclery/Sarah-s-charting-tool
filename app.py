@@ -665,5 +665,24 @@ def get_chart(chart_id):
         conn.close()
 
 
+@app.route('/api/chart/<int:chart_id>', methods=['DELETE'])
+def delete_chart(chart_id):
+    conn = _db()
+    try:
+        row = conn.execute('SELECT patient_id FROM charts WHERE id=?', (chart_id,)).fetchone()
+        if not row:
+            return jsonify({'error': 'Not found'}), 404
+        patient_id = row['patient_id']
+        conn.execute('DELETE FROM charts WHERE id=?', (chart_id,))
+        # Remove patient record if they have no charts left
+        remaining = conn.execute('SELECT COUNT(*) FROM charts WHERE patient_id=?', (patient_id,)).fetchone()[0]
+        if remaining == 0:
+            conn.execute('DELETE FROM patients WHERE id=?', (patient_id,))
+        conn.commit()
+        return jsonify({'ok': True})
+    finally:
+        conn.close()
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)
