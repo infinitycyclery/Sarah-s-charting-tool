@@ -1,15 +1,50 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import re
+import sqlite3
 from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '1.0'
+VERSION = '1.1'
 
 BASE_DIR = Path(__file__).parent
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
 ABBREVIATIONS_FILE = BASE_DIR / 'data' / 'abbreviations.json'
+DB_PATH = BASE_DIR / 'data' / 'charting.db'
+
+
+# ── Database ──────────────────────────────────────────────────────────────────
+
+def _db():
+    conn = sqlite3.connect(str(DB_PATH), check_same_thread=False)
+    conn.row_factory = sqlite3.Row
+    conn.execute('PRAGMA journal_mode=WAL')
+    return conn
+
+
+def init_db():
+    with _db() as conn:
+        conn.executescript('''
+            CREATE TABLE IF NOT EXISTS patients (
+                id          INTEGER PRIMARY KEY AUTOINCREMENT,
+                name        TEXT    NOT NULL,
+                created_at  TEXT    DEFAULT (datetime('now','localtime'))
+            );
+            CREATE TABLE IF NOT EXISTS charts (
+                id            INTEGER PRIMARY KEY AUTOINCREMENT,
+                patient_id    INTEGER NOT NULL REFERENCES patients(id),
+                template_id   TEXT    NOT NULL,
+                template_name TEXT,
+                fields        TEXT    NOT NULL,
+                chart_text    TEXT    NOT NULL,
+                created_at    TEXT    DEFAULT (datetime('now','localtime')),
+                updated_at    TEXT    DEFAULT (datetime('now','localtime'))
+            );
+        ''')
+
+
+init_db()
 
 with open(ABBREVIATIONS_FILE) as f:
     ABBREVIATIONS = json.load(f)
@@ -513,6 +548,121 @@ def generate_chart():
 @app.route('/api/abbreviations')
 def get_abbreviations():
     return jsonify(ABBREVIATIONS)
+
+
+# ── Patient / Chart persistence ───────────────────────────────────────────────
+
+@app.route('/api/save-chart', methods=['POST'])
+def save_chart():
+    data = request.get_json(silent=True) or {}
+    patient_name = data.get('patient_name', '').strip()
+    template_id  = data.get('template_id', '')
+    fields       = data.get('fields', {})
+    chart_text   = data.get('chart_text', '')
+    chart_id     = data.get('chart_id')
+
+    if not patient_name:
+        return jsonify({'error': 'Patient name required to save'}), 400
+
+    fields.pop('patient_name', None)   # stored on the patient record, not in fields JSON
+
+    conn = _db()
+    try:
+        row = conn.execute(
+            'SELECT id FROM patients WHERE name = ? COLLATE NOCASE', (patient_name,)
+        ).fetchone()
+        if row:
+            patient_id = row['id']
+        else:
+            cur = conn.execute('INSERT INTO patients (name) VALUES (?)', (patient_name,))
+            patient_id = cur.lastrowid
+
+        tpl = load_template(template_id)
+        template_name = tpl['name'] if tpl else template_id
+
+        if chart_id:
+            conn.execute(
+                "UPDATE charts SET chart_text=?, fields=?, updated_at=datetime('now','localtime') WHERE id=?",
+                (chart_text, json.dumps(fields), chart_id)
+            )
+        else:
+            cur = conn.execute(
+                'INSERT INTO charts (patient_id, template_id, template_name, fields, chart_text) VALUES (?,?,?,?,?)',
+                (patient_id, template_id, template_name, json.dumps(fields), chart_text)
+            )
+            chart_id = cur.lastrowid
+
+        conn.commit()
+        return jsonify({'chart_id': chart_id, 'patient_id': patient_id})
+    finally:
+        conn.close()
+
+
+@app.route('/api/patients/search')
+def search_patients():
+    q = request.args.get('q', '').strip()
+    conn = _db()
+    try:
+        sql = '''
+            SELECT p.id, p.name,
+                   COUNT(c.id)    AS chart_count,
+                   MAX(c.updated_at) AS last_visit
+            FROM patients p
+            LEFT JOIN charts c ON c.patient_id = p.id
+            {where}
+            GROUP BY p.id
+            ORDER BY last_visit DESC
+            LIMIT 30
+        '''
+        if q:
+            rows = conn.execute(
+                sql.format(where='WHERE p.name LIKE ? COLLATE NOCASE'),
+                (f'%{q}%',)
+            ).fetchall()
+        else:
+            rows = conn.execute(sql.format(where='')).fetchall()
+        return jsonify([dict(r) for r in rows])
+    finally:
+        conn.close()
+
+
+@app.route('/api/patient/<int:patient_id>/charts')
+def get_patient_charts(patient_id):
+    conn = _db()
+    try:
+        rows = conn.execute(
+            'SELECT id, template_id, template_name, chart_text, created_at, updated_at '
+            'FROM charts WHERE patient_id=? ORDER BY updated_at DESC',
+            (patient_id,)
+        ).fetchall()
+        result = []
+        for r in rows:
+            d = dict(r)
+            txt = d['chart_text']
+            d['preview'] = (txt[:140] + '…') if len(txt) > 140 else txt
+            d['preview'] = d['preview'].replace('\n', ' ')
+            result.append(d)
+        return jsonify(result)
+    finally:
+        conn.close()
+
+
+@app.route('/api/chart/<int:chart_id>')
+def get_chart(chart_id):
+    conn = _db()
+    try:
+        row = conn.execute('SELECT * FROM charts WHERE id=?', (chart_id,)).fetchone()
+        if not row:
+            return jsonify({'error': 'Not found'}), 404
+        d = dict(row)
+        d['fields'] = json.loads(d['fields'])
+
+        # Also fetch patient name
+        pr = conn.execute('SELECT name FROM patients WHERE id=?', (d['patient_id'],)).fetchone()
+        d['patient_name'] = pr['name'] if pr else ''
+        return jsonify(d)
+    finally:
+        conn.close()
 
 
 if __name__ == '__main__':

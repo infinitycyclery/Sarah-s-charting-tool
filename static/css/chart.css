@@ -209,3 +209,125 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
   .print-header { display: flex !important; justify-content: space-between; font-size: 10pt; border-bottom: 1px solid #000; padding-bottom: 6px; margin-bottom: 12px; }
 }
 .print-header { display: none; }
+
+/* ── Save Status ── */
+.save-status {
+  font-size: 0.72rem;
+  color: rgba(255,255,255,0.5);
+  white-space: nowrap;
+  opacity: 0;
+  transition: opacity 0.5s;
+}
+.save-status.visible { opacity: 1; }
+
+/* ── Patient History Modal ── */
+.ph-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 100;
+}
+.ph-overlay.open { display: block; }
+
+.ph-modal {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 12px;
+  width: 540px;
+  max-width: 92vw;
+  max-height: 78vh;
+  z-index: 101;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.22);
+  overflow: hidden;
+}
+.ph-modal.open { display: flex; }
+
+.ph-header {
+  background: #1a3a5c;
+  color: #fff;
+  padding: 13px 18px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-weight: 700;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+.ph-close {
+  background: none;
+  border: none;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: color .15s;
+}
+.ph-close:hover { color: #fff; }
+
+.ph-search-wrap {
+  padding: 12px 16px;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.ph-search-input {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 0.88rem;
+  font-family: inherit;
+  outline: none;
+  transition: border-color .15s;
+}
+.ph-search-input:focus { border-color: #1a3a5c; box-shadow: 0 0 0 2px rgba(26,58,92,.1); }
+
+.ph-body { flex: 1; overflow-y: auto; }
+
+.ph-empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 40px 20px; }
+
+.ph-patient-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background .1s;
+}
+.ph-patient-row:hover { background: #f8fafc; }
+.ph-patient-name { font-weight: 600; font-size: 0.9rem; color: #1a202c; }
+.ph-patient-meta { font-size: 0.74rem; color: #94a3b8; margin-top: 2px; }
+.ph-chevron { color: #cbd5e1; font-size: 1.1rem; }
+
+.ph-back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 9px 16px;
+  font-size: 0.8rem;
+  color: #475569;
+  cursor: pointer;
+  border-bottom: 1px solid #e2e8f0;
+  background: #f8fafc;
+  transition: color .1s;
+}
+.ph-back-btn:hover { color: #1a3a5c; }
+
+.ph-chart-row {
+  padding: 11px 16px 11px 28px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background .1s;
+}
+.ph-chart-row:hover { background: #f0f7ff; }
+.ph-chart-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 4px; }
+.ph-chart-tpl { font-size: 0.78rem; font-weight: 700; color: #1a3a5c; }
+.ph-chart-date { font-size: 0.72rem; color: #94a3b8; }
+.ph-chart-preview { font-size: 0.78rem; color: #64748b; line-height: 1.45; }
