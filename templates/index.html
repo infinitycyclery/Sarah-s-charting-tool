@@ -21,12 +21,13 @@
              onblur="closePatientDropdown()">
       <div class="patient-dropdown" id="patient-dropdown"></div>
     </div>
-    <button class="btn-top" onclick="newChart()">+ New Chart</button>
     <button class="btn-top" onclick="openVac()">📋 View All Charts</button>
     <button class="btn-top" onclick="openPatientHistory()">⏱ History</button>
     <span class="save-status" id="save-status"></span>
   </div>
   <div class="topbar-right">
+    <button class="btn-new-chart" onclick="openNewChartDialog()">+ New Chart</button>
+    <div class="tpl-divider"></div>
     {% for tpl in templates %}
     <button class="btn-tpl" data-template-id="{{ tpl.id }}" onclick="selectTemplate('{{ tpl.id }}')"
             title="{{ tpl.description }}">
@@ -124,6 +125,26 @@
            oninput="searchPatients(this.value)">
   </div>
   <div class="ph-body" id="ph-body"></div>
+</div>
+
+<!-- ── New Chart Dialog ── -->
+<div class="nc-overlay" id="nc-overlay" onclick="closeNewChartDialog()"></div>
+<div class="nc-dialog" id="nc-dialog">
+  <div class="nc-title">Start a New Chart</div>
+  <div class="nc-body">Who are you charting for?</div>
+  <div class="nc-actions">
+    <button class="nc-btn-new" onclick="ncNewPatient()">
+      <span class="nc-btn-icon">👤</span>
+      <span class="nc-btn-label">New Patient</span>
+      <span class="nc-btn-sub">Create a brand-new record</span>
+    </button>
+    <button class="nc-btn-existing" onclick="ncExistingPatient()">
+      <span class="nc-btn-icon">🔍</span>
+      <span class="nc-btn-label">Existing Patient</span>
+      <span class="nc-btn-sub">Search and resume a record</span>
+    </button>
+  </div>
+  <button class="nc-btn-cancel" onclick="closeNewChartDialog()">Cancel</button>
 </div>
 
 <!-- ── Delete Confirmation Dialog ── -->

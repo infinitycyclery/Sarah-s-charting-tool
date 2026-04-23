@@ -172,12 +172,37 @@ function clearChart() {
 }
 
 // ── New Chart ──────────────────────────────────────────────────────────────
-function newChart() {
+function openNewChartDialog() {
+  document.getElementById('nc-overlay').classList.add('open');
+  document.getElementById('nc-dialog').classList.add('open');
+}
+
+function closeNewChartDialog() {
+  document.getElementById('nc-overlay').classList.remove('open');
+  document.getElementById('nc-dialog').classList.remove('open');
+}
+
+function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
   document.getElementById('patient-name').value = '';
   clearChart();
   currentChartId = null;
   clearTimeout(autoSaveTimer);
+}
+
+function newChart() { _resetChart(); }
+
+function ncNewPatient() {
+  closeNewChartDialog();
+  _resetChart();
+  setTimeout(() => document.getElementById('patient-name').focus(), 50);
+}
+
+function ncExistingPatient() {
+  closeNewChartDialog();
+  const input = document.getElementById('patient-name');
+  input.focus();
+  onPatientInput(input.value);
 }
 
 // ── Delete Chart ──────────────────────────────────────────────────────────
