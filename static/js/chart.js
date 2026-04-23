@@ -460,6 +460,7 @@ function _plMakeRow(p) {
       <div class="pl-row-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} · Last visit: ${lastVisit}</div>
     </div>
     <div class="pl-row-actions">
+      <button class="pl-btn-select" onclick="plShowCharts(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">⊕ Select</button>
       <button class="pl-btn-edit" onclick="plStartEdit(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">✏ Edit</button>
       <button class="pl-btn-delete" onclick="plStartDelete(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">🗑 Delete</button>
     </div>`;
@@ -503,6 +504,7 @@ function plCancelEdit(patientId, originalName) {
       <div class="pl-row-meta">${lastVisitEl ? lastVisitEl.textContent : ''}</div>
     </div>
     <div class="pl-row-actions">
+      <button class="pl-btn-select" onclick="plShowCharts(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">⊕ Select</button>
       <button class="pl-btn-edit" onclick="plStartEdit(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">✏ Edit</button>
       <button class="pl-btn-delete" onclick="plStartDelete(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">🗑 Delete</button>
     </div>`;
@@ -529,6 +531,49 @@ async function plConfirmDelete(patientId) {
 function plCancelDelete(patientId, name) {
   const q = document.getElementById('pl-search').value;
   _plDoLoad(q);
+}
+
+async function plShowCharts(patientId, patientName) {
+  const list = document.getElementById('pl-list');
+  list.innerHTML = '<div class="pl-empty">Loading charts…</div>';
+
+  try {
+    const charts = await (await fetch(`/api/patient/${patientId}/charts`)).json();
+    list.innerHTML = '';
+
+    const back = document.createElement('div');
+    back.className = 'pl-charts-header';
+    back.innerHTML = `
+      <button class="pl-back-btn" onclick="_plDoLoad(document.getElementById('pl-search').value)">← Back</button>
+      <span class="pl-charts-patient">${esc(patientName)}</span>`;
+    list.appendChild(back);
+
+    if (!charts.length) {
+      const empty = document.createElement('div');
+      empty.className = 'pl-empty';
+      empty.textContent = 'No charts saved yet.';
+      list.appendChild(empty);
+      return;
+    }
+
+    charts.forEach(c => {
+      const row = document.createElement('div');
+      row.className = 'pl-chart-row';
+      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleString('en-US', {
+        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
+      });
+      row.innerHTML = `
+        <div class="pl-chart-row-header">
+          <span class="pl-chart-tpl">${esc(c.template_id)} · ${esc(c.template_name)}</span>
+          <span class="pl-chart-date">${d}</span>
+        </div>
+        <div class="pl-chart-preview">${esc(c.preview)}</div>`;
+      row.onclick = () => loadChartRecord(c.id, patientName);
+      list.appendChild(row);
+    });
+  } catch {
+    list.innerHTML = '<div class="pl-empty">Error loading charts.</div>';
+  }
 }
 
 async function loadChartRecord(chartId, patientName) {

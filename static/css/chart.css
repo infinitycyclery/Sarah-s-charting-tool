@@ -771,6 +771,14 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
 .pl-row-meta { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
 .pl-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
 
+.pl-btn-select {
+  background: #f0fdf4; color: #15803d;
+  border: 1px solid #bbf7d0; border-radius: 6px;
+  padding: 5px 12px; font-size: 0.78rem; font-weight: 600;
+  cursor: pointer; transition: background .1s;
+}
+.pl-btn-select:hover { background: #dcfce7; }
+
 .pl-btn-edit {
   background: #eff6ff; color: #1d4ed8;
   border: 1px solid #bfdbfe; border-radius: 6px;
@@ -824,3 +832,36 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
   cursor: pointer;
 }
 .pl-empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 60px 20px; }
+
+/* Patient chart sub-view */
+.pl-charts-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 10px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid #e2e8f0;
+  flex-shrink: 0;
+}
+.pl-back-btn {
+  background: none; border: none;
+  color: #475569; font-size: 0.84rem;
+  cursor: pointer; padding: 4px 0;
+}
+.pl-back-btn:hover { color: #1a3a5c; }
+.pl-charts-patient { font-weight: 700; font-size: 0.95rem; color: #1a202c; }
+
+.pl-chart-row {
+  padding: 12px 20px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background .1s;
+}
+.pl-chart-row:hover { background: #f0f7ff; }
+.pl-chart-row-header {
+  display: flex; justify-content: space-between;
+  align-items: baseline; margin-bottom: 4px;
+}
+.pl-chart-tpl  { font-size: 0.8rem; font-weight: 700; color: #1a3a5c; }
+.pl-chart-date { font-size: 0.74rem; color: #94a3b8; }
+.pl-chart-preview { font-size: 0.8rem; color: #64748b; line-height: 1.45; }
