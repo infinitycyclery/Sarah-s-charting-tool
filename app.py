@@ -38,10 +38,17 @@ def init_db():
                 template_name TEXT,
                 fields        TEXT    NOT NULL,
                 chart_text    TEXT    NOT NULL,
+                status        TEXT    DEFAULT 'active',
                 created_at    TEXT    DEFAULT (datetime('now','localtime')),
                 updated_at    TEXT    DEFAULT (datetime('now','localtime'))
             );
         ''')
+        # Migration: add status column to existing databases
+        try:
+            conn.execute("ALTER TABLE charts ADD COLUMN status TEXT DEFAULT 'active'")
+            conn.commit()
+        except Exception:
+            pass
 
 
 init_db()
@@ -678,6 +685,69 @@ def delete_chart(chart_id):
         remaining = conn.execute('SELECT COUNT(*) FROM charts WHERE patient_id=?', (patient_id,)).fetchone()[0]
         if remaining == 0:
             conn.execute('DELETE FROM patients WHERE id=?', (patient_id,))
+        conn.commit()
+        return jsonify({'ok': True})
+    finally:
+        conn.close()
+
+
+@app.route('/api/charts')
+def get_all_charts():
+    page     = max(1, int(request.args.get('page', 1)))
+    q        = request.args.get('q', '').strip()
+    per_page = 25
+    offset   = (page - 1) * per_page
+
+    conn = _db()
+    try:
+        base = '''
+            SELECT c.id, c.template_id, c.template_name, c.chart_text,
+                   c.status, c.created_at, c.updated_at,
+                   p.id AS patient_id, p.name AS patient_name
+            FROM charts c
+            JOIN patients p ON p.id = c.patient_id
+        '''
+        where     = 'WHERE p.name LIKE ? COLLATE NOCASE' if q else ''
+        q_arg     = (f'%{q}%',) if q else ()
+        total = conn.execute(
+            f'SELECT COUNT(*) FROM charts c JOIN patients p ON p.id=c.patient_id {where}',
+            q_arg
+        ).fetchone()[0]
+
+        rows = conn.execute(
+            f'{base} {where} ORDER BY c.created_at DESC LIMIT ? OFFSET ?',
+            q_arg + (per_page, offset)
+        ).fetchall()
+
+        charts = []
+        for r in rows:
+            d = dict(r)
+            txt = d['chart_text']
+            d['preview'] = (txt[:200] + '…').replace('\n', ' ') if len(txt) > 200 else txt.replace('\n', ' ')
+            charts.append(d)
+
+        return jsonify({
+            'charts': charts,
+            'total':  total,
+            'page':   page,
+            'pages':  max(1, (total + per_page - 1) // per_page),
+        })
+    finally:
+        conn.close()
+
+
+@app.route('/api/chart/<int:chart_id>/status', methods=['PATCH'])
+def update_chart_status(chart_id):
+    data   = request.get_json(silent=True) or {}
+    status = data.get('status', 'active')
+    if status not in ('active', 'finished'):
+        return jsonify({'error': 'Invalid status'}), 400
+    conn = _db()
+    try:
+        conn.execute(
+            "UPDATE charts SET status=?, updated_at=datetime('now','localtime') WHERE id=?",
+            (status, chart_id)
+        )
         conn.commit()
         return jsonify({'ok': True})
     finally:

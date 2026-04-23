@@ -22,6 +22,7 @@
       <div class="patient-dropdown" id="patient-dropdown"></div>
     </div>
     <button class="btn-top" onclick="newChart()">+ New Chart</button>
+    <button class="btn-top" onclick="openVac()">📋 View All Charts</button>
     <button class="btn-top" onclick="openPatientHistory()">⏱ History</button>
     <span class="save-status" id="save-status"></span>
   </div>
@@ -80,6 +81,21 @@
   <strong id="print-patient-name"></strong>
   <span id="print-template-name"></span>
   <span id="print-date"></span>
+</div>
+
+<!-- ── View All Charts Panel ── -->
+<div class="vac-overlay" id="vac-overlay" onclick="closeVac()"></div>
+<div class="vac-panel" id="vac-panel">
+  <div class="vac-header">
+    <span class="vac-title">📋 All Charts</span>
+    <input class="vac-search" id="vac-search" type="text"
+           placeholder="Search by patient name…"
+           oninput="vacSearch(this.value)" autocomplete="off">
+    <button class="vac-close" onclick="closeVac()">✕</button>
+  </div>
+  <div class="vac-pagination-bar" id="vac-pagination-top"></div>
+  <div class="vac-list" id="vac-list"></div>
+  <div class="vac-pagination-bar" id="vac-pagination-bot"></div>
 </div>
 
 <!-- ── Overwrite Warning Dialog ── -->

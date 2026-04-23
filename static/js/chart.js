@@ -534,3 +534,180 @@ function esc(str) {
     .replace(/>/g, '&gt;')
     .replace(/"/g, '&quot;');
 }
+
+// ── View All Charts ───────────────────────────────────────────────────────
+let vacPage = 1;
+let vacQuery = '';
+let vacSearchTimer = null;
+
+function openVac() {
+  document.getElementById('vac-overlay').classList.add('open');
+  document.getElementById('vac-panel').classList.add('open');
+  vacPage = 1;
+  vacQuery = '';
+  document.getElementById('vac-search').value = '';
+  loadVacCharts();
+  setTimeout(() => document.getElementById('vac-search').focus(), 60);
+}
+
+function closeVac() {
+  document.getElementById('vac-overlay').classList.remove('open');
+  document.getElementById('vac-panel').classList.remove('open');
+}
+
+function vacSearch(q) {
+  clearTimeout(vacSearchTimer);
+  vacSearchTimer = setTimeout(() => {
+    vacQuery = q;
+    vacPage = 1;
+    loadVacCharts();
+  }, 300);
+}
+
+async function loadVacCharts() {
+  document.getElementById('vac-list').innerHTML = '<div class="vac-loading">Loading…</div>';
+  try {
+    const url = `/api/charts?page=${vacPage}&q=${encodeURIComponent(vacQuery)}`;
+    const data = await (await fetch(url)).json();
+    renderVacCharts(data);
+  } catch {
+    document.getElementById('vac-list').innerHTML = '<div class="vac-empty">Error loading charts.</div>';
+  }
+}
+
+function renderVacCharts(data) {
+  const list = document.getElementById('vac-list');
+  list.innerHTML = '';
+
+  if (!data.charts.length) {
+    list.innerHTML = '<div class="vac-empty">No charts found.</div>';
+    renderVacPagination(data, 'vac-pagination-top');
+    renderVacPagination(data, 'vac-pagination-bot');
+    return;
+  }
+
+  data.charts.forEach(c => {
+    const isFinished = c.status === 'finished';
+    const card = document.createElement('div');
+    card.className = `vac-card${isFinished ? ' finished' : ''}`;
+    card.id = `vac-card-${c.id}`;
+
+    const d = new Date(c.created_at.replace(' ', 'T')).toLocaleString('en-US', {
+      month: 'short', day: 'numeric', year: 'numeric',
+      hour: 'numeric', minute: '2-digit',
+    });
+
+    card.innerHTML = `
+      <div class="vac-card-inner">
+        <div class="vac-card-left">
+          <span class="vac-tpl-badge">${esc(c.template_id)}</span>
+        </div>
+        <div class="vac-card-mid">
+          <div class="vac-card-name">${esc(c.patient_name)}</div>
+          <div class="vac-card-meta">${d}</div>
+          <div class="vac-card-preview">${esc(c.preview)}</div>
+        </div>
+        <div class="vac-card-right">
+          <button class="vac-status-btn ${isFinished ? 'finished' : 'active'}"
+                  onclick="toggleVacStatus(${c.id}, '${c.status}')">
+            ${isFinished ? '✓ Finished' : '● Active'}
+          </button>
+          <button class="vac-load-btn"
+                  onclick="vacLoadChart(${c.id}, '${esc(c.patient_name)}')">
+            Open →
+          </button>
+        </div>
+      </div>`;
+    list.appendChild(card);
+  });
+
+  renderVacPagination(data, 'vac-pagination-top');
+  renderVacPagination(data, 'vac-pagination-bot');
+}
+
+function renderVacPagination(data, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  if (data.pages <= 1) return;
+
+  const wrap = document.createElement('div');
+  wrap.className = 'vac-pagination';
+
+  const prev = document.createElement('button');
+  prev.className = 'vac-pg-btn';
+  prev.textContent = '‹ Prev';
+  prev.disabled = data.page <= 1;
+  prev.onclick = () => { vacPage = data.page - 1; loadVacCharts(); };
+  wrap.appendChild(prev);
+
+  const start = Math.max(1, data.page - 3);
+  const end   = Math.min(data.pages, data.page + 3);
+
+  if (start > 1) {
+    const b = makePageBtn(1); wrap.appendChild(b);
+    if (start > 2) wrap.appendChild(makeEllipsis());
+  }
+  for (let i = start; i <= end; i++) wrap.appendChild(makePageBtn(i, i === data.page));
+  if (end < data.pages) {
+    if (end < data.pages - 1) wrap.appendChild(makeEllipsis());
+    wrap.appendChild(makePageBtn(data.pages));
+  }
+
+  const next = document.createElement('button');
+  next.className = 'vac-pg-btn';
+  next.textContent = 'Next ›';
+  next.disabled = data.page >= data.pages;
+  next.onclick = () => { vacPage = data.page + 1; loadVacCharts(); };
+  wrap.appendChild(next);
+
+  const info = document.createElement('span');
+  info.className = 'vac-pg-info';
+  const from = (data.page - 1) * 25 + 1;
+  const to   = Math.min(data.page * 25, data.total);
+  info.textContent = `${from}–${to} of ${data.total}`;
+  wrap.appendChild(info);
+
+  el.appendChild(wrap);
+}
+
+function makePageBtn(page, active = false) {
+  const b = document.createElement('button');
+  b.className = `vac-pg-btn${active ? ' active' : ''}`;
+  b.textContent = page;
+  b.onclick = () => { vacPage = page; loadVacCharts(); };
+  return b;
+}
+
+function makeEllipsis() {
+  const s = document.createElement('span');
+  s.className = 'vac-pg-ellipsis';
+  s.textContent = '…';
+  return s;
+}
+
+async function toggleVacStatus(chartId, currentStatus) {
+  const newStatus = currentStatus === 'finished' ? 'active' : 'finished';
+  try {
+    await fetch(`/api/chart/${chartId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status: newStatus }),
+    });
+    const card = document.getElementById(`vac-card-${chartId}`);
+    if (card) {
+      card.classList.toggle('finished', newStatus === 'finished');
+      const btn = card.querySelector('.vac-status-btn');
+      btn.className = `vac-status-btn ${newStatus}`;
+      btn.textContent = newStatus === 'finished' ? '✓ Finished' : '● Active';
+      btn.onclick = () => toggleVacStatus(chartId, newStatus);
+    }
+  } catch (e) {
+    alert('Error updating status: ' + e.message);
+  }
+}
+
+async function vacLoadChart(chartId, patientName) {
+  closeVac();
+  await loadChartRecord(chartId, patientName);
+}
+}
