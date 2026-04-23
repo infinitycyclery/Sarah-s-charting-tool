@@ -1079,7 +1079,51 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
   cursor: pointer; padding: 4px 0;
 }
 .pl-back-btn:hover { color: #1a3a5c; }
-.pl-charts-patient { font-weight: 700; font-size: 0.95rem; color: #1a202c; }
+.pl-charts-patient { font-weight: 700; font-size: 0.95rem; color: #1a202c; flex: 1; }
+.pl-btn-new-chart {
+  margin-left: auto;
+  background: #22c55e;
+  border: none;
+  border-radius: 20px;
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 6px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.pl-btn-new-chart:hover { background: #16a34a; }
+
+.pl-tpl-hint {
+  padding: 16px 20px 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #475569;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.pl-tpl-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  padding: 8px 20px 20px;
+}
+.pl-tpl-tile {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 18px 12px;
+  background: #f8fafc;
+  border: 2px solid #e2e8f0;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.pl-tpl-tile:hover { background: #eff6ff; border-color: #3b82f6; }
+.pl-tpl-tile-id { font-weight: 800; font-size: 1.1rem; color: #1a3a5c; }
+.pl-tpl-tile-name { font-size: 0.72rem; color: #64748b; text-align: center; }
 
 .pl-chart-row {
   padding: 12px 20px;

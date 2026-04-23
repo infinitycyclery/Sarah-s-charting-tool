@@ -770,7 +770,8 @@ async function plShowCharts(patientId, patientName) {
     back.className = 'pl-charts-header';
     back.innerHTML = `
       <button class="pl-back-btn" onclick="_plDoLoad(document.getElementById('pl-search').value)">← Back</button>
-      <span class="pl-charts-patient">${esc(patientName)}</span>`;
+      <span class="pl-charts-patient">${esc(patientName)}</span>
+      <button class="pl-btn-new-chart" onclick="plNewChartForPatient(${patientId}, '${esc(patientName).replace(/'/g, "\\'")}')">+ New Chart</button>`;
     list.appendChild(back);
 
     if (!charts.length) {
@@ -799,6 +800,43 @@ async function plShowCharts(patientId, patientName) {
   } catch {
     list.innerHTML = '<div class="pl-empty">Error loading charts.</div>';
   }
+}
+
+function plNewChartForPatient(patientId, patientName) {
+  const list = document.getElementById('pl-list');
+  list.innerHTML = '';
+
+  const header = document.createElement('div');
+  header.className = 'pl-charts-header';
+  header.innerHTML = `
+    <button class="pl-back-btn" onclick="plShowCharts(${patientId}, '${esc(patientName).replace(/'/g, "\\'")}')">← Back</button>
+    <span class="pl-charts-patient">New chart for ${esc(patientName)}</span>`;
+  list.appendChild(header);
+
+  const hint = document.createElement('div');
+  hint.className = 'pl-tpl-hint';
+  hint.textContent = 'Select a chart type:';
+  list.appendChild(hint);
+
+  const grid = document.createElement('div');
+  grid.className = 'pl-tpl-grid';
+
+  document.querySelectorAll('.btn-tpl').forEach(tile => {
+    const tplId   = tile.dataset.templateId;
+    const tplName = tile.querySelector('.tpl-name').textContent;
+    const btn = document.createElement('button');
+    btn.className = 'pl-tpl-tile';
+    btn.innerHTML = `<span class="pl-tpl-tile-id">${esc(tplId)}</span><span class="pl-tpl-tile-name">${esc(tplName)}</span>`;
+    btn.onclick = () => {
+      _resetChart();
+      _setPatientName(patientName);
+      closePatientList();
+      selectTemplate(tplId);
+    };
+    grid.appendChild(btn);
+  });
+
+  list.appendChild(grid);
 }
 
 async function loadChartRecord(chartId, patientName) {
