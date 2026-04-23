@@ -2,11 +2,21 @@ from flask import Flask, render_template, request, jsonify
 import json
 import re
 import sqlite3
+import urllib.request
+import urllib.error
 from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '1.1'
+VERSION = '1.2'
+
+# ── Ollama AI Configuration ───────────────────────────────────────────────────
+# Install Ollama from https://ollama.com, then run one of:
+#   48 GB RAM (MacBook Pro Max):  ollama pull llama3.1:70b
+#   16-24 GB RAM (MacBook Air):   ollama pull llama3.1:8b
+OLLAMA_URL   = 'http://localhost:11434'
+OLLAMA_MODEL = 'llama3.1:8b'   # ← change to llama3.1:70b on the 48 GB machine
+USE_OLLAMA   = True             # set False to always use the rule-based generator
 
 BASE_DIR = Path(__file__).parent
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
@@ -536,20 +546,96 @@ def parse_abn_route():
     return jsonify({'sections': sections})
 
 
+# ── Ollama helpers ───────────────────────────────────────────────────────────
+
+def _is_ollama_available():
+    try:
+        urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2)
+        return True
+    except Exception:
+        return False
+
+
+def _build_ollama_prompt(fields, template):
+    patient_name  = fields.get('patient_name', 'the patient')
+    template_name = template.get('name', template.get('id', 'visit'))
+
+    lines = []
+    for group in template.get('abn_groups', []):
+        for field in group.get('fields', []):
+            key = field['key']
+            val = (fields.get(key) or '').strip()
+            if val and key != 'patient_name':
+                lines.append(f'- {field["label"]}: {val}')
+
+    data_section = '\n'.join(lines) if lines else '(No additional data provided)'
+
+    return f"""You are a licensed psychiatric nurse practitioner writing a clinical progress note after a patient visit.
+
+Write a detailed, professional clinical note in flowing prose paragraphs. Rules:
+- No bullet points, no section headers, no markdown formatting
+- Write in third person using the patient's full name throughout
+- Use natural clinical language a clinician would use
+- Include every detail provided below — do not omit anything
+- Do not invent information that was not provided
+- End with a concise Assessment and Plan paragraph
+
+Patient: {patient_name}
+Visit Type: {template_name}
+
+Clinical data from today's visit:
+{data_section}
+
+Write the complete clinical note now (3-5 paragraphs):"""
+
+
+def _call_ollama(prompt):
+    payload = json.dumps({
+        'model':  OLLAMA_MODEL,
+        'prompt': prompt,
+        'stream': False,
+        'options': {'temperature': 0.65, 'num_predict': 900},
+    }).encode()
+
+    req = urllib.request.Request(
+        f'{OLLAMA_URL}/api/generate',
+        data=payload,
+        headers={'Content-Type': 'application/json'},
+        method='POST',
+    )
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        result = json.loads(resp.read())
+    return result.get('response', '').strip()
+
+
+@app.route('/api/ollama-status')
+def ollama_status():
+    available = _is_ollama_available() if USE_OLLAMA else False
+    return jsonify({'enabled': USE_OLLAMA, 'available': available, 'model': OLLAMA_MODEL})
+
+
 @app.route('/api/generate-chart', methods=['POST'])
 def generate_chart():
-    data = request.get_json(silent=True) or {}
+    data        = request.get_json(silent=True) or {}
     template_id = data.get('template_id', '')
-    fields = data.get('fields', {})
-    template = load_template(template_id)
+    fields      = data.get('fields', {})
+    template    = load_template(template_id)
     if not template:
         return jsonify({'error': 'Template not found'}), 404
+
+    if USE_OLLAMA:
+        try:
+            prompt     = _build_ollama_prompt(fields, template)
+            chart_text = _call_ollama(prompt)
+            return jsonify({'chart': chart_text, 'source': 'ai'})
+        except Exception as e:
+            app.logger.warning('Ollama unavailable, falling back to rule-based: %s', e)
+
     generator_key = template.get('generator')
     fn = GENERATORS.get(generator_key)
     if not fn:
         return jsonify({'error': f'No generator for template {template_id}'}), 400
-    chart_text = fn(fields)
-    return jsonify({'chart': chart_text})
+    return jsonify({'chart': fn(fields), 'source': 'rules'})
 
 
 @app.route('/api/abbreviations')

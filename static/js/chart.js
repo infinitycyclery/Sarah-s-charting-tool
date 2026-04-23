@@ -119,7 +119,9 @@ async function _doGenerate() {
   if (patientName) fields['patient_name'] = patientName;
 
   const btn = document.getElementById('btn-generate');
-  btn.textContent = 'Generating…';
+  const badge = document.getElementById('ai-status');
+  const usingAI = badge && badge.classList.contains('ai-on');
+  btn.textContent = usingAI ? '🤖 AI Generating…' : 'Generating…';
   btn.disabled = true;
 
   try {
@@ -134,6 +136,9 @@ async function _doGenerate() {
     currentChartId = null;
     showChart(data.chart, patientName);
     persistChart(patientName, data.chart, { ...fields });
+
+    // refresh badge in case Ollama state changed mid-session
+    checkOllamaStatus();
   } catch (e) {
     alert('Error generating chart: ' + e.message);
   } finally {
@@ -395,7 +400,31 @@ function scheduleAutoSave() {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
+  checkOllamaStatus();
 });
+
+async function checkOllamaStatus() {
+  const badge = document.getElementById('ai-status');
+  try {
+    const data = await (await fetch('/api/ollama-status')).json();
+    if (data.enabled && data.available) {
+      badge.className = 'ai-status ai-on';
+      badge.textContent = `🤖 AI · ${data.model}`;
+      badge.title = 'Ollama is running — charts will be AI-generated';
+    } else if (data.enabled && !data.available) {
+      badge.className = 'ai-status ai-off';
+      badge.textContent = '📝 Rules (Ollama offline)';
+      badge.title = 'Ollama is not running — using rule-based generator';
+    } else {
+      badge.className = 'ai-status ai-off';
+      badge.textContent = '📝 Rules';
+      badge.title = 'AI generation is disabled';
+    }
+  } catch {
+    badge.className = 'ai-status ai-off';
+    badge.textContent = '📝 Rules';
+  }
+}
 
 // ── Patient List Panel ────────────────────────────────────────────────────
 let _plSearchTimer = null;
