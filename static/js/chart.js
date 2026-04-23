@@ -710,4 +710,3 @@ async function vacLoadChart(chartId, patientName) {
   closeVac();
   await loadChartRecord(chartId, patientName);
 }
-}
