@@ -417,12 +417,33 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   background: transparent;
   line-height: 1.55;
 }
+.rules-apply-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  border-top: 1px solid #f1f5f9;
+  flex-shrink: 0;
+}
 .rules-hint {
   font-size: 0.71rem;
   color: #94a3b8;
-  padding: 4px 12px 8px;
-  border-top: 1px solid #f1f5f9;
+  flex: 1;
 }
+.rules-apply-btn {
+  background: #22c55e;
+  border: none;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 7px 16px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .2s;
+}
+.rules-apply-btn:hover { background: #16a34a; }
 
 .btn-rules {
   background: rgba(26,58,92,0.08);
@@ -438,7 +459,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   transition: all .15s;
 }
 .btn-rules:hover { background: rgba(26,58,92,0.14); }
-.btn-rules.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+.btn-rules.active { background: #16a34a; color: #fff; border-color: #16a34a; }
 .btn-rules:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* ── Chart Chat Footer ── */

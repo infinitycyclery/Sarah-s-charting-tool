@@ -25,12 +25,21 @@ async function selectTemplate(templateId) {
 // ── Chart Rules ───────────────────────────────────────────────────────────
 function _rulesKey(templateId) { return `chart_rules_${templateId}`; }
 
+function _updateRulesBtn() {
+  const btn = document.getElementById('btn-rules');
+  if (!btn) return;
+  const hasRules = getChartRules().trim().length > 0;
+  btn.classList.toggle('active', hasRules);
+  btn.title = hasRules ? 'Chart Rules active — click to edit' : 'Chart Rules — none set';
+}
+
 function _loadChartRules(templateId) {
   const ta = document.getElementById('rules-textarea');
   if (!ta) return;
   ta.value = localStorage.getItem(_rulesKey(templateId)) || '';
   const title = document.getElementById('rules-panel-title');
   if (title) title.textContent = `📋 Chart Rules — ${templateId}`;
+  _updateRulesBtn();
 }
 
 function saveChartRules() {
@@ -38,6 +47,7 @@ function saveChartRules() {
   const ta = document.getElementById('rules-textarea');
   if (!ta) return;
   localStorage.setItem(_rulesKey(currentTemplate.id), ta.value);
+  _updateRulesBtn();
 }
 
 function getChartRules() {
@@ -45,14 +55,29 @@ function getChartRules() {
   return localStorage.getItem(_rulesKey(currentTemplate.id)) || '';
 }
 
+function applyChartRules() {
+  saveChartRules();
+  const btn = document.getElementById('rules-apply-btn-el');
+  // brief flash confirmation
+  const applyBtn = document.querySelector('.rules-apply-btn');
+  if (applyBtn) {
+    applyBtn.textContent = '✓ Applied!';
+    applyBtn.style.background = '#16a34a';
+    setTimeout(() => {
+      applyBtn.textContent = '✓ Apply Rules';
+      applyBtn.style.background = '';
+    }, 1200);
+  }
+  setTimeout(() => toggleChartRules(), 600);
+}
+
 function toggleChartRules() {
   const panel    = document.getElementById('rules-panel');
   const formBody = document.getElementById('abn-form-body');
-  const btn      = document.getElementById('btn-rules');
   const open     = panel.style.display === 'none' || panel.style.display === '';
   panel.style.display    = open ? 'flex' : 'none';
   formBody.style.display = open ? 'none' : '';
-  btn.classList.toggle('active', open);
+  _updateRulesBtn();
   if (open) document.getElementById('rules-textarea').focus();
 }
 

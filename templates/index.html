@@ -58,7 +58,10 @@ Examples:
 - End with a 1-paragraph summary
 - Always mention safety assessment in the second paragraph"
                 oninput="saveChartRules()"></textarea>
-      <div class="rules-hint">Rules are saved per chart type and sent to the AI on every generation.</div>
+      <div class="rules-apply-row">
+        <span class="rules-hint">Rules are saved per chart type and injected into every generation.</span>
+        <button class="rules-apply-btn" onclick="applyChartRules()">✓ Apply Rules</button>
+      </div>
     </div>
 
     <div class="panel-footer no-print">
