@@ -131,10 +131,27 @@
 <div class="nc-overlay" id="nc-overlay" onclick="closeNewChartDialog()"></div>
 <div class="nc-dialog" id="nc-dialog">
 
-  <!-- Screen 1: choice -->
-  <div class="nc-screen" id="nc-screen-choice">
+  <!-- Screen 0: pick chart type -->
+  <div class="nc-screen" id="nc-screen-template">
     <div class="nc-title">Start a New Chart</div>
-    <div class="nc-body">Who are you charting for?</div>
+    <div class="nc-body">Select the chart type for this visit.</div>
+    <div class="nc-tpl-grid">
+      {% for tpl in templates %}
+      <button class="nc-tpl-tile" data-tpl-id="{{ tpl.id }}"
+              onclick="ncPickTemplate('{{ tpl.id }}')"
+              title="{{ tpl.description }}">
+        <span class="nc-tpl-tile-id">{{ tpl.id }}</span>
+        <span class="nc-tpl-tile-name">{{ tpl.name }}</span>
+      </button>
+      {% endfor %}
+    </div>
+    <button class="nc-btn-cancel" onclick="closeNewChartDialog()">Cancel</button>
+  </div>
+
+  <!-- Screen 1: new or existing patient -->
+  <div class="nc-screen" id="nc-screen-choice" style="display:none;">
+    <div class="nc-title">Who are you charting for?</div>
+    <div class="nc-body" id="nc-chosen-type-label"></div>
     <div class="nc-actions">
       <button class="nc-btn-new" onclick="ncShowScreen('new')">
         <span class="nc-btn-icon">👤</span>
@@ -147,7 +164,7 @@
         <span class="nc-btn-sub">Search and resume a record</span>
       </button>
     </div>
-    <button class="nc-btn-cancel" onclick="closeNewChartDialog()">Cancel</button>
+    <button class="nc-btn-back-small" onclick="ncShowScreen('template')">← Change Chart Type</button>
   </div>
 
   <!-- Screen 2a: new patient name form -->

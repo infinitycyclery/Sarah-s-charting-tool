@@ -172,8 +172,12 @@ function clearChart() {
 }
 
 // ── New Chart ──────────────────────────────────────────────────────────────
+let ncSelectedTemplateId = null;
+
 function openNewChartDialog() {
-  ncShowScreen('choice');
+  ncSelectedTemplateId = null;
+  document.querySelectorAll('.nc-tpl-tile').forEach(b => b.classList.remove('selected'));
+  ncShowScreen('template');
   document.getElementById('nc-overlay').classList.add('open');
   document.getElementById('nc-dialog').classList.add('open');
 }
@@ -181,6 +185,17 @@ function openNewChartDialog() {
 function closeNewChartDialog() {
   document.getElementById('nc-overlay').classList.remove('open');
   document.getElementById('nc-dialog').classList.remove('open');
+}
+
+function ncPickTemplate(templateId) {
+  ncSelectedTemplateId = templateId;
+  document.querySelectorAll('.nc-tpl-tile').forEach(b =>
+    b.classList.toggle('selected', b.dataset.tplId === templateId)
+  );
+  const label = document.querySelector(`.nc-tpl-tile[data-tpl-id="${templateId}"] .nc-tpl-tile-name`);
+  document.getElementById('nc-chosen-type-label').textContent =
+    label ? `Chart type: ${label.textContent}` : '';
+  ncShowScreen('choice');
 }
 
 function ncShowScreen(name) {
@@ -208,7 +223,7 @@ function _resetChart() {
 
 function newChart() { _resetChart(); }
 
-function ncSubmitNewPatient() {
+async function ncSubmitNewPatient() {
   const first = document.getElementById('nc-first-name').value.trim();
   const last  = document.getElementById('nc-last-name').value.trim();
   if (!first && !last) { document.getElementById('nc-first-name').focus(); return; }
@@ -216,6 +231,7 @@ function ncSubmitNewPatient() {
   _resetChart();
   document.getElementById('patient-name').value = fullName;
   closeNewChartDialog();
+  if (ncSelectedTemplateId) await selectTemplate(ncSelectedTemplateId);
 }
 
 let _ncSearchTimer = null;
@@ -256,6 +272,7 @@ function ncSelectExistingPatient(patientId, patientName) {
   document.getElementById('patient-name').value = patientName;
   closeNewChartDialog();
   showChartsInDropdown(patientId, patientName);
+  if (ncSelectedTemplateId) selectTemplate(ncSelectedTemplateId);
 }
 
 // ── Delete Chart ──────────────────────────────────────────────────────────
