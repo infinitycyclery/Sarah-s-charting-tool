@@ -369,11 +369,13 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 
 /* ── Chart Rules Panel ── */
 .rules-panel {
-  flex-shrink: 0;
-  border-top: 2px solid #e2e8f0;
+  position: absolute;
+  inset: 0;
+  z-index: 5;
   background: #fafbff;
   display: flex;
   flex-direction: column;
+  border: none;
 }
 .rules-panel-header {
   display: flex;
@@ -392,6 +394,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 }
 .rules-close-btn:hover { color: #475569; }
 .rules-textarea {
+  flex: 1;
   resize: none;
   border: none;
   outline: none;
@@ -400,7 +403,6 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   font-family: inherit;
   color: #334155;
   background: transparent;
-  height: 140px;
   line-height: 1.55;
 }
 .rules-hint {
