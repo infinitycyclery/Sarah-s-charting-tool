@@ -73,6 +73,108 @@
         Fill in notes on the left and click<br><strong>Generate Chart</strong>
       </div>
       <div class="chart-output" id="chart-output" contenteditable="true" style="display:none;"></div>
+
+      <!-- AI loading overlay -->
+      <div class="ai-loading-overlay" id="ai-loading" style="display:none;">
+        <div class="ai-loading-card">
+          <svg class="pug-svg" viewBox="0 0 300 195" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+              <clipPath id="beltClip"><rect x="26" y="155" width="248" height="18" rx="3"/></clipPath>
+            </defs>
+            <style>
+              .belt-anim{animation:scrollBelt .45s linear infinite}
+              @keyframes scrollBelt{to{transform:translateX(-24px)}}
+              .pug-bob{animation:pugBob .23s ease-in-out infinite alternate}
+              @keyframes pugBob{from{transform:translateY(0)}to{transform:translateY(-4px)}}
+              .leg-a{transform-origin:0 0;animation:swingA .45s ease-in-out infinite}
+              .leg-b{transform-origin:0 0;animation:swingB .45s ease-in-out infinite}
+              @keyframes swingA{0%,100%{transform:rotate(-22deg)}50%{transform:rotate(22deg)}}
+              @keyframes swingB{0%,100%{transform:rotate(22deg)}50%{transform:rotate(-22deg)}}
+              .tail-wag{transform-origin:113px 120px;animation:wagTail .45s ease-in-out infinite alternate}
+              @keyframes wagTail{from{transform:rotate(-20deg)}to{transform:rotate(20deg)}}
+              .tongue-pant{animation:pantTongue .23s ease-in-out infinite alternate}
+              @keyframes pantTongue{from{transform:translateY(0)}to{transform:translateY(3px)}}
+            </style>
+
+            <!-- Treadmill handles -->
+            <rect x="48" y="68" width="6" height="88" rx="3" fill="#4b5563"/>
+            <rect x="48" y="65" width="36" height="6" rx="3" fill="#4b5563"/>
+            <rect x="246" y="68" width="6" height="88" rx="3" fill="#4b5563"/>
+            <rect x="216" y="65" width="36" height="6" rx="3" fill="#4b5563"/>
+
+            <!-- Treadmill frame -->
+            <rect x="22" y="152" width="256" height="28" rx="8" fill="#374151"/>
+            <!-- Belt -->
+            <rect x="26" y="155" width="248" height="18" rx="3" fill="#6b7280"/>
+            <g class="belt-anim" clip-path="url(#beltClip)">
+              <rect x="22" y="155" width="260" height="18" fill="#6b7280"/>
+              <line x1="22"  y1="154" x2="22"  y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="46"  y1="154" x2="46"  y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="70"  y1="154" x2="70"  y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="94"  y1="154" x2="94"  y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="118" y1="154" x2="118" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="142" y1="154" x2="142" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="166" y1="154" x2="166" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="190" y1="154" x2="190" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="214" y1="154" x2="214" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="238" y1="154" x2="238" y2="175" stroke="#9ca3af" stroke-width="2"/>
+              <line x1="262" y1="154" x2="262" y2="175" stroke="#9ca3af" stroke-width="2"/>
+            </g>
+            <!-- Rollers -->
+            <circle cx="32"  cy="164" r="10" fill="#4b5563"/>
+            <circle cx="268" cy="164" r="10" fill="#4b5563"/>
+
+            <!-- Pug -->
+            <g class="pug-bob">
+              <!-- Back legs -->
+              <g transform="translate(125,147)"><g class="leg-b"><rect x="-5" y="0" width="10" height="16" rx="5" fill="#b8763e"/></g></g>
+              <g transform="translate(138,147)"><g class="leg-a"><rect x="-5" y="0" width="10" height="16" rx="5" fill="#c4874a"/></g></g>
+              <!-- Body -->
+              <ellipse cx="158" cy="128" rx="48" ry="26" fill="#d4956a"/>
+              <ellipse cx="158" cy="136" rx="42" ry="16" fill="#c07848" opacity=".28"/>
+              <!-- Tail -->
+              <g class="tail-wag">
+                <path d="M113 122 Q100 108 110 100 Q120 92 125 105 Q130 115 120 118" stroke="#b8763e" stroke-width="9" fill="none" stroke-linecap="round"/>
+              </g>
+              <!-- Front legs -->
+              <g transform="translate(180,147)"><g class="leg-b"><rect x="-5" y="0" width="10" height="16" rx="5" fill="#b8763e"/></g></g>
+              <g transform="translate(193,147)"><g class="leg-a"><rect x="-5" y="0" width="10" height="16" rx="5" fill="#c4874a"/></g></g>
+              <!-- Neck -->
+              <ellipse cx="200" cy="130" rx="20" ry="18" fill="#d4956a"/>
+              <!-- Head -->
+              <circle cx="214" cy="112" r="30" fill="#d4956a"/>
+              <ellipse cx="214" cy="95" rx="20" ry="9" fill="#b8763e" opacity=".3"/>
+              <!-- Ears -->
+              <ellipse cx="196" cy="99" rx="11" ry="15" fill="#5c3d25" transform="rotate(-15,196,99)"/>
+              <ellipse cx="232" cy="99" rx="11" ry="15" fill="#5c3d25" transform="rotate(15,232,99)"/>
+              <!-- Eyes -->
+              <circle cx="205" cy="109" r="10" fill="#2d1a0e"/>
+              <circle cx="226" cy="109" r="10" fill="#2d1a0e"/>
+              <circle cx="208" cy="105" r="3.5" fill="white"/>
+              <circle cx="229" cy="105" r="3.5" fill="white"/>
+              <!-- Muzzle -->
+              <ellipse cx="218" cy="124" rx="22" ry="15" fill="#3d2210"/>
+              <path d="M206 116 Q214 112 222 116" fill="none" stroke="#5c3d25" stroke-width="2" stroke-linecap="round"/>
+              <path d="M208 120 Q214 117 220 120" fill="none" stroke="#2d1a0e" stroke-width="1.5" stroke-linecap="round"/>
+              <!-- Nose -->
+              <ellipse cx="218" cy="117" rx="10" ry="7" fill="#1a0a04"/>
+              <ellipse cx="214" cy="115" rx="3" ry="2" fill="#2d1208" opacity=".6"/>
+              <!-- Tongue -->
+              <path d="M210 130 Q218 134 226 130" fill="none" stroke="#5c3d25" stroke-width="2" stroke-linecap="round"/>
+              <g class="tongue-pant">
+                <ellipse cx="218" cy="133" rx="7" ry="6" fill="#e87878"/>
+                <line x1="218" y1="128" x2="218" y2="138" stroke="#d05555" stroke-width="1.5"/>
+              </g>
+              <!-- Forehead wrinkles -->
+              <path d="M205 97 Q214 92 223 97" fill="none" stroke="#b8763e" stroke-width="2" stroke-linecap="round"/>
+              <path d="M208 91 Q214 87 220 91" fill="none" stroke="#b8763e" stroke-width="1.5" stroke-linecap="round"/>
+            </g>
+          </svg>
+          <div class="ai-loading-text">AI is writing your chart…</div>
+          <div class="ai-loading-dots"><span></span><span></span><span></span></div>
+        </div>
+      </div>
+
     </div>
   </div>
 

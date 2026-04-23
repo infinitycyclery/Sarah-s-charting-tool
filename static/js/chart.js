@@ -124,6 +124,9 @@ async function _doGenerate() {
   btn.textContent = usingAI ? '🤖 AI Generating…' : 'Generating…';
   btn.disabled = true;
 
+  const loadingEl = document.getElementById('ai-loading');
+  if (usingAI && loadingEl) loadingEl.style.display = 'flex';
+
   try {
     const resp = await fetch('/api/generate-chart', {
       method: 'POST',
@@ -144,6 +147,7 @@ async function _doGenerate() {
   } finally {
     btn.textContent = 'Generate Chart →';
     btn.disabled = false;
+    if (loadingEl) loadingEl.style.display = 'none';
   }
 }
 
