@@ -369,13 +369,12 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 
 /* ── Chart Rules Panel ── */
 .rules-panel {
-  position: absolute;
-  inset: 0;
-  z-index: 5;
+  flex: 1;
   background: #fafbff;
   display: flex;
   flex-direction: column;
-  border: none;
+  border-top: 2px solid #e2e8f0;
+  min-height: 0;
 }
 .rules-panel-header {
   display: flex;

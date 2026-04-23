@@ -49,22 +49,23 @@
     </div>
     <div class="panel-body" id="abn-form-body">
       <div class="empty-hint">← Select a template above to begin</div>
-      <!-- Chart Rules panel (collapsible overlay) -->
-      <div class="rules-panel no-print" id="rules-panel" style="display:none;">
-        <div class="rules-panel-header">
-          <span id="rules-panel-title">📋 Chart Rules</span>
-          <button class="rules-close-btn" onclick="toggleChartRules()">✕</button>
-        </div>
-        <textarea class="rules-textarea" id="rules-textarea"
-                  placeholder="Add rules or structure instructions for the AI when generating this chart type.
+    </div>
+
+    <!-- Chart Rules panel (fills left panel when open) -->
+    <div class="rules-panel no-print" id="rules-panel" style="display:none;">
+      <div class="rules-panel-header">
+        <span id="rules-panel-title">📋 Chart Rules</span>
+        <button class="rules-close-btn" onclick="toggleChartRules()">✕</button>
+      </div>
+      <textarea class="rules-textarea" id="rules-textarea"
+                placeholder="Add rules or structure instructions for the AI when generating this chart type.
 
 Examples:
 - Start every chart with: &quot;Pt presents for an office visit to assess current [treatment].&quot;
 - End with a 1-paragraph summary
 - Always mention safety assessment in the second paragraph"
-                  oninput="saveChartRules()"></textarea>
-        <div class="rules-hint">Rules are saved per chart type and sent to the AI on every generation.</div>
-      </div>
+                oninput="saveChartRules()"></textarea>
+      <div class="rules-hint">Rules are saved per chart type and sent to the AI on every generation.</div>
     </div>
 
     <div class="panel-footer no-print">

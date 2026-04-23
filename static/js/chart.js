@@ -46,10 +46,12 @@ function getChartRules() {
 }
 
 function toggleChartRules() {
-  const panel = document.getElementById('rules-panel');
-  const btn   = document.getElementById('btn-rules');
-  const open  = panel.style.display === 'none' || panel.style.display === '';
-  panel.style.display = open ? 'flex' : 'none';
+  const panel    = document.getElementById('rules-panel');
+  const formBody = document.getElementById('abn-form-body');
+  const btn      = document.getElementById('btn-rules');
+  const open     = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display    = open ? 'flex' : 'none';
+  formBody.style.display = open ? 'none' : '';
   btn.classList.toggle('active', open);
   if (open) document.getElementById('rules-textarea').focus();
 }
