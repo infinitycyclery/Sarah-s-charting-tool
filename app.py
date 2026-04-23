@@ -633,6 +633,60 @@ def search_patients():
         conn.close()
 
 
+@app.route('/api/patients')
+def list_patients():
+    q = request.args.get('q', '').strip()
+    conn = _db()
+    try:
+        sql = '''
+            SELECT p.id, p.name,
+                   COUNT(c.id)    AS chart_count,
+                   MAX(c.updated_at) AS last_visit
+            FROM patients p
+            LEFT JOIN charts c ON c.patient_id = p.id
+            {where}
+            GROUP BY p.id
+            ORDER BY p.name COLLATE NOCASE ASC
+        '''
+        if q:
+            rows = conn.execute(
+                sql.format(where='WHERE p.name LIKE ? COLLATE NOCASE'),
+                (f'%{q}%',)
+            ).fetchall()
+        else:
+            rows = conn.execute(sql.format(where='')).fetchall()
+        return jsonify([dict(r) for r in rows])
+    finally:
+        conn.close()
+
+
+@app.route('/api/patient/<int:patient_id>', methods=['PATCH'])
+def update_patient(patient_id):
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    if not name:
+        return jsonify({'error': 'Name required'}), 400
+    conn = _db()
+    try:
+        conn.execute('UPDATE patients SET name=? WHERE id=?', (name, patient_id))
+        conn.commit()
+        return jsonify({'ok': True})
+    finally:
+        conn.close()
+
+
+@app.route('/api/patient/<int:patient_id>', methods=['DELETE'])
+def delete_patient(patient_id):
+    conn = _db()
+    try:
+        conn.execute('DELETE FROM charts WHERE patient_id=?', (patient_id,))
+        conn.execute('DELETE FROM patients WHERE id=?', (patient_id,))
+        conn.commit()
+        return jsonify({'ok': True})
+    finally:
+        conn.close()
+
+
 @app.route('/api/patient/<int:patient_id>/charts')
 def get_patient_charts(patient_id):
     conn = _db()

@@ -397,100 +397,138 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
 });
 
-// ── Patient History Modal ─────────────────────────────────────────────────
-function openPatientHistory() {
-  document.getElementById('ph-overlay').classList.add('open');
-  document.getElementById('ph-modal').classList.add('open');
-  document.getElementById('ph-search-input').value = '';
-  loadRecentPatients();
-  setTimeout(() => document.getElementById('ph-search-input').focus(), 60);
+// ── Patient List Panel ────────────────────────────────────────────────────
+let _plSearchTimer = null;
+
+function openPatientList() {
+  document.getElementById('pl-overlay').classList.add('open');
+  document.getElementById('pl-panel').classList.add('open');
+  document.getElementById('pl-search').value = '';
+  _plDoLoad('');
+  setTimeout(() => document.getElementById('pl-search').focus(), 60);
 }
 
-function closePatientHistory() {
-  document.getElementById('ph-overlay').classList.remove('open');
-  document.getElementById('ph-modal').classList.remove('open');
+function closePatientList() {
+  document.getElementById('pl-overlay').classList.remove('open');
+  document.getElementById('pl-panel').classList.remove('open');
 }
 
-async function loadRecentPatients() {
+function plSearch(q) {
+  clearTimeout(_plSearchTimer);
+  _plSearchTimer = setTimeout(() => _plDoLoad(q), 250);
+}
+
+async function _plDoLoad(q) {
+  const list = document.getElementById('pl-list');
+  list.innerHTML = '<div class="pl-empty">Loading…</div>';
   try {
-    const data = await (await fetch('/api/patients/search')).json();
-    renderPatientList(data);
-  } catch { renderPatientList([]); }
-}
-
-async function searchPatients(q) {
-  try {
-    const data = await (await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`)).json();
-    renderPatientList(data);
-  } catch { renderPatientList([]); }
-}
-
-function renderPatientList(patients) {
-  const body = document.getElementById('ph-body');
-  body.innerHTML = '';
-
-  if (!patients.length) {
-    body.innerHTML = '<div class="ph-empty">No patients found.</div>';
-    return;
-  }
-
-  patients.forEach(p => {
-    const row = document.createElement('div');
-    row.className = 'ph-patient-row';
-    const lastVisit = p.last_visit
-      ? new Date(p.last_visit.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
-      : '—';
-    row.innerHTML = `
-      <div>
-        <div class="ph-patient-name">${esc(p.name)}</div>
-        <div class="ph-patient-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} &nbsp;·&nbsp; Last visit: ${lastVisit}</div>
-      </div>
-      <span class="ph-chevron">›</span>`;
-    row.onclick = () => showPatientCharts(p.id, p.name);
-    body.appendChild(row);
-  });
-}
-
-async function showPatientCharts(patientId, patientName) {
-  const body = document.getElementById('ph-body');
-  body.innerHTML = '<div class="ph-empty">Loading…</div>';
-
-  try {
-    const charts = await (await fetch(`/api/patient/${patientId}/charts`)).json();
-    body.innerHTML = '';
-
-    const back = document.createElement('div');
-    back.className = 'ph-back-btn';
-    back.innerHTML = `‹ Back &nbsp;&nbsp; <strong>${esc(patientName)}</strong>`;
-    back.onclick = loadRecentPatients;
-    body.appendChild(back);
-
-    if (!charts.length) {
-      const empty = document.createElement('div');
-      empty.className = 'ph-empty';
-      empty.textContent = 'No charts saved yet.';
-      body.appendChild(empty);
+    const patients = await (await fetch(`/api/patients?q=${encodeURIComponent(q)}`)).json();
+    list.innerHTML = '';
+    if (!patients.length) {
+      list.innerHTML = '<div class="pl-empty">No patients found.</div>';
       return;
     }
-
-    charts.forEach(c => {
-      const row = document.createElement('div');
-      row.className = 'ph-chart-row';
-      const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleString('en-US', {
-        month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
-      });
-      row.innerHTML = `
-        <div class="ph-chart-header">
-          <span class="ph-chart-tpl">${esc(c.template_id)} · ${esc(c.template_name)}</span>
-          <span class="ph-chart-date">${d}</span>
-        </div>
-        <div class="ph-chart-preview">${esc(c.preview)}</div>`;
-      row.onclick = () => loadChartRecord(c.id, patientName);
-      body.appendChild(row);
+    let lastLetter = '';
+    patients.forEach(p => {
+      const letter = (p.name[0] || '#').toUpperCase();
+      if (!q && letter !== lastLetter) {
+        const div = document.createElement('div');
+        div.className = 'pl-letter-divider';
+        div.textContent = letter;
+        list.appendChild(div);
+        lastLetter = letter;
+      }
+      list.appendChild(_plMakeRow(p));
     });
   } catch {
-    body.innerHTML = '<div class="ph-empty">Error loading charts.</div>';
+    list.innerHTML = '<div class="pl-empty">Error loading patients.</div>';
   }
+}
+
+function _plMakeRow(p) {
+  const row = document.createElement('div');
+  row.className = 'pl-row';
+  row.id = `pl-row-${p.id}`;
+
+  const lastVisit = p.last_visit
+    ? new Date(p.last_visit.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    : 'No charts';
+
+  row.innerHTML = `
+    <div class="pl-row-info">
+      <div class="pl-row-name">${esc(p.name)}</div>
+      <div class="pl-row-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} · Last visit: ${lastVisit}</div>
+    </div>
+    <div class="pl-row-actions">
+      <button class="pl-btn-edit" onclick="plStartEdit(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">✏ Edit</button>
+      <button class="pl-btn-delete" onclick="plStartDelete(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">🗑 Delete</button>
+    </div>`;
+  return row;
+}
+
+function plStartEdit(patientId, currentName) {
+  const row = document.getElementById(`pl-row-${patientId}`);
+  row.innerHTML = `
+    <div class="pl-edit-form">
+      <input class="pl-edit-input" id="pl-edit-input-${patientId}" type="text"
+             value="${esc(currentName)}" autocomplete="off"
+             onkeydown="if(event.key==='Enter') plSaveEdit(${patientId}); if(event.key==='Escape') plCancelEdit(${patientId}, '${esc(currentName).replace(/'/g, "\\'")}')">
+      <button class="pl-btn-save" onclick="plSaveEdit(${patientId})">Save</button>
+      <button class="pl-btn-cancel-edit" onclick="plCancelEdit(${patientId}, '${esc(currentName).replace(/'/g, "\\'")}')">Cancel</button>
+    </div>`;
+  document.getElementById(`pl-edit-input-${patientId}`).select();
+}
+
+async function plSaveEdit(patientId) {
+  const input = document.getElementById(`pl-edit-input-${patientId}`);
+  const newName = input.value.trim();
+  if (!newName) { input.focus(); return; }
+  try {
+    await fetch(`/api/patient/${patientId}`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: newName }),
+    });
+    const q = document.getElementById('pl-search').value;
+    _plDoLoad(q);
+  } catch { alert('Error saving name.'); }
+}
+
+function plCancelEdit(patientId, originalName) {
+  const row = document.getElementById(`pl-row-${patientId}`);
+  const lastVisitEl = row.querySelector('.pl-row-meta');
+  row.innerHTML = `
+    <div class="pl-row-info">
+      <div class="pl-row-name">${esc(originalName)}</div>
+      <div class="pl-row-meta">${lastVisitEl ? lastVisitEl.textContent : ''}</div>
+    </div>
+    <div class="pl-row-actions">
+      <button class="pl-btn-edit" onclick="plStartEdit(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">✏ Edit</button>
+      <button class="pl-btn-delete" onclick="plStartDelete(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">🗑 Delete</button>
+    </div>`;
+}
+
+function plStartDelete(patientId, name) {
+  const row = document.getElementById(`pl-row-${patientId}`);
+  row.innerHTML = `
+    <div class="pl-confirm-row">
+      <span class="pl-confirm-msg">Delete <strong>${esc(name)}</strong> and all their charts?</span>
+      <button class="pl-btn-confirm-del" onclick="plConfirmDelete(${patientId})">Yes, Delete</button>
+      <button class="pl-btn-cancel-del" onclick="plCancelDelete(${patientId}, '${esc(name).replace(/'/g, "\\'")}')">Cancel</button>
+    </div>`;
+}
+
+async function plConfirmDelete(patientId) {
+  try {
+    await fetch(`/api/patient/${patientId}`, { method: 'DELETE' });
+    const q = document.getElementById('pl-search').value;
+    _plDoLoad(q);
+  } catch { alert('Error deleting patient.'); }
+}
+
+function plCancelDelete(patientId, name) {
+  const q = document.getElementById('pl-search').value;
+  _plDoLoad(q);
 }
 
 async function loadChartRecord(chartId, patientName) {
@@ -498,7 +536,7 @@ async function loadChartRecord(chartId, patientName) {
     const data = await (await fetch(`/api/chart/${chartId}`)).json();
     if (data.error) { alert(data.error); return; }
 
-    closePatientHistory();
+    closePatientList();
 
     document.getElementById('patient-name').value = data.patient_name || patientName;
     await selectTemplate(data.template_id);

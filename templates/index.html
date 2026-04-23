@@ -22,7 +22,7 @@
       <div class="patient-dropdown" id="patient-dropdown"></div>
     </div>
     <button class="btn-top" onclick="openVac()">📋 View All Charts</button>
-    <button class="btn-top" onclick="openPatientHistory()">⏱ History</button>
+    <button class="btn-top" onclick="openPatientList()">👥 Patient List</button>
     <span class="save-status" id="save-status"></span>
   </div>
   <div class="topbar-right">
@@ -112,19 +112,17 @@
   </div>
 </div>
 
-<!-- ── Patient History Modal ── -->
-<div class="ph-overlay" id="ph-overlay" onclick="closePatientHistory()"></div>
-<div class="ph-modal" id="ph-modal">
-  <div class="ph-header">
-    <span>Patient History</span>
-    <button class="ph-close" onclick="closePatientHistory()">✕</button>
+<!-- ── Patient List Panel ── -->
+<div class="pl-overlay" id="pl-overlay" onclick="closePatientList()"></div>
+<div class="pl-panel" id="pl-panel">
+  <div class="pl-header">
+    <span class="pl-title">👥 Patient List</span>
+    <input class="pl-search" id="pl-search" type="text"
+           placeholder="Search by name…"
+           oninput="plSearch(this.value)" autocomplete="off">
+    <button class="pl-close" onclick="closePatientList()">✕</button>
   </div>
-  <div class="ph-search-wrap">
-    <input class="ph-search-input" id="ph-search-input" type="text"
-           placeholder="Search by patient name…"
-           oninput="searchPatients(this.value)">
-  </div>
-  <div class="ph-body" id="ph-body"></div>
+  <div class="pl-list" id="pl-list"></div>
 </div>
 
 <!-- ── New Chart Dialog ── -->
