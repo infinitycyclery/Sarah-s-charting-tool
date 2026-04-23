@@ -430,20 +430,8 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
 }
 .vac-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
 
-/* Finished: diagonal line drawn across the card */
-.vac-card.finished { opacity: 0.78; }
-.vac-card.finished::after {
-  content: '';
-  position: absolute; inset: 0;
-  background: linear-gradient(
-    to bottom right,
-    transparent calc(50% - 1.5px),
-    rgba(220,38,38,0.6) calc(50% - 1.5px),
-    rgba(220,38,38,0.6) calc(50% + 1.5px),
-    transparent calc(50% + 1.5px)
-  );
-  pointer-events: none; border-radius: inherit;
-}
+/* Finished: greyed out */
+.vac-card.finished { opacity: 0.5; filter: grayscale(60%); }
 
 .vac-card-inner { display: flex; align-items: center; gap: 14px; padding: 13px 16px; }
 .vac-card-left { flex-shrink: 0; }
