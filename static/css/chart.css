@@ -156,12 +156,16 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   box-shadow: 0 24px 64px rgba(0,0,0,0.25);
   padding: 30px 28px 22px;
   text-align: center;
+  transition: width .2s;
 }
 .nc-dialog.open { display: block; }
+.nc-dialog.nc-wide { width: 560px; }
 
+/* Screen shared */
 .nc-title { font-size: 1.1rem; font-weight: 700; color: #1a202c; margin-bottom: 6px; }
 .nc-body  { font-size: 0.85rem; color: #64748b; margin-bottom: 22px; }
 
+/* Screen 1: choice */
 .nc-actions { display: flex; gap: 14px; justify-content: center; margin-bottom: 18px; }
 
 .nc-btn-new,
@@ -177,18 +181,9 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   border: 2px solid transparent;
   transition: all .15s;
 }
-.nc-btn-new {
-  background: #f0fdf4;
-  border-color: #22c55e;
-  color: #15803d;
-}
+.nc-btn-new     { background: #f0fdf4; border-color: #22c55e; color: #15803d; }
 .nc-btn-new:hover { background: #dcfce7; }
-
-.nc-btn-existing {
-  background: #eff6ff;
-  border-color: #3b82f6;
-  color: #1d4ed8;
-}
+.nc-btn-existing  { background: #eff6ff; border-color: #3b82f6; color: #1d4ed8; }
 .nc-btn-existing:hover { background: #dbeafe; }
 
 .nc-btn-icon  { font-size: 1.8rem; line-height: 1; }
@@ -196,14 +191,85 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .nc-btn-sub   { font-size: 0.75rem; opacity: 0.7; }
 
 .nc-btn-cancel {
-  background: none;
-  border: none;
-  color: #94a3b8;
-  font-size: 0.82rem;
-  cursor: pointer;
-  padding: 4px 10px;
+  background: none; border: none;
+  color: #94a3b8; font-size: 0.82rem;
+  cursor: pointer; padding: 4px 10px;
 }
 .nc-btn-cancel:hover { color: #475569; }
+
+/* Screen 2a: new patient */
+.nc-name-form { display: flex; gap: 10px; margin-bottom: 20px; text-align: left; }
+.nc-input {
+  flex: 1;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  outline: none;
+  font-family: inherit;
+}
+.nc-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+
+.nc-form-actions {
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 6px;
+}
+.nc-btn-back-small {
+  background: none; border: none;
+  color: #64748b; font-size: 0.84rem;
+  cursor: pointer; padding: 6px 4px;
+}
+.nc-btn-back-small:hover { color: #1a202c; }
+
+.nc-btn-start {
+  background: #22c55e; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 20px; font-size: 0.88rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.nc-btn-start:hover { background: #16a34a; }
+
+/* Screen 2b: existing patient */
+.nc-search-input {
+  display: block;
+  width: 100%;
+  border: 1.5px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  margin-bottom: 12px;
+  outline: none;
+  font-family: inherit;
+  text-align: left;
+  box-sizing: border-box;
+}
+.nc-search-input:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+
+.nc-patient-list {
+  border: 1.5px solid #e2e8f0;
+  border-radius: 10px;
+  max-height: 310px;
+  overflow-y: auto;
+  margin-bottom: 14px;
+  text-align: left;
+}
+.nc-patient-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  border-bottom: 1px solid #f1f5f9;
+  cursor: pointer;
+  transition: background .1s;
+}
+.nc-patient-row:last-child { border-bottom: none; }
+.nc-patient-row:hover { background: #f8fafc; }
+.nc-patient-name { font-weight: 600; font-size: 0.9rem; color: #1a202c; }
+.nc-patient-meta { font-size: 0.78rem; color: #94a3b8; white-space: nowrap; }
+.nc-list-empty { padding: 24px; color: #94a3b8; font-size: 0.85rem; }
 
 /* ── Template Buttons ── */
 .btn-tpl {

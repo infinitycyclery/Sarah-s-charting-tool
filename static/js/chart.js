@@ -173,6 +173,7 @@ function clearChart() {
 
 // ── New Chart ──────────────────────────────────────────────────────────────
 function openNewChartDialog() {
+  ncShowScreen('choice');
   document.getElementById('nc-overlay').classList.add('open');
   document.getElementById('nc-dialog').classList.add('open');
 }
@@ -180,6 +181,21 @@ function openNewChartDialog() {
 function closeNewChartDialog() {
   document.getElementById('nc-overlay').classList.remove('open');
   document.getElementById('nc-dialog').classList.remove('open');
+}
+
+function ncShowScreen(name) {
+  document.querySelectorAll('.nc-screen').forEach(s => s.style.display = 'none');
+  document.getElementById(`nc-screen-${name}`).style.display = '';
+  document.getElementById('nc-dialog').classList.toggle('nc-wide', name === 'existing');
+  if (name === 'new') {
+    document.getElementById('nc-first-name').value = '';
+    document.getElementById('nc-last-name').value = '';
+    setTimeout(() => document.getElementById('nc-first-name').focus(), 50);
+  } else if (name === 'existing') {
+    document.getElementById('nc-patient-search').value = '';
+    _ncDoSearch('');
+    setTimeout(() => document.getElementById('nc-patient-search').focus(), 50);
+  }
 }
 
 function _resetChart() {
@@ -192,17 +208,54 @@ function _resetChart() {
 
 function newChart() { _resetChart(); }
 
-function ncNewPatient() {
-  closeNewChartDialog();
+function ncSubmitNewPatient() {
+  const first = document.getElementById('nc-first-name').value.trim();
+  const last  = document.getElementById('nc-last-name').value.trim();
+  if (!first && !last) { document.getElementById('nc-first-name').focus(); return; }
+  const fullName = [first, last].filter(Boolean).join(' ');
   _resetChart();
-  setTimeout(() => document.getElementById('patient-name').focus(), 50);
+  document.getElementById('patient-name').value = fullName;
+  closeNewChartDialog();
 }
 
-function ncExistingPatient() {
+let _ncSearchTimer = null;
+function ncSearchPatients(q) {
+  clearTimeout(_ncSearchTimer);
+  _ncSearchTimer = setTimeout(() => _ncDoSearch(q), 220);
+}
+
+async function _ncDoSearch(q) {
+  const list = document.getElementById('nc-patient-list');
+  list.innerHTML = '<div class="nc-list-empty">Loading…</div>';
+  try {
+    const patients = await (await fetch(`/api/patients/search?q=${encodeURIComponent(q)}`)).json();
+    list.innerHTML = '';
+    if (!patients.length) {
+      list.innerHTML = '<div class="nc-list-empty">No patients found.</div>';
+      return;
+    }
+    patients.forEach(p => {
+      const row = document.createElement('div');
+      row.className = 'nc-patient-row';
+      const lastVisit = p.last_visit
+        ? new Date(p.last_visit.replace(' ', 'T')).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+        : 'No charts';
+      row.innerHTML = `
+        <span class="nc-patient-name">${esc(p.name)}</span>
+        <span class="nc-patient-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} · ${lastVisit}</span>`;
+      row.onclick = () => ncSelectExistingPatient(p.id, p.name);
+      list.appendChild(row);
+    });
+  } catch {
+    list.innerHTML = '<div class="nc-list-empty">Error loading patients.</div>';
+  }
+}
+
+function ncSelectExistingPatient(patientId, patientName) {
+  _resetChart();
+  document.getElementById('patient-name').value = patientName;
   closeNewChartDialog();
-  const input = document.getElementById('patient-name');
-  input.focus();
-  onPatientInput(input.value);
+  showChartsInDropdown(patientId, patientName);
 }
 
 // ── Delete Chart ──────────────────────────────────────────────────────────

@@ -130,21 +130,55 @@
 <!-- ── New Chart Dialog ── -->
 <div class="nc-overlay" id="nc-overlay" onclick="closeNewChartDialog()"></div>
 <div class="nc-dialog" id="nc-dialog">
-  <div class="nc-title">Start a New Chart</div>
-  <div class="nc-body">Who are you charting for?</div>
-  <div class="nc-actions">
-    <button class="nc-btn-new" onclick="ncNewPatient()">
-      <span class="nc-btn-icon">👤</span>
-      <span class="nc-btn-label">New Patient</span>
-      <span class="nc-btn-sub">Create a brand-new record</span>
-    </button>
-    <button class="nc-btn-existing" onclick="ncExistingPatient()">
-      <span class="nc-btn-icon">🔍</span>
-      <span class="nc-btn-label">Existing Patient</span>
-      <span class="nc-btn-sub">Search and resume a record</span>
-    </button>
+
+  <!-- Screen 1: choice -->
+  <div class="nc-screen" id="nc-screen-choice">
+    <div class="nc-title">Start a New Chart</div>
+    <div class="nc-body">Who are you charting for?</div>
+    <div class="nc-actions">
+      <button class="nc-btn-new" onclick="ncShowScreen('new')">
+        <span class="nc-btn-icon">👤</span>
+        <span class="nc-btn-label">New Patient</span>
+        <span class="nc-btn-sub">Create a brand-new record</span>
+      </button>
+      <button class="nc-btn-existing" onclick="ncShowScreen('existing')">
+        <span class="nc-btn-icon">🔍</span>
+        <span class="nc-btn-label">Existing Patient</span>
+        <span class="nc-btn-sub">Search and resume a record</span>
+      </button>
+    </div>
+    <button class="nc-btn-cancel" onclick="closeNewChartDialog()">Cancel</button>
   </div>
-  <button class="nc-btn-cancel" onclick="closeNewChartDialog()">Cancel</button>
+
+  <!-- Screen 2a: new patient name form -->
+  <div class="nc-screen" id="nc-screen-new" style="display:none;">
+    <div class="nc-title">New Patient</div>
+    <div class="nc-body">Enter the patient's name to begin charting.</div>
+    <div class="nc-name-form">
+      <input class="nc-input" id="nc-first-name" type="text" placeholder="First name" autocomplete="off">
+      <input class="nc-input" id="nc-last-name" type="text" placeholder="Last name" autocomplete="off"
+             onkeydown="if(event.key==='Enter') ncSubmitNewPatient()">
+    </div>
+    <div class="nc-form-actions">
+      <button class="nc-btn-back-small" onclick="ncShowScreen('choice')">← Back</button>
+      <button class="nc-btn-start" onclick="ncSubmitNewPatient()">Start Chart →</button>
+    </div>
+  </div>
+
+  <!-- Screen 2b: existing patient search -->
+  <div class="nc-screen" id="nc-screen-existing" style="display:none;">
+    <div class="nc-title">Existing Patient</div>
+    <input class="nc-search-input" id="nc-patient-search" type="text"
+           placeholder="Search by name…" autocomplete="off"
+           oninput="ncSearchPatients(this.value)">
+    <div class="nc-patient-list" id="nc-patient-list">
+      <div class="nc-list-empty">Loading…</div>
+    </div>
+    <div class="nc-form-actions" style="justify-content:flex-start;">
+      <button class="nc-btn-back-small" onclick="ncShowScreen('choice')">← Back</button>
+    </div>
+  </div>
+
 </div>
 
 <!-- ── Delete Confirmation Dialog ── -->
