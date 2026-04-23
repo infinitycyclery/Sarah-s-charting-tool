@@ -176,6 +176,17 @@
       </div>
 
     </div>
+    <!-- Chart refinement chat footer -->
+    <div class="chart-chat-footer no-print" id="chart-chat-footer" style="display:none;">
+      <div class="draft-nav" id="draft-nav"></div>
+      <div class="chat-input-row">
+        <input class="chat-input" id="chat-input" type="text"
+               placeholder="Ask AI to refine this chart… (e.g. 'make the assessment shorter')"
+               autocomplete="off"
+               onkeydown="if(event.key==='Enter') sendRefinement()">
+        <button class="chat-send-btn" id="chat-send-btn" onclick="sendRefinement()">↑ Refine</button>
+      </div>
+    </div>
   </div>
 
 </div><!-- /main-split -->

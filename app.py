@@ -538,6 +538,45 @@ def get_template(template_id):
     return jsonify(template)
 
 
+@app.route('/api/refine-chart', methods=['POST'])
+def refine_chart():
+    data          = request.get_json(silent=True) or {}
+    current_chart = data.get('current_chart', '').strip()
+    message       = data.get('message', '').strip()
+    patient_name  = data.get('patient_name', 'the patient').strip()
+    template_id   = data.get('template_id', '')
+    template      = load_template(template_id)
+    template_name = template.get('name', template_id) if template else template_id
+
+    if not current_chart:
+        return jsonify({'error': 'No chart to refine'}), 400
+    if not message:
+        return jsonify({'error': 'No instruction provided'}), 400
+
+    prompt = f"""You are a licensed psychiatric nurse practitioner. You wrote the following clinical chart note and are now being asked to revise it based on an instruction.
+
+Patient: {patient_name}
+Visit Type: {template_name}
+
+Current chart:
+---
+{current_chart}
+---
+
+Revision instruction: {message}
+
+Rewrite the complete revised chart note incorporating the requested changes. Keep all unchanged sections exactly as they were. Write in the same clinical style as the original. Output only the chart text — no preamble, no explanation, no headings."""
+
+    if USE_OLLAMA:
+        try:
+            refined = _call_ollama(prompt)
+            return jsonify({'chart': refined, 'source': 'ai'})
+        except Exception as e:
+            app.logger.warning('Ollama refine failed: %s', e)
+
+    return jsonify({'error': 'Ollama is not available for refinement'}), 503
+
+
 @app.route('/api/parse-abn', methods=['POST'])
 def parse_abn_route():
     data = request.get_json(silent=True) or {}

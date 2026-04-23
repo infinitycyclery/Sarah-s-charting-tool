@@ -151,6 +151,110 @@ async function _doGenerate() {
   }
 }
 
+// ── Draft History ─────────────────────────────────────────────────────────
+let _drafts = [];
+let _draftIdx = -1;
+
+function _initDrafts(text) {
+  _drafts = [{ text, label: 'Original' }];
+  _draftIdx = 0;
+  _renderDraftNav();
+}
+
+function _pushDraft(text) {
+  // discard any forward history if user went back
+  _drafts = _drafts.slice(0, _draftIdx + 1);
+  _drafts.push({ text, label: `Rev. ${_drafts.length}` });
+  _draftIdx = _drafts.length - 1;
+  _renderDraftNav();
+}
+
+function _renderDraftNav() {
+  const nav = document.getElementById('draft-nav');
+  if (!nav) return;
+  nav.innerHTML = '';
+  if (_drafts.length <= 1) { nav.style.display = 'none'; return; }
+  nav.style.display = 'flex';
+  const lbl = document.createElement('span');
+  lbl.className = 'draft-nav-label';
+  lbl.textContent = 'Versions:';
+  nav.appendChild(lbl);
+  _drafts.forEach((d, i) => {
+    const btn = document.createElement('button');
+    btn.className = 'draft-pill' + (i === _draftIdx ? ' active' : '');
+    btn.textContent = d.label;
+    btn.onclick = () => _switchDraft(i);
+    nav.appendChild(btn);
+  });
+}
+
+function _switchDraft(idx) {
+  _draftIdx = idx;
+  document.getElementById('chart-output').textContent = _drafts[idx].text;
+  _renderDraftNav();
+}
+
+// ── Chart Refinement Chat ─────────────────────────────────────────────────
+async function sendRefinement() {
+  const input  = document.getElementById('chat-input');
+  const message = input.value.trim();
+  if (!message) { input.focus(); return; }
+
+  const currentText = document.getElementById('chart-output').innerText || document.getElementById('chart-output').textContent;
+  if (!currentText) return;
+
+  const sendBtn = document.getElementById('chat-send-btn');
+  const loadingEl = document.getElementById('ai-loading');
+
+  input.disabled = true;
+  sendBtn.disabled = true;
+  sendBtn.textContent = '…';
+  if (loadingEl) loadingEl.style.display = 'flex';
+
+  try {
+    const patientName = document.getElementById('patient-name').value.trim();
+    const resp = await fetch('/api/refine-chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        current_chart: currentText,
+        message,
+        patient_name: patientName,
+        template_id:  currentTemplate ? currentTemplate.id : '',
+      }),
+    });
+    const data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+
+    _pushDraft(data.chart);
+    document.getElementById('chart-output').textContent = data.chart;
+    input.value = '';
+
+    persistChart(
+      patientName,
+      data.chart,
+      _getFields()
+    );
+  } catch (e) {
+    alert('Refinement error: ' + e.message);
+  } finally {
+    input.disabled = false;
+    sendBtn.disabled = false;
+    sendBtn.textContent = '↑ Refine';
+    input.focus();
+    if (loadingEl) loadingEl.style.display = 'none';
+  }
+}
+
+function _getFields() {
+  const fields = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    const val = el.value.trim();
+    if (val) fields[el.dataset.key] = val;
+  });
+  return fields;
+}
+
 function showChart(text, patientName) {
   document.getElementById('chart-placeholder').style.display = 'none';
   const output = document.getElementById('chart-output');
@@ -167,6 +271,11 @@ function showChart(text, patientName) {
   document.getElementById('print-template-name').textContent = currentTemplate ? currentTemplate.name : '';
   document.getElementById('print-date').textContent = today;
   document.getElementById('print-header').style.display = 'flex';
+
+  // show chat footer + initialise draft history
+  const footer = document.getElementById('chart-chat-footer');
+  if (footer) footer.style.display = 'flex';
+  _initDrafts(text);
 }
 
 function clearChart() {
@@ -178,6 +287,11 @@ function clearChart() {
   document.getElementById('btn-copy').disabled = true;
   document.getElementById('btn-print').disabled = true;
   document.getElementById('print-header').style.display = 'none';
+  const footer = document.getElementById('chart-chat-footer');
+  if (footer) footer.style.display = 'none';
+  _drafts = []; _draftIdx = -1;
+  const nav = document.getElementById('draft-nav');
+  if (nav) { nav.innerHTML = ''; nav.style.display = 'none'; }
 }
 
 // ── New Chart ──────────────────────────────────────────────────────────────
