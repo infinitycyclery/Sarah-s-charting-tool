@@ -533,6 +533,41 @@ function plCancelDelete(patientId, name) {
   _plDoLoad(q);
 }
 
+function plShowNewPatientForm() {
+  const list = document.getElementById('pl-list');
+  if (document.getElementById('pl-new-form')) return; // already showing
+  const form = document.createElement('div');
+  form.className = 'pl-new-patient-form';
+  form.id = 'pl-new-form';
+  form.innerHTML = `
+    <span class="pl-form-label">New Patient:</span>
+    <input class="pl-edit-input" id="pl-new-first" type="text" placeholder="First name" autocomplete="off">
+    <input class="pl-edit-input" id="pl-new-last"  type="text" placeholder="Last name"  autocomplete="off"
+           onkeydown="if(event.key==='Enter') plSubmitNewPatient()">
+    <button class="pl-btn-save" onclick="plSubmitNewPatient()">Create</button>
+    <button class="pl-btn-cancel-edit" onclick="this.closest('#pl-new-form').remove()">Cancel</button>`;
+  list.prepend(form);
+  document.getElementById('pl-new-first').focus();
+}
+
+async function plSubmitNewPatient() {
+  const first = document.getElementById('pl-new-first').value.trim();
+  const last  = document.getElementById('pl-new-last').value.trim();
+  if (!first && !last) { document.getElementById('pl-new-first').focus(); return; }
+  const name = [first, last].filter(Boolean).join(' ');
+  try {
+    const resp = await fetch('/api/patients', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name }),
+    });
+    const data = await resp.json();
+    if (data.error) { alert(data.error); return; }
+    const q = document.getElementById('pl-search').value;
+    _plDoLoad(q);
+  } catch { alert('Error creating patient.'); }
+}
+
 async function plShowCharts(patientId, patientName) {
   const list = document.getElementById('pl-list');
   list.innerHTML = '<div class="pl-empty">Loading charts…</div>';

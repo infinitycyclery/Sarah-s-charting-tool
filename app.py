@@ -633,6 +633,24 @@ def search_patients():
         conn.close()
 
 
+@app.route('/api/patients', methods=['POST'])
+def create_patient():
+    data = request.get_json(silent=True) or {}
+    name = (data.get('name') or '').strip()
+    if not name:
+        return jsonify({'error': 'Name required'}), 400
+    conn = _db()
+    try:
+        existing = conn.execute('SELECT id FROM patients WHERE name=? COLLATE NOCASE', (name,)).fetchone()
+        if existing:
+            return jsonify({'error': 'A patient with that name already exists'}), 409
+        conn.execute('INSERT INTO patients (name) VALUES (?)', (name,))
+        conn.commit()
+        return jsonify({'ok': True})
+    finally:
+        conn.close()
+
+
 @app.route('/api/patients')
 def list_patients():
     q = request.args.get('q', '').strip()

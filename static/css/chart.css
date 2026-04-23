@@ -735,6 +735,15 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
 .pl-search::placeholder { color: rgba(255,255,255,0.55); }
 .pl-search:focus { background: rgba(255,255,255,0.25); }
 
+.pl-btn-new-patient {
+  background: #22c55e; color: #fff;
+  border: none; border-radius: 18px;
+  padding: 6px 14px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; white-space: nowrap; flex-shrink: 0;
+  transition: background .15s;
+}
+.pl-btn-new-patient:hover { background: #16a34a; }
+
 .pl-close {
   background: none; border: none;
   color: rgba(255,255,255,0.65);
@@ -832,6 +841,20 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
   cursor: pointer;
 }
 .pl-empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 60px 20px; }
+
+/* Inline new patient form */
+.pl-new-patient-form {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 14px 20px;
+  background: #f0fdf4;
+  border-bottom: 2px solid #bbf7d0;
+}
+.pl-new-patient-form .pl-edit-input { max-width: 200px; }
+.pl-new-patient-form .pl-form-label {
+  font-size: 0.82rem; font-weight: 600; color: #15803d; white-space: nowrap;
+}
 
 /* Patient chart sub-view */
 .pl-charts-header {
