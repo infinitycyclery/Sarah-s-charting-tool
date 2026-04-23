@@ -373,9 +373,15 @@ function ncShowScreen(name) {
   }
 }
 
+function _setPatientName(name) {
+  document.getElementById('patient-name').value = name;
+  const lbl = document.getElementById('topbar-patient-name');
+  if (lbl) { lbl.textContent = name; lbl.style.display = name ? '' : 'none'; }
+}
+
 function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
-  document.getElementById('patient-name').value = '';
+  _setPatientName('');
   clearChart();
   currentChartId = null;
   clearTimeout(autoSaveTimer);
@@ -389,7 +395,7 @@ async function ncSubmitNewPatient() {
   if (!first && !last) { document.getElementById('nc-first-name').focus(); return; }
   const fullName = [first, last].filter(Boolean).join(' ');
   _resetChart();
-  document.getElementById('patient-name').value = fullName;
+  _setPatientName(fullName);
   closeNewChartDialog();
   if (ncSelectedTemplateId) await selectTemplate(ncSelectedTemplateId);
 }
@@ -429,7 +435,7 @@ async function _ncDoSearch(q) {
 
 function ncSelectExistingPatient(patientId, patientName) {
   _resetChart();
-  document.getElementById('patient-name').value = patientName;
+  _setPatientName(patientName);
   closeNewChartDialog();
   showChartsInDropdown(patientId, patientName);
   if (ncSelectedTemplateId) selectTemplate(ncSelectedTemplateId);
@@ -802,7 +808,7 @@ async function loadChartRecord(chartId, patientName) {
 
     closePatientList();
 
-    document.getElementById('patient-name').value = data.patient_name || patientName;
+    _setPatientName(data.patient_name || patientName);
     await selectTemplate(data.template_id);
 
     Object.entries(data.fields).forEach(([key, val]) => {
@@ -884,7 +890,7 @@ async function showChartsInDropdown(patientId, patientName) {
     if (!charts.length) {
       // No prior charts — just set the name and close
       dd.innerHTML += '<div class="pd-empty">No saved charts — ready for new chart.</div>';
-      document.getElementById('patient-name').value = patientName;
+      _setPatientName(patientName);
       setTimeout(closePatientDropdownNow, 1200);
       return;
     }
