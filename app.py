@@ -545,6 +545,7 @@ def refine_chart():
     message       = data.get('message', '').strip()
     patient_name  = data.get('patient_name', 'the patient').strip()
     template_id   = data.get('template_id', '')
+    chart_rules   = data.get('chart_rules', '').strip()
     template      = load_template(template_id)
     template_name = template.get('name', template_id) if template else template_id
 
@@ -553,11 +554,13 @@ def refine_chart():
     if not message:
         return jsonify({'error': 'No instruction provided'}), 400
 
+    rules_section = f'\nChart rules to follow:\n{chart_rules}\n' if chart_rules else ''
+
     prompt = f"""You are a licensed psychiatric nurse practitioner. You wrote the following clinical chart note and are now being asked to revise it based on an instruction.
 
 Patient: {patient_name}
 Visit Type: {template_name}
-
+{rules_section}
 Current chart:
 ---
 {current_chart}
@@ -595,7 +598,7 @@ def _is_ollama_available():
         return False
 
 
-def _build_ollama_prompt(fields, template):
+def _build_ollama_prompt(fields, template, chart_rules=''):
     patient_name  = fields.get('patient_name', 'the patient')
     template_name = template.get('name', template.get('id', 'visit'))
 
@@ -607,7 +610,8 @@ def _build_ollama_prompt(fields, template):
             if val and key != 'patient_name':
                 lines.append(f'- {field["label"]}: {val}')
 
-    data_section = '\n'.join(lines) if lines else '(No additional data provided)'
+    data_section  = '\n'.join(lines) if lines else '(No additional data provided)'
+    rules_section = f'\nAdditional chart rules to follow:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
 
     return f"""You are a licensed psychiatric nurse practitioner writing a clinical progress note after a patient visit.
 
@@ -618,7 +622,7 @@ Write a detailed, professional clinical note in flowing prose paragraphs. Rules:
 - Include every detail provided below — do not omit anything
 - Do not invent information that was not provided
 - End with a concise Assessment and Plan paragraph
-
+{rules_section}
 Patient: {patient_name}
 Visit Type: {template_name}
 
@@ -656,15 +660,16 @@ def ollama_status():
 @app.route('/api/generate-chart', methods=['POST'])
 def generate_chart():
     data        = request.get_json(silent=True) or {}
-    template_id = data.get('template_id', '')
-    fields      = data.get('fields', {})
-    template    = load_template(template_id)
+    template_id  = data.get('template_id', '')
+    fields       = data.get('fields', {})
+    chart_rules  = data.get('chart_rules', '')
+    template     = load_template(template_id)
     if not template:
         return jsonify({'error': 'Template not found'}), 404
 
     if USE_OLLAMA:
         try:
-            prompt     = _build_ollama_prompt(fields, template)
+            prompt     = _build_ollama_prompt(fields, template, chart_rules)
             chart_text = _call_ollama(prompt)
             return jsonify({'chart': chart_text, 'source': 'ai'})
         except Exception as e:

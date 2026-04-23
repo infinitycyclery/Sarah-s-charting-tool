@@ -359,10 +359,73 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 
 .panel-footer {
   border-top: 1px solid #d1d9e6;
-  padding: 12px 16px;
+  padding: 10px 12px;
   flex-shrink: 0;
   background: #fff;
+  display: flex;
+  gap: 8px;
+  align-items: center;
 }
+
+/* ── Chart Rules Panel ── */
+.rules-panel {
+  flex-shrink: 0;
+  border-top: 2px solid #e2e8f0;
+  background: #fafbff;
+  display: flex;
+  flex-direction: column;
+}
+.rules-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: #1a3a5c;
+  border-bottom: 1px solid #e2e8f0;
+}
+.rules-close-btn {
+  background: none; border: none;
+  color: #94a3b8; font-size: 0.9rem;
+  cursor: pointer; padding: 0 4px;
+}
+.rules-close-btn:hover { color: #475569; }
+.rules-textarea {
+  resize: none;
+  border: none;
+  outline: none;
+  padding: 10px 12px;
+  font-size: 0.82rem;
+  font-family: inherit;
+  color: #334155;
+  background: transparent;
+  height: 140px;
+  line-height: 1.55;
+}
+.rules-hint {
+  font-size: 0.71rem;
+  color: #94a3b8;
+  padding: 4px 12px 8px;
+  border-top: 1px solid #f1f5f9;
+}
+
+.btn-rules {
+  background: rgba(26,58,92,0.08);
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  color: #1a3a5c;
+  padding: 8px 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: all .15s;
+}
+.btn-rules:hover { background: rgba(26,58,92,0.14); }
+.btn-rules.active { background: #1a3a5c; color: #fff; border-color: #1a3a5c; }
+.btn-rules:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* ── Chart Chat Footer ── */
 .chart-chat-footer {

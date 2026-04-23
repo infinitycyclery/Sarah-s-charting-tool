@@ -18,6 +18,40 @@ async function selectTemplate(templateId) {
   renderAbnForm(currentTemplate);
   clearChart();
   document.getElementById('btn-generate').disabled = false;
+  document.getElementById('btn-rules').disabled = false;
+  _loadChartRules(templateId);
+}
+
+// ── Chart Rules ───────────────────────────────────────────────────────────
+function _rulesKey(templateId) { return `chart_rules_${templateId}`; }
+
+function _loadChartRules(templateId) {
+  const ta = document.getElementById('rules-textarea');
+  if (!ta) return;
+  ta.value = localStorage.getItem(_rulesKey(templateId)) || '';
+  const title = document.getElementById('rules-panel-title');
+  if (title) title.textContent = `📋 Chart Rules — ${templateId}`;
+}
+
+function saveChartRules() {
+  if (!currentTemplate) return;
+  const ta = document.getElementById('rules-textarea');
+  if (!ta) return;
+  localStorage.setItem(_rulesKey(currentTemplate.id), ta.value);
+}
+
+function getChartRules() {
+  if (!currentTemplate) return '';
+  return localStorage.getItem(_rulesKey(currentTemplate.id)) || '';
+}
+
+function toggleChartRules() {
+  const panel = document.getElementById('rules-panel');
+  const btn   = document.getElementById('btn-rules');
+  const open  = panel.style.display === 'none' || panel.style.display === '';
+  panel.style.display = open ? 'flex' : 'none';
+  btn.classList.toggle('active', open);
+  if (open) document.getElementById('rules-textarea').focus();
 }
 
 // ── Render ABN Form ────────────────────────────────────────────────────────
@@ -131,7 +165,7 @@ async function _doGenerate() {
     const resp = await fetch('/api/generate-chart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template_id: currentTemplate.id, fields }),
+      body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules() }),
     });
     const data = await resp.json();
     if (data.error) { alert(data.error); return; }
@@ -221,6 +255,7 @@ async function sendRefinement() {
         message,
         patient_name: patientName,
         template_id:  currentTemplate ? currentTemplate.id : '',
+        chart_rules:  getChartRules(),
       }),
     });
     const data = await resp.json();
