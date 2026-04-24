@@ -9,14 +9,17 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '1.2'
+VERSION = '1.3'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
-OLLAMA_URL   = 'http://localhost:11434'
-OLLAMA_MODEL = 'llama3.1:8b'
-USE_OLLAMA   = True
-
 BASE_DIR = Path(__file__).parent
+
+_LOCAL_CFG_PATH = BASE_DIR / 'data' / 'local_config.json'
+_local_cfg = json.loads(_LOCAL_CFG_PATH.read_text()) if _LOCAL_CFG_PATH.exists() else {}
+
+OLLAMA_URL   = _local_cfg.get('ollama_url',   'http://localhost:11434')
+OLLAMA_MODEL = _local_cfg.get('ollama_model', 'llama3.1:8b')
+USE_OLLAMA   = _local_cfg.get('use_ollama',   True)
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
 ABBREVIATIONS_FILE = BASE_DIR / 'data' / 'abbreviations.json'
 DB_PATH = BASE_DIR / 'data' / 'charting.db'
@@ -588,12 +591,24 @@ def parse_abn_route():
 
 # ── Ollama helpers ───────────────────────────────────────────────────────────
 
-def _is_ollama_available():
+def _ollama_status_detail():
+    """Return (ollama_running, model_ready) booleans."""
     try:
-        urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2)
-        return True
+        with urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2) as resp:
+            data = json.loads(resp.read())
+        names = [m.get('name', '') for m in data.get('models', [])]
+        model_ready = any(
+            n == OLLAMA_MODEL or n.startswith(OLLAMA_MODEL.split(':')[0] + ':')
+            for n in names
+        )
+        return True, model_ready
     except Exception:
-        return False
+        return False, False
+
+
+def _is_ollama_available():
+    running, ready = _ollama_status_detail()
+    return running and ready
 
 
 def _build_ollama_prompt(fields, template, chart_rules=''):
@@ -651,8 +666,17 @@ def _call_ollama(prompt):
 
 @app.route('/api/ollama-status')
 def ollama_status():
-    available = _is_ollama_available() if USE_OLLAMA else False
-    return jsonify({'enabled': USE_OLLAMA, 'available': available, 'model': OLLAMA_MODEL})
+    if USE_OLLAMA:
+        running, model_ready = _ollama_status_detail()
+    else:
+        running = model_ready = False
+    return jsonify({
+        'enabled': USE_OLLAMA,
+        'available': running and model_ready,
+        'ollama_running': running,
+        'model_ready': model_ready,
+        'model': OLLAMA_MODEL,
+    })
 
 
 @app.route('/api/generate-chart', methods=['POST'])
@@ -1072,10 +1096,26 @@ def import_data():
 
 @app.route('/api/update', methods=['POST'])
 def update_app():
+    app_dir = Path(__file__).resolve().parent
     try:
+        # Verify this is a git repository before attempting pull
+        check = subprocess.run(
+            ['git', 'rev-parse', '--is-inside-work-tree'],
+            cwd=app_dir,
+            capture_output=True, text=True, timeout=5
+        )
+        if check.returncode != 0:
+            return jsonify({
+                'ok': False,
+                'output': (
+                    'This app was not installed via git, so automatic updates are unavailable. '
+                    'To enable updates, reinstall by cloning the repository with git.'
+                ),
+            })
+
         result = subprocess.run(
             ['git', 'pull'],
-            cwd=Path(__file__).parent,
+            cwd=app_dir,
             capture_output=True, text=True, timeout=30
         )
         output = (result.stdout + result.stderr).strip()

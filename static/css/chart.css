@@ -923,8 +923,108 @@ textarea.abn-input { min-height: 56px; resize: vertical; }
   white-space: nowrap;
   display: none;
 }
-.ai-status.ai-on  { display: inline; background: rgba(34,197,94,.25); color: #86efac; }
-.ai-status.ai-off { display: inline; background: rgba(255,255,255,.1);  color: rgba(255,255,255,.45); }
+.ai-status.ai-on   { display: inline; background: rgba(34,197,94,.25);  color: #86efac; cursor: default; }
+.ai-status.ai-off  { display: inline; background: rgba(255,255,255,.1); color: rgba(255,255,255,.45); cursor: pointer; }
+.ai-status.ai-warn { display: inline; background: rgba(251,191,36,.25); color: #fde68a; cursor: pointer; }
+
+/* ── Chart Source Badge ── */
+.chart-source-badge {
+  font-size: 0.7rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  white-space: nowrap;
+}
+.chart-source-badge.source-ai    { background: rgba(34,197,94,.15); color: #16a34a; border: 1px solid rgba(34,197,94,.3); }
+.chart-source-badge.source-rules { background: rgba(251,191,36,.15); color: #b45309; border: 1px solid rgba(251,191,36,.3); }
+
+/* ── Fallback Warning Toast ── */
+.fallback-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%) translateY(120px);
+  background: #1e293b;
+  color: #fde68a;
+  border: 1px solid rgba(251,191,36,.4);
+  border-radius: 10px;
+  padding: 12px 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+  z-index: 500;
+  transition: transform .35s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+.fallback-toast.show { transform: translateX(-50%) translateY(0); }
+.fallback-toast-close {
+  background: none;
+  border: none;
+  color: rgba(253,230,138,.6);
+  cursor: pointer;
+  font-size: 0.85rem;
+  padding: 0 0 0 6px;
+  line-height: 1;
+}
+.fallback-toast-close:hover { color: #fde68a; }
+
+/* ── Ollama Setup Dialog ── */
+.ol-overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 400;
+}
+.ol-overlay.open { display: block; }
+
+.ol-dialog {
+  display: none;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: #fff;
+  border-radius: 14px;
+  width: 480px;
+  max-width: 92vw;
+  z-index: 401;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  padding: 32px 28px 24px;
+}
+.ol-dialog.open { display: block; }
+
+.ol-icon  { font-size: 2.2rem; text-align: center; margin-bottom: 12px; }
+.ol-title { font-size: 1.05rem; font-weight: 700; color: #1a202c; margin-bottom: 14px; text-align: center; }
+.ol-body  { font-size: 0.85rem; color: #374151; line-height: 1.65; margin-bottom: 24px; }
+.ol-body ol { padding-left: 1.4em; margin: 10px 0; }
+.ol-body li { margin-bottom: 6px; }
+.ol-body code {
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 1px 6px;
+  font-size: 0.82rem;
+  font-family: monospace;
+  color: #0f172a;
+}
+.ol-body strong { color: #1a202c; }
+.ol-actions { text-align: center; }
+.ol-btn-close {
+  background: #3b82f6;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 28px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background .15s;
+}
+.ol-btn-close:hover { background: #2563eb; }
 
 /* ── Patient List Panel ── */
 .pl-overlay {

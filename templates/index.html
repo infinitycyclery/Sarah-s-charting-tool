@@ -81,7 +81,11 @@ Examples:
   <!-- RIGHT: Generated Chart -->
   <div class="right-panel" id="right-panel">
     <div class="panel-header">
-      <span>Chart</span>
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span>CHART</span>
+        <span class="chart-source-badge" id="chart-source-badge" style="display:none;"></span>
+      </div>
+      </div>
       <div class="panel-header-actions no-print">
         <button class="btn-action" onclick="manualSave()" id="btn-save" disabled>💾 Save</button>
         <button class="btn-action" onclick="copyChart()" id="btn-copy" disabled>⎘ Copy</button>
@@ -332,6 +336,17 @@ Examples:
 
 </div>
 
+<!-- ── Ollama Setup Dialog ── -->
+<div class="ol-overlay" id="ol-overlay" onclick="closeOllamaDialog()"></div>
+<div class="ol-dialog" id="ol-dialog">
+  <div class="ol-icon">🤖</div>
+  <div class="ol-title" id="ol-dialog-title">AI Not Available</div>
+  <div class="ol-body" id="ol-dialog-body"></div>
+  <div class="ol-actions">
+    <button class="ol-btn-close" onclick="closeOllamaDialog()">Got it</button>
+  </div>
+</div>
+
 <!-- ── Delete Confirmation Dialog ── -->
 <div class="del-overlay" id="del-overlay"></div>
 <div class="del-dialog" id="del-dialog">
@@ -342,6 +357,13 @@ Examples:
     <button class="del-btn-back" onclick="cancelDeleteChart()">← Go Back</button>
     <button class="del-btn-confirm" onclick="confirmDeleteChart()">Yes, Delete</button>
   </div>
+</div>
+
+<!-- ── Fallback Warning Toast ── -->
+<div class="fallback-toast" id="fallback-toast">
+  <span class="fallback-toast-icon">⚠️</span>
+  <span class="fallback-toast-msg">AI unavailable — chart generated with rule-based fallback</span>
+  <button class="fallback-toast-close" onclick="document.getElementById('fallback-toast').classList.remove('show')">✕</button>
 </div>
 
 <script src="{{ url_for('static', filename='js/chart.js') }}"></script>

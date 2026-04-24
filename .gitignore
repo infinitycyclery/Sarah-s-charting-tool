@@ -4,3 +4,4 @@ __pycache__/
 .DS_Store
 *.egg-info/
 data/charting.db
+data/local_config.json

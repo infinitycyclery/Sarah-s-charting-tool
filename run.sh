@@ -3,6 +3,9 @@
 
 cd "$(dirname "$0")"
 
+# Clear macOS quarantine flag so iCloud sync doesn't block the app after updates
+xattr -dr com.apple.quarantine . 2>/dev/null
+
 # Check for Python 3
 if ! command -v python3 &> /dev/null; then
     echo "Error: Python 3 is required. Install from https://python.org"
