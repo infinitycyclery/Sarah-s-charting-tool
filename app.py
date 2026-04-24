@@ -668,19 +668,15 @@ def generate_chart():
     if not template:
         return jsonify({'error': 'Template not found'}), 404
 
-    if USE_OLLAMA:
-        try:
-            prompt     = _build_ollama_prompt(fields, template, chart_rules)
-            chart_text = _call_ollama(prompt)
-            return jsonify({'chart': chart_text, 'source': 'ai'})
-        except Exception as e:
-            app.logger.warning('Ollama unavailable, falling back to rule-based: %s', e)
-
-    generator_key = template.get('generator')
-    fn = GENERATORS.get(generator_key)
-    if not fn:
-        return jsonify({'error': f'No generator for template {template_id}'}), 400
-    return jsonify({'chart': fn(fields), 'source': 'rules'})
+    try:
+        prompt     = _build_ollama_prompt(fields, template, chart_rules)
+        chart_text = _call_ollama(prompt)
+        return jsonify({'chart': chart_text, 'source': 'ai'})
+    except urllib.error.URLError as e:
+        reason = getattr(e, 'reason', str(e))
+        return jsonify({'error': f'AI failed — Ollama is not running or unreachable. ({reason})'}), 503
+    except Exception as e:
+        return jsonify({'error': f'AI failed — {e}'}), 503
 
 
 @app.route('/api/abbreviations')

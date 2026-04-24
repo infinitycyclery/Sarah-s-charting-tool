@@ -195,7 +195,7 @@ async function _doGenerate() {
       body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules() }),
     });
     const data = await resp.json();
-    if (data.error) { alert(data.error); return; }
+    if (data.error) { showChartError(data.error); return; }
 
     currentChartId = null;
     showChart(data.chart, patientName);
@@ -342,8 +342,11 @@ function showChart(text, patientName) {
 
 function clearChart() {
   document.getElementById('chart-placeholder').style.display = 'block';
-  document.getElementById('chart-output').style.display = 'none';
-  document.getElementById('chart-output').textContent = '';
+  const out = document.getElementById('chart-output');
+  out.style.display = 'none';
+  out.textContent = '';
+  out.contentEditable = 'true';
+  out.innerHTML = '';
   document.getElementById('btn-delete').disabled = true;
   document.getElementById('btn-save').disabled = true;
   document.getElementById('btn-copy').disabled = true;
@@ -354,6 +357,14 @@ function clearChart() {
   _drafts = []; _draftIdx = -1;
   const nav = document.getElementById('draft-nav');
   if (nav) { nav.innerHTML = ''; nav.style.display = 'none'; }
+}
+
+function showChartError(msg) {
+  document.getElementById('chart-placeholder').style.display = 'none';
+  const output = document.getElementById('chart-output');
+  output.style.display = 'block';
+  output.contentEditable = 'false';
+  output.innerHTML = `<div class="chart-error"><div class="chart-error-title">AI generation failed</div><div class="chart-error-msg">${esc(msg)}</div></div>`;
 }
 
 // ── New Chart ──────────────────────────────────────────────────────────────
