@@ -1052,11 +1052,14 @@ async function plShowCharts(patientId, patientName) {
         month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
       });
       row.innerHTML = `
-        <div class="pl-chart-row-header">
-          <span class="pl-chart-tpl">${esc(c.template_id)} · ${esc(c.template_name)}</span>
-          <span class="pl-chart-date">${d}</span>
-        </div>
-        <div class="pl-chart-preview">${esc(c.preview)}</div>`;
+        <div class="pl-chart-order-badge">#${c.order_num ?? c.id}</div>
+        <div class="pl-chart-row-content">
+          <div class="pl-chart-row-header">
+            <span class="pl-chart-tpl">${esc(c.template_id)} · ${esc(c.template_name)}</span>
+            <span class="pl-chart-date">${d}</span>
+          </div>
+          <div class="pl-chart-preview">${esc(c.preview)}</div>
+        </div>`;
       row.onclick = () => loadChartRecord(c.id, patientName);
       list.appendChild(row);
     });
