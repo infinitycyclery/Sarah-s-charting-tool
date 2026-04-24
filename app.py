@@ -12,12 +12,9 @@ app = Flask(__name__)
 VERSION = '1.2'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
-# Install Ollama from https://ollama.com, then run one of:
-#   48 GB RAM (MacBook Pro Max):  ollama pull llama3.1:70b
-#   16-24 GB RAM (MacBook Air):   ollama pull llama3.1:8b
 OLLAMA_URL   = 'http://localhost:11434'
-OLLAMA_MODEL = 'llama3.1:8b'   # ← change to llama3.1:70b on the 48 GB machine
-USE_OLLAMA   = True             # set False to always use the rule-based generator
+OLLAMA_MODEL = 'llama3.1:8b'
+USE_OLLAMA   = True
 
 BASE_DIR = Path(__file__).parent
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
