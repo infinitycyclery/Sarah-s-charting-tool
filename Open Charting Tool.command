@@ -5,7 +5,21 @@ cd "$(dirname "$0")"
 
 # Pull latest updates from GitHub
 echo "Checking for updates..."
-git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
+GITHUB_REPO="https://github.com/infinitycyclery/sarah-s-charting-tool.git"
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    # Already a proper git repo — just pull
+    git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
+else
+    # Downloaded as a ZIP — initialise git so future updates work
+    echo "Connecting to GitHub for automatic updates..."
+    git init --quiet
+    git remote add origin "$GITHUB_REPO"
+    if git fetch --quiet origin main 2>/dev/null && git reset --hard origin/main --quiet 2>/dev/null; then
+        echo "Updated to latest version."
+    else
+        echo "Could not reach GitHub — using local version."
+    fi
+fi
 
 # First-time setup: create virtual environment and install Flask
 if [ ! -d "venv" ]; then

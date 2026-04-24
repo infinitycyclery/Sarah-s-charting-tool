@@ -1070,12 +1070,40 @@ def import_data():
     })
 
 
+GITHUB_REPO = 'https://github.com/infinitycyclery/sarah-s-charting-tool.git'
+
+
 @app.route('/api/update', methods=['POST'])
 def update_app():
+    cwd = str(Path(__file__).parent)
     try:
+        # Check if this is a git repo; if not (e.g. downloaded as ZIP), bootstrap it
+        is_git = subprocess.run(
+            ['git', 'rev-parse', '--git-dir'],
+            cwd=cwd, capture_output=True, timeout=5
+        ).returncode == 0
+
+        if not is_git:
+            subprocess.run(['git', 'init'], cwd=cwd, capture_output=True, timeout=10)
+            subprocess.run(
+                ['git', 'remote', 'add', 'origin', GITHUB_REPO],
+                cwd=cwd, capture_output=True, timeout=5
+            )
+            fetch = subprocess.run(
+                ['git', 'fetch', '--quiet', 'origin', 'main'],
+                cwd=cwd, capture_output=True, text=True, timeout=30
+            )
+            if fetch.returncode != 0:
+                return jsonify({'ok': False, 'output': 'Could not reach GitHub. Check your internet connection.'})
+            subprocess.run(
+                ['git', 'reset', '--hard', 'origin/main'],
+                cwd=cwd, capture_output=True, timeout=15
+            )
+            return jsonify({'ok': True, 'output': 'Updated to latest version.', 'current': False})
+
         result = subprocess.run(
             ['git', 'pull'],
-            cwd=Path(__file__).parent,
+            cwd=cwd,
             capture_output=True, text=True, timeout=30
         )
         output = (result.stdout + result.stderr).strip()
