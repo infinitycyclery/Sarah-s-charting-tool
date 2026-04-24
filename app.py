@@ -881,7 +881,7 @@ def get_patient_charts(patient_id):
     conn = _db()
     try:
         rows = conn.execute(
-            'SELECT id, template_id, template_name, chart_text, created_at, updated_at '
+            'SELECT id, order_num, template_id, template_name, chart_text, created_at, updated_at '
             'FROM charts WHERE patient_id=? ORDER BY updated_at DESC',
             (patient_id,)
         ).fetchall()
