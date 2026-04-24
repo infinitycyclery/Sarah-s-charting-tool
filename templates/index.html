@@ -17,6 +17,11 @@
     <span class="topbar-patient" id="topbar-patient-name" style="display:none;"></span>
     <button class="btn-top" onclick="openVac()">📋 View All Charts</button>
     <button class="btn-top" onclick="openPatientList()">👥 Patient List</button>
+    <button class="btn-top btn-export" onclick="exportData()" title="Download all patients & charts as a backup file">⬇ Export</button>
+    <label class="btn-top btn-import" title="Import patients & charts from a backup file">
+      ⬆ Import
+      <input type="file" id="import-file-input" accept=".json" style="display:none" onchange="importData(this)">
+    </label>
     <span class="save-status" id="save-status"></span>
     <span class="ai-status" id="ai-status" title=""></span>
   </div>

@@ -1004,6 +1004,39 @@ function esc(str) {
 // ── View All Charts ───────────────────────────────────────────────────────
 let vacPage = 1;
 let vacQuery = '';
+// ── Export / Import ───────────────────────────────────────────────────────
+function exportData() {
+  window.location.href = '/api/export';
+}
+
+async function importData(input) {
+  const file = input.files[0];
+  if (!file) return;
+  input.value = '';
+
+  const confirmed = confirm(
+    `Import "${file.name}"?\n\nExisting patients and charts will be kept. ` +
+    `Only new records will be added (no duplicates).`
+  );
+  if (!confirmed) return;
+
+  const form = new FormData();
+  form.append('file', file);
+
+  try {
+    const resp = await fetch('/api/import', { method: 'POST', body: form });
+    const data = await resp.json();
+    if (data.error) { alert('Import failed: ' + data.error); return; }
+    alert(
+      `Import complete!\n` +
+      `• ${data.patients_added} new patient(s) added\n` +
+      `• ${data.charts_added} new chart(s) added`
+    );
+  } catch {
+    alert('Import failed — check that the file is a valid export.');
+  }
+}
+
 let vacSearchTimer = null;
 
 function openVac() {

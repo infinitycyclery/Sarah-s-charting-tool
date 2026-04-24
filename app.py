@@ -956,5 +956,121 @@ def update_chart_status(chart_id):
         conn.close()
 
 
+@app.route('/api/export', methods=['GET'])
+def export_data():
+    conn = _db()
+    try:
+        patients = [dict(r) for r in conn.execute('SELECT * FROM patients ORDER BY name').fetchall()]
+        charts   = [dict(r) for r in conn.execute('SELECT * FROM charts ORDER BY created_at').fetchall()]
+    finally:
+        conn.close()
+
+    chart_map = {}
+    for c in charts:
+        chart_map.setdefault(c['patient_id'], []).append({
+            'template_id':   c['template_id'],
+            'template_name': c['template_name'],
+            'fields':        c['fields'],
+            'chart_text':    c['chart_text'],
+            'status':        c['status'],
+            'created_at':    c['created_at'],
+            'updated_at':    c['updated_at'],
+        })
+
+    payload = {
+        'export_version': 1,
+        'exported_at': __import__('datetime').datetime.now().isoformat(timespec='seconds'),
+        'patients': [
+            {
+                'name':       p['name'],
+                'created_at': p['created_at'],
+                'charts':     chart_map.get(p['id'], []),
+            }
+            for p in patients
+        ]
+    }
+
+    import io
+    data = json.dumps(payload, indent=2)
+    buf  = io.BytesIO(data.encode())
+    from flask import send_file
+    fname = 'sarahs_charting_export_{}.json'.format(
+        __import__('datetime').datetime.now().strftime('%Y%m%d_%H%M%S'))
+    return send_file(buf, mimetype='application/json',
+                     as_attachment=True, download_name=fname)
+
+
+@app.route('/api/import', methods=['POST'])
+def import_data():
+    f = request.files.get('file')
+    if not f:
+        return jsonify({'error': 'No file uploaded'}), 400
+    try:
+        payload = json.loads(f.read().decode())
+    except Exception:
+        return jsonify({'error': 'Invalid JSON file'}), 400
+
+    if payload.get('export_version') != 1:
+        return jsonify({'error': 'Unrecognised export format'}), 400
+
+    patients_in  = payload.get('patients', [])
+    imported_pts = 0
+    imported_cht = 0
+
+    conn = _db()
+    try:
+        for pt in patients_in:
+            name = (pt.get('name') or '').strip()
+            if not name:
+                continue
+
+            row = conn.execute('SELECT id FROM patients WHERE name=?', (name,)).fetchone()
+            if row:
+                patient_id = row['id']
+            else:
+                cur = conn.execute(
+                    'INSERT INTO patients (name, created_at) VALUES (?, ?)',
+                    (name, pt.get('created_at') or 'datetime("now","localtime")')
+                )
+                patient_id = cur.lastrowid
+                imported_pts += 1
+
+            existing_keys = set()
+            for ec in conn.execute(
+                'SELECT template_id, created_at FROM charts WHERE patient_id=?', (patient_id,)
+            ).fetchall():
+                existing_keys.add((ec['template_id'], ec['created_at']))
+
+            for c in pt.get('charts', []):
+                key = (c.get('template_id', ''), c.get('created_at', ''))
+                if key in existing_keys:
+                    continue
+                conn.execute(
+                    '''INSERT INTO charts
+                       (patient_id, template_id, template_name, fields, chart_text,
+                        status, created_at, updated_at)
+                       VALUES (?,?,?,?,?,?,?,?)''',
+                    (patient_id,
+                     c.get('template_id', ''),
+                     c.get('template_name', ''),
+                     c.get('fields', '{}'),
+                     c.get('chart_text', ''),
+                     c.get('status', 'active'),
+                     c.get('created_at', ''),
+                     c.get('updated_at', ''))
+                )
+                imported_cht += 1
+
+        conn.commit()
+    finally:
+        conn.close()
+
+    return jsonify({
+        'ok': True,
+        'patients_added': imported_pts,
+        'charts_added':   imported_cht,
+    })
+
+
 if __name__ == '__main__':
     app.run(debug=True, port=8080)

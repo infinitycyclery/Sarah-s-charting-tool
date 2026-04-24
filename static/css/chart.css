@@ -122,6 +122,10 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   cursor: pointer;
   white-space: nowrap;
 }
+.btn-top.btn-export { background: rgba(34,197,94,0.25); border-color: rgba(34,197,94,0.5); }
+.btn-top.btn-export:hover { background: rgba(34,197,94,0.4); }
+.btn-top.btn-import { background: rgba(59,130,246,0.25); border-color: rgba(59,130,246,0.5); display: inline-flex; align-items: center; }
+.btn-top.btn-import:hover { background: rgba(59,130,246,0.4); }
 .btn-top:hover { background: rgba(255,255,255,0.25); }
 
 /* ── New Chart Button (topbar-right) ── */
