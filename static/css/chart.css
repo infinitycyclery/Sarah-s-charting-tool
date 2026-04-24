@@ -582,37 +582,82 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 }
 
 /* ── ABN Form Groups ── */
-.abn-group { margin-bottom: 18px; }
+.abn-group {
+  margin-bottom: 10px;
+  background: #fff;
+  border: 1px solid #e8ecf2;
+  border-radius: 12px;
+  padding: 12px 14px;
+}
 .abn-group-label {
-  font-size: 0.68rem;
+  font-size: 0.63rem;
   font-weight: 800;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #1a3a5c;
-  border-bottom: 2px solid #e2e8f0;
-  padding-bottom: 4px;
+  letter-spacing: 0.1em;
+  color: #94a3b8;
+  padding-bottom: 8px;
   margin-bottom: 10px;
+  border-bottom: 1px solid #f1f5f9;
 }
-.abn-field { margin-bottom: 8px; display: flex; flex-direction: column; gap: 3px; }
+.abn-field { margin-bottom: 9px; display: flex; flex-direction: column; gap: 4px; }
+.abn-field:last-child { margin-bottom: 0; }
 .abn-label {
-  font-size: 0.72rem;
-  font-weight: 600;
-  color: #64748b;
+  font-size: 0.67rem;
+  font-weight: 700;
+  color: #6b7280;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 .abn-input {
-  border: 1px solid #cbd5e1;
-  border-radius: 6px;
-  padding: 6px 9px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 7px 10px;
   font-size: 0.85rem;
   font-family: inherit;
   width: 100%;
+  background: #f9fafb;
   resize: none;
-  transition: border-color .15s;
+  transition: border-color .15s, background .15s, box-shadow .15s;
+  color: #1e293b;
 }
-.abn-input:focus { outline: none; border-color: #1a3a5c; box-shadow: 0 0 0 2px rgba(26,58,92,.1); }
-textarea.abn-input { min-height: 56px; resize: vertical; }
+.abn-input:focus {
+  outline: none;
+  border-color: #3b82f6;
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(59,130,246,.1);
+}
+textarea.abn-input { min-height: 58px; resize: vertical; }
+
+/* ── Yes/No Toggles ── */
+.yesno-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+.yesno-field { margin-bottom: 0; }
+.yesno-toggle {
+  display: flex;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+  height: 34px;
+}
+.yesno-btn {
+  flex: 1;
+  border: none;
+  background: #f9fafb;
+  cursor: pointer;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #9ca3af;
+  letter-spacing: 0.03em;
+  transition: background .12s, color .12s;
+}
+.yesno-btn:first-child { border-right: 1px solid #e2e8f0; }
+.yesno-btn:hover:not(.active-yes):not(.active-no) { background: #f1f5f9; color: #475569; }
+.yesno-btn.active-yes { background: #dcfce7; color: #15803d; }
+.yesno-btn.active-no  { background: #fee2e2; color: #b91c1c; }
 
 /* ── Generate Button ── */
 .btn-generate {

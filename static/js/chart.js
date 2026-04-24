@@ -100,30 +100,96 @@ function renderAbnForm(template) {
     labelEl.textContent = group.label;
     groupEl.appendChild(labelEl);
 
+    let yesnoGrid = null;
     group.fields.forEach(field => {
-      const fieldEl = document.createElement('div');
-      fieldEl.className = 'abn-field';
-
-      const lbl = document.createElement('label');
-      lbl.className = 'abn-label';
-      lbl.textContent = field.label;
-      lbl.setAttribute('for', `abn_${field.key}`);
-      fieldEl.appendChild(lbl);
-
-      const isTextarea = field.type === 'textarea';
-      const input = document.createElement(isTextarea ? 'textarea' : 'input');
-      input.className = 'abn-input';
-      input.id = `abn_${field.key}`;
-      input.dataset.key = field.key;
-      if (!isTextarea) input.type = 'text';
-      if (field.default) input.value = field.default;
-
-      fieldEl.appendChild(input);
-      groupEl.appendChild(fieldEl);
+      if (field.type === 'yesno') {
+        if (!yesnoGrid) {
+          yesnoGrid = document.createElement('div');
+          yesnoGrid.className = 'yesno-grid';
+          groupEl.appendChild(yesnoGrid);
+        }
+        yesnoGrid.appendChild(_renderYesNoField(field));
+      } else {
+        yesnoGrid = null;
+        groupEl.appendChild(_renderTextField(field));
+      }
     });
 
     body.appendChild(groupEl);
   });
+}
+
+function _renderYesNoField(field) {
+  const fieldEl = document.createElement('div');
+  fieldEl.className = 'abn-field yesno-field';
+
+  const lbl = document.createElement('label');
+  lbl.className = 'abn-label';
+  lbl.textContent = field.label;
+  fieldEl.appendChild(lbl);
+
+  const toggle = document.createElement('div');
+  toggle.className = 'yesno-toggle';
+
+  const hidden = document.createElement('input');
+  hidden.type = 'hidden';
+  hidden.id = `abn_${field.key}`;
+  hidden.dataset.key = field.key;
+
+  const yesBtn = document.createElement('button');
+  yesBtn.type = 'button';
+  yesBtn.className = 'yesno-btn';
+  yesBtn.textContent = 'Yes';
+  yesBtn.onclick = () => _setYesNo(toggle, hidden, 'yes');
+
+  const noBtn = document.createElement('button');
+  noBtn.type = 'button';
+  noBtn.className = 'yesno-btn';
+  noBtn.textContent = 'No';
+  noBtn.onclick = () => _setYesNo(toggle, hidden, 'no');
+
+  toggle.appendChild(yesBtn);
+  toggle.appendChild(noBtn);
+  toggle.appendChild(hidden);
+  fieldEl.appendChild(toggle);
+  return fieldEl;
+}
+
+function _renderTextField(field) {
+  const fieldEl = document.createElement('div');
+  fieldEl.className = 'abn-field';
+
+  const lbl = document.createElement('label');
+  lbl.className = 'abn-label';
+  lbl.textContent = field.label;
+  lbl.setAttribute('for', `abn_${field.key}`);
+  fieldEl.appendChild(lbl);
+
+  const isTextarea = field.type === 'textarea';
+  const input = document.createElement(isTextarea ? 'textarea' : 'input');
+  input.className = 'abn-input';
+  input.id = `abn_${field.key}`;
+  input.dataset.key = field.key;
+  if (!isTextarea) input.type = 'text';
+  if (field.default) input.value = field.default;
+
+  fieldEl.appendChild(input);
+  return fieldEl;
+}
+
+function _setYesNo(toggle, hidden, val) {
+  toggle.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  const btn = val === 'yes' ? toggle.querySelector('.yesno-btn:first-child')
+                            : toggle.querySelector('.yesno-btn:last-of-type');
+  btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+  hidden.value = val;
+}
+
+function _restoreYesNo(hiddenInput, val) {
+  const toggle = hiddenInput.closest('.yesno-toggle');
+  if (!toggle) return;
+  const v = val.toLowerCase().trim();
+  if (v === 'yes' || v === 'no') _setYesNo(toggle, hiddenInput, v);
 }
 
 // ── Generate Chart ─────────────────────────────────────────────────────────
@@ -438,6 +504,8 @@ function _setPatientName(name) {
 
 function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
+  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
   _setPatientName('');
   clearChart();
   currentChartId = null;
@@ -950,7 +1018,9 @@ async function loadChartRecord(chartId, patientName) {
 
     Object.entries(data.fields).forEach(([key, val]) => {
       const el = document.getElementById(`abn_${key}`);
-      if (el) el.value = val;
+      if (!el) return;
+      el.value = val;
+      _restoreYesNo(el, val);
     });
 
     showChart(data.chart_text, data.patient_name || patientName);

@@ -7,35 +7,27 @@
     {
       "label": "Yes / No",
       "fields": [
-        {"key": "stable",    "label": "Stable"},
-        {"key": "helping",   "label": "Helping"},
-        {"key": "side_effects", "label": "Side Effects"},
-        {"key": "side_effect_rec", "label": "Side Effect Treatment Recommendation", "type": "textarea"},
-        {"key": "suicidal",  "label": "Suicidal"},
-        {"key": "self_harm", "label": "Self Harm"},
-        {"key": "fatigue",   "label": "Fatigue"},
-        {"key": "age",       "label": "Age"},
-        {"key": "gender",    "label": "Gender"}
+        {"key": "stable",       "label": "Stable",       "type": "yesno"},
+        {"key": "self_harm",    "label": "Self Harm",    "type": "yesno"},
+        {"key": "fatigue",      "label": "Fatigue",      "type": "yesno"},
+        {"key": "helping",      "label": "Helping",      "type": "yesno"},
+        {"key": "suicidal",     "label": "Suicidal",     "type": "yesno"},
+        {"key": "side_effects", "label": "Side Effects", "type": "yesno"},
+        {"key": "age",          "label": "Age"},
+        {"key": "gender",       "label": "Gender"},
+        {"key": "side_effect_rec", "label": "Side Effect Details", "type": "textarea"},
+        {"key": "suicidal_detail", "label": "Suicidal Ideation Details", "type": "textarea"}
       ]
     },
     {
-      "label": "Short Questions",
+      "label": "Symptom Update",
       "fields": [
-        {"key": "symptom_update",          "label": "Symptom Update",            "type": "textarea"},
-        {"key": "socially_isolating",      "label": "Socially Isolating"},
-        {"key": "productive",              "label": "Productive"},
-        {"key": "sleep",                   "label": "Sleeping More or Less"},
-        {"key": "collateral",              "label": "Friend / Family Comments",   "type": "textarea"},
-        {"key": "anhedonia",               "label": "Anhedonia"}
-      ]
-    },
-    {
-      "label": "Complex",
-      "fields": [
-        {"key": "physical_health", "label": "Recent Change to Physical Health", "type": "textarea"},
-        {"key": "med_change",      "label": "Med Change",                       "type": "textarea"},
-        {"key": "work",            "label": "Challenges at Work",               "type": "textarea"},
-        {"key": "pmh",             "label": "Past Medical History",             "type": "textarea"}
+        {"key": "symptom_update",     "label": "General Symptom Update",  "type": "textarea"},
+        {"key": "socially_isolating", "label": "Socially Isolating"},
+        {"key": "productive",         "label": "Productive"},
+        {"key": "sleep",              "label": "Sleeping More or Less"},
+        {"key": "anhedonia",          "label": "Anhedonia"},
+        {"key": "collateral",         "label": "Friend / Family Comments", "type": "textarea"}
       ]
     },
     {
@@ -44,8 +36,17 @@
         {"key": "session_num",  "label": "Number of Treatments"},
         {"key": "protocol",     "label": "Protocol Used"},
         {"key": "frequency",    "label": "Frequency of Treatment"},
-        {"key": "mt_increased", "label": "Increased to Prescribed MT (yes/no)"},
-        {"key": "freq_change",  "label": "Should Frequency Be Changed"}
+        {"key": "mt_increased", "label": "Prescribed MT Reached", "type": "yesno"},
+        {"key": "freq_change",  "label": "Change Frequency",      "type": "yesno"}
+      ]
+    },
+    {
+      "label": "Additional Notes",
+      "fields": [
+        {"key": "physical_health", "label": "Recent Change to Physical Health", "type": "textarea"},
+        {"key": "med_change",      "label": "Med Change",                       "type": "textarea"},
+        {"key": "work",            "label": "Challenges at Work",               "type": "textarea"},
+        {"key": "pmh",             "label": "Past Medical History",             "type": "textarea"}
       ]
     }
   ]
