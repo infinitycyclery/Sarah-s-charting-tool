@@ -1079,6 +1079,18 @@ function esc(str) {
 let vacPage = 1;
 let vacQuery = '';
 // ── Update ────────────────────────────────────────────────────────────────
+function toggleAdminMenu(e) {
+  if (e) e.stopPropagation();
+  const dd = document.getElementById('admin-dropdown');
+  dd.style.display = dd.style.display === 'none' ? 'flex' : 'none';
+}
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('admin-menu');
+  if (menu && !menu.contains(e.target)) {
+    document.getElementById('admin-dropdown').style.display = 'none';
+  }
+});
+
 async function runUpdate() {
   const btn = document.getElementById('btn-update');
   btn.textContent = '⟳ Updating…';
