@@ -654,8 +654,25 @@ def _call_ollama(prompt):
 
 @app.route('/api/ollama-status')
 def ollama_status():
-    available = _is_ollama_available() if USE_OLLAMA else False
-    return jsonify({'enabled': USE_OLLAMA, 'available': available, 'model': OLLAMA_MODEL})
+    if not USE_OLLAMA:
+        return jsonify({'enabled': False, 'available': False, 'model': OLLAMA_MODEL})
+    try:
+        urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2)
+    except Exception:
+        return jsonify({'enabled': True, 'available': False, 'model': OLLAMA_MODEL})
+
+    # Ollama is up — find the actually-loaded model via /api/ps
+    model = OLLAMA_MODEL
+    try:
+        with urllib.request.urlopen(f'{OLLAMA_URL}/api/ps', timeout=2) as resp:
+            ps = json.loads(resp.read())
+        running = ps.get('models', [])
+        if running:
+            model = running[0]['name']
+    except Exception:
+        pass
+
+    return jsonify({'enabled': True, 'available': True, 'model': model})
 
 
 @app.route('/api/generate-chart', methods=['POST'])

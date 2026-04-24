@@ -598,6 +598,7 @@ function scheduleAutoSave() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
   checkOllamaStatus();
+  setInterval(checkOllamaStatus, 30_000);
 });
 
 async function checkOllamaStatus() {
@@ -608,18 +609,15 @@ async function checkOllamaStatus() {
       badge.className = 'ai-status ai-on';
       badge.textContent = `🤖 AI · ${data.model}`;
       badge.title = 'Ollama is running — charts will be AI-generated';
-    } else if (data.enabled && !data.available) {
-      badge.className = 'ai-status ai-off';
-      badge.textContent = '📝 Rules (Ollama offline)';
-      badge.title = 'Ollama is not running — using rule-based generator';
     } else {
       badge.className = 'ai-status ai-off';
-      badge.textContent = '📝 Rules';
-      badge.title = 'AI generation is disabled';
+      badge.textContent = '⚠ AI Offline';
+      badge.title = 'Ollama is not running — start Ollama to generate charts';
     }
   } catch {
     badge.className = 'ai-status ai-off';
-    badge.textContent = '📝 Rules';
+    badge.textContent = '⚠ AI Offline';
+    badge.title = 'Could not reach Ollama';
   }
 }
 
