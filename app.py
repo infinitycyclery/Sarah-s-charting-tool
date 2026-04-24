@@ -9,7 +9,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '1.2'
+VERSION = '1.3'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent
