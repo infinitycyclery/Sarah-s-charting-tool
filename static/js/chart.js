@@ -167,6 +167,7 @@ function _renderYesNoField(field) {
       const open = detailArea.style.display === 'none';
       detailArea.style.display = open ? 'block' : 'none';
       expandBtn.classList.toggle('active-expand', open);
+      expandBtn.textContent = open ? '−' : '+';
       if (open) detailArea.focus();
       _syncYesNoValue(toggle, hidden, detailArea);
     };
@@ -240,6 +241,7 @@ function _restoreYesNo(hiddenInput, val) {
       if (expandBtn) {
         expandBtn.classList.add('active-expand');
         expandBtn.classList.add('has-detail');
+        expandBtn.textContent = '−';
       }
     }
   }
@@ -570,6 +572,7 @@ function _setPatientName(name) {
 function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no', 'active-expand', 'has-detail'));
+  document.querySelectorAll('.yesno-expand-btn').forEach(b => { b.textContent = '+'; });
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-detail').forEach(el => { el.value = ''; el.style.display = 'none'; });
   _setPatientName('');
