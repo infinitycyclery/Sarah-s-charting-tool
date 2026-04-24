@@ -660,6 +660,7 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .yesno-btn.active-no  { background: #fee2e2; color: #b91c1c; }
 .yesno-expand-btn { flex: 0 0 34px; font-size: 1rem; color: #94a3b8; }
 .yesno-expand-btn.active-expand { background: #eff6ff; color: #2563eb; }
+.yesno-expand-btn.has-detail { background: rgba(249,115,22,.18); color: #ea580c; box-shadow: 0 0 0 2px rgba(249,115,22,.35); }
 .yesno-detail {
   display: none;
   margin-top: 5px;
