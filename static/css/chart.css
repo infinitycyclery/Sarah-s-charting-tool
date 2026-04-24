@@ -122,6 +122,9 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   cursor: pointer;
   white-space: nowrap;
 }
+.btn-top.btn-update { background: rgba(168,85,247,0.25); border-color: rgba(168,85,247,0.5); }
+.btn-top.btn-update:hover { background: rgba(168,85,247,0.4); }
+.btn-top.btn-update:disabled { opacity: 0.6; cursor: default; }
 .btn-top.btn-export { background: rgba(34,197,94,0.25); border-color: rgba(34,197,94,0.5); }
 .btn-top.btn-export:hover { background: rgba(34,197,94,0.4); }
 .btn-top.btn-import { background: rgba(59,130,246,0.25); border-color: rgba(59,130,246,0.5); display: inline-flex; align-items: center; }

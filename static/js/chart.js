@@ -1004,6 +1004,34 @@ function esc(str) {
 // ── View All Charts ───────────────────────────────────────────────────────
 let vacPage = 1;
 let vacQuery = '';
+// ── Update ────────────────────────────────────────────────────────────────
+async function runUpdate() {
+  const btn = document.getElementById('btn-update');
+  btn.textContent = '⟳ Updating…';
+  btn.disabled = true;
+
+  try {
+    const resp = await fetch('/api/update', { method: 'POST' });
+    const data = await resp.json();
+
+    if (!data.ok) {
+      alert('Update failed:\n\n' + data.output);
+    } else if (data.current) {
+      btn.textContent = '✓ Up to date';
+      setTimeout(() => { btn.textContent = '⟳ Update'; btn.disabled = false; }, 2500);
+      return;
+    } else {
+      alert('Updated successfully! The tool will reload now.\n\n' + data.output);
+      location.reload();
+    }
+  } catch {
+    alert('Update failed — make sure the server is running and connected to the internet.');
+  }
+
+  btn.textContent = '⟳ Update';
+  btn.disabled = false;
+}
+
 // ── Export / Import ───────────────────────────────────────────────────────
 function exportData() {
   window.location.href = '/api/export';

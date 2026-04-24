@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, jsonify
 import json
 import re
 import sqlite3
+import subprocess
 import urllib.request
 import urllib.error
 from pathlib import Path
@@ -1070,6 +1071,27 @@ def import_data():
         'patients_added': imported_pts,
         'charts_added':   imported_cht,
     })
+
+
+@app.route('/api/update', methods=['POST'])
+def update_app():
+    try:
+        result = subprocess.run(
+            ['git', 'pull'],
+            cwd=Path(__file__).parent,
+            capture_output=True, text=True, timeout=30
+        )
+        output = (result.stdout + result.stderr).strip()
+        already_current = 'Already up to date' in output or 'Already up-to-date' in output
+        return jsonify({
+            'ok':      result.returncode == 0,
+            'output':  output,
+            'current': already_current,
+        })
+    except subprocess.TimeoutExpired:
+        return jsonify({'ok': False, 'output': 'Timed out — check your internet connection.'})
+    except Exception as e:
+        return jsonify({'ok': False, 'output': str(e)})
 
 
 if __name__ == '__main__':
