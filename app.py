@@ -12,11 +12,14 @@ app = Flask(__name__)
 VERSION = '1.2'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
-OLLAMA_URL   = 'http://localhost:11434'
-OLLAMA_MODEL = 'llama3.1:8b'
-USE_OLLAMA   = True
-
 BASE_DIR = Path(__file__).parent
+
+_LOCAL_CFG_PATH = BASE_DIR / 'data' / 'local_config.json'
+_local_cfg = json.loads(_LOCAL_CFG_PATH.read_text()) if _LOCAL_CFG_PATH.exists() else {}
+
+OLLAMA_URL   = _local_cfg.get('ollama_url',   'http://localhost:11434')
+OLLAMA_MODEL = _local_cfg.get('ollama_model', 'llama3.1:8b')
+USE_OLLAMA   = _local_cfg.get('use_ollama',   True)
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
 ABBREVIATIONS_FILE = BASE_DIR / 'data' / 'abbreviations.json'
 DB_PATH = BASE_DIR / 'data' / 'charting.db'
