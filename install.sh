@@ -13,8 +13,22 @@ echo ""
 echo "  Sarah's Charting Tool — Setup"
 echo "  ─────────────────────────────"
 
+# Fix permissions and quarantine
 chmod +x "Open Charting Tool.command" run.sh
 xattr -dr com.apple.quarantine . 2>/dev/null
+
+# Connect to GitHub so the Update button works
+if [ ! -d ".git" ]; then
+    echo "  Connecting to GitHub for future updates..."
+    git init -q
+    git remote add origin https://github.com/infinitycyclery/Sarah-s-charting-tool.git
+    git fetch -q origin
+    git checkout -q -b main --track origin/main 2>/dev/null || \
+        git reset -q --hard origin/main
+    echo "  Connected."
+else
+    echo "  Already connected to GitHub."
+fi
 
 echo "  Done! You can now double-click 'Open Charting Tool.command' to start."
 echo ""
