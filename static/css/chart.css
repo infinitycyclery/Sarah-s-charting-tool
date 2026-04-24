@@ -1024,6 +1024,25 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   border-radius: 8px;
   white-space: nowrap;
 }
+.chart-order-num {
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 8px;
+  background: rgba(99,102,241,.12);
+  color: #4338ca;
+  border: 1px solid rgba(99,102,241,.25);
+  white-space: nowrap;
+  letter-spacing: 0.02em;
+}
+.vac-order-num {
+  display: block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #6366f1;
+  margin-top: 4px;
+  letter-spacing: 0.03em;
+}
 .chart-source-badge.source-ai    { background: rgba(34,197,94,.15); color: #16a34a; border: 1px solid rgba(34,197,94,.3); }
 .chart-source-badge.source-rules { background: rgba(251,191,36,.15); color: #b45309; border: 1px solid rgba(251,191,36,.3); }
 

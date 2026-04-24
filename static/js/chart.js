@@ -455,11 +455,23 @@ function showChart(text, patientName, source) {
   document.getElementById('print-header').style.display = 'flex';
 
   setChartSourceBadge(source);
+  setChartOrderNum(null);
 
   // show chat footer + initialise draft history
   const footer = document.getElementById('chart-chat-footer');
   if (footer) footer.style.display = 'flex';
   _initDrafts(text);
+}
+
+function setChartOrderNum(orderNum) {
+  const el = document.getElementById('chart-order-num');
+  if (!el) return;
+  if (orderNum !== null && orderNum !== undefined) {
+    el.textContent = `Chart Order #${orderNum}`;
+    el.style.display = 'inline-block';
+  } else {
+    el.style.display = 'none';
+  }
 }
 
 function setChartSourceBadge(source) {
@@ -707,6 +719,7 @@ async function persistChart(patientName, chartText, fieldsOverride) {
     const data = await resp.json();
     if (data.chart_id) {
       currentChartId = data.chart_id;
+      if (data.order_num !== undefined) setChartOrderNum(data.order_num);
       showSaveStatus();
     }
   } catch (e) {
@@ -1072,6 +1085,7 @@ async function loadChartRecord(chartId, patientName) {
     });
 
     showChart(data.chart_text, data.patient_name || patientName);
+    if (data.order_num !== undefined && data.order_num !== null) setChartOrderNum(data.order_num);
     currentChartId = chartId;
   } catch (e) {
     alert('Error loading chart: ' + e.message);
@@ -1332,6 +1346,7 @@ function renderVacCharts(data) {
       <div class="vac-card-inner">
         <div class="vac-card-left">
           <span class="vac-tpl-badge">${esc(c.template_id)}</span>
+          <span class="vac-order-num">#${c.order_num ?? c.id}</span>
         </div>
         <div class="vac-card-mid">
           <div class="vac-card-name">${esc(c.patient_name)}</div>

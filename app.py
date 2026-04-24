@@ -60,6 +60,18 @@ def init_db():
             conn.commit()
         except Exception:
             pass
+        # Migration: add order_num column and back-fill existing charts
+        try:
+            conn.execute("ALTER TABLE charts ADD COLUMN order_num INTEGER")
+            conn.commit()
+            conn.execute("""
+                UPDATE charts SET order_num = (
+                    SELECT COUNT(*) FROM charts c2 WHERE c2.id < charts.id
+                )
+            """)
+            conn.commit()
+        except Exception:
+            pass
 
 
 init_db()
@@ -749,15 +761,17 @@ def save_chart():
                 "UPDATE charts SET chart_text=?, fields=?, updated_at=datetime('now','localtime') WHERE id=?",
                 (chart_text, json.dumps(fields), chart_id)
             )
+            order_num = conn.execute('SELECT order_num FROM charts WHERE id=?', (chart_id,)).fetchone()[0]
         else:
+            order_num = conn.execute('SELECT COALESCE(MAX(order_num) + 1, 0) FROM charts').fetchone()[0]
             cur = conn.execute(
-                'INSERT INTO charts (patient_id, template_id, template_name, fields, chart_text) VALUES (?,?,?,?,?)',
-                (patient_id, template_id, template_name, json.dumps(fields), chart_text)
+                'INSERT INTO charts (patient_id, template_id, template_name, fields, chart_text, order_num) VALUES (?,?,?,?,?,?)',
+                (patient_id, template_id, template_name, json.dumps(fields), chart_text, order_num)
             )
             chart_id = cur.lastrowid
 
         conn.commit()
-        return jsonify({'chart_id': chart_id, 'patient_id': patient_id})
+        return jsonify({'chart_id': chart_id, 'patient_id': patient_id, 'order_num': order_num})
     finally:
         conn.close()
 
@@ -930,7 +944,7 @@ def get_all_charts():
     conn = _db()
     try:
         base = '''
-            SELECT c.id, c.template_id, c.template_name, c.chart_text,
+            SELECT c.id, c.order_num, c.template_id, c.template_name, c.chart_text,
                    c.status, c.created_at, c.updated_at,
                    p.id AS patient_id, p.name AS patient_name
             FROM charts c
