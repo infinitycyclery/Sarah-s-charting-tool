@@ -1087,9 +1087,10 @@ def import_data():
 
 
 _REPO_ZIP = (
-    'https://github.com/infinitycyclery/sarah-s-charting-tool'
+    'https://github.com/infinitycyclery/Sarah-s-charting-tool'
     '/archive/refs/heads/claude/sarahs-charting-tool-XzAug.zip'
 )
+_HEADERS = {'User-Agent': 'SarahsChartingTool/' + VERSION}
 _PRESERVE = {'data', 'venv', '.git'}
 
 
@@ -1119,9 +1120,11 @@ def update_app():
             tmp_path = Path(tmp)
             zip_path = tmp_path / 'update.zip'
             try:
-                urllib.request.urlretrieve(_REPO_ZIP, str(zip_path))
-            except urllib.error.URLError:
-                return jsonify({'ok': False, 'output': 'Could not reach GitHub — check your internet connection.'})
+                req = urllib.request.Request(_REPO_ZIP, headers=_HEADERS)
+                with urllib.request.urlopen(req, timeout=30) as resp:
+                    zip_path.write_bytes(resp.read())
+            except urllib.error.URLError as e:
+                return jsonify({'ok': False, 'output': f'Could not reach GitHub — {getattr(e, "reason", e)}'})
 
             with zipfile.ZipFile(zip_path) as zf:
                 zf.extractall(tmp)
