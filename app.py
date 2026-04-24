@@ -1117,8 +1117,13 @@ def update_app():
                            cwd=app_dir, capture_output=True, timeout=15)
             return jsonify({'ok': True, 'output': 'Connected to GitHub and updated successfully.', 'current': False})
 
+        # Ensure tracking is set, then pull
+        subprocess.run(
+            ['git', 'branch', '--set-upstream-to=origin/main', 'main'],
+            cwd=app_dir, capture_output=True, timeout=5
+        )
         result = subprocess.run(
-            ['git', 'pull'],
+            ['git', 'pull', 'origin', 'main'],
             cwd=app_dir,
             capture_output=True, text=True, timeout=30
         )
