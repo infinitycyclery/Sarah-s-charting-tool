@@ -7,16 +7,14 @@
     {
       "label": "Yes / No",
       "fields": [
-        {"key": "stable",       "label": "Stable",       "type": "yesno"},
+        {"key": "stable",       "label": "Stable",       "type": "yesno", "expandable": true},
         {"key": "self_harm",    "label": "Self Harm",    "type": "yesno", "expandable": true},
-        {"key": "fatigue",      "label": "Fatigue",      "type": "yesno"},
-        {"key": "helping",      "label": "Helping",      "type": "yesno"},
-        {"key": "suicidal",     "label": "Suicidal",     "type": "yesno"},
-        {"key": "side_effects", "label": "Side Effects", "type": "yesno"},
+        {"key": "fatigue",      "label": "Fatigue",      "type": "yesno", "expandable": true},
+        {"key": "helping",      "label": "Helping",      "type": "yesno", "expandable": true},
+        {"key": "suicidal",     "label": "Suicidal",     "type": "yesno", "expandable": true},
+        {"key": "side_effects", "label": "Side Effects", "type": "yesno", "expandable": true},
         {"key": "age",          "label": "Age"},
-        {"key": "gender",       "label": "Gender"},
-        {"key": "side_effect_rec", "label": "Side Effect Details", "type": "textarea"},
-        {"key": "suicidal_detail", "label": "Suicidal Ideation Details", "type": "textarea"}
+        {"key": "gender",       "label": "Gender"}
       ]
     },
     {
@@ -36,8 +34,8 @@
         {"key": "session_num",  "label": "Number of Treatments"},
         {"key": "protocol",     "label": "Protocol Used"},
         {"key": "frequency",    "label": "Frequency of Treatment"},
-        {"key": "mt_increased", "label": "Prescribed MT Reached", "type": "yesno"},
-        {"key": "freq_change",  "label": "Change Frequency",      "type": "yesno"}
+        {"key": "mt_increased", "label": "Prescribed MT Reached", "type": "yesno", "expandable": true},
+        {"key": "freq_change",  "label": "Change Frequency",      "type": "yesno", "expandable": true}
       ]
     },
     {
