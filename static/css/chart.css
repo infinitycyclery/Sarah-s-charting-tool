@@ -1004,6 +1004,12 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   0%,80%,100% { transform: scale(0.6); opacity: .4; }
   40%          { transform: scale(1.2); opacity: 1; }
 }
+.ai-loading-countdown {
+  font-size: 0.78rem;
+  color: #94a3b8;
+  letter-spacing: .02em;
+  min-height: 1.2em;
+}
 
 .ai-status {
   font-size: 0.72rem;

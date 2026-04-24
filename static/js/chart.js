@@ -247,6 +247,35 @@ function _restoreYesNo(hiddenInput, val) {
   }
 }
 
+// ── Loading overlay helpers ─────────────────────────────────────────────────
+let _countdownTimer = null;
+function _showLoading() {
+  const el = document.getElementById('ai-loading');
+  if (!el) return;
+  el.style.display = 'flex';
+  const cd = document.getElementById('ai-countdown');
+  if (!cd) return;
+  let secs = 15;
+  cd.textContent = `Estimated time: ${secs}s`;
+  clearInterval(_countdownTimer);
+  _countdownTimer = setInterval(() => {
+    secs--;
+    if (secs > 0) {
+      cd.textContent = `Estimated time: ${secs}s`;
+    } else {
+      cd.textContent = 'Almost done…';
+      clearInterval(_countdownTimer);
+    }
+  }, 1000);
+}
+function _hideLoading() {
+  clearInterval(_countdownTimer);
+  const el = document.getElementById('ai-loading');
+  if (el) el.style.display = 'none';
+  const cd = document.getElementById('ai-countdown');
+  if (cd) cd.textContent = '';
+}
+
 // ── Generate Chart ─────────────────────────────────────────────────────────
 async function generateChart() {
   if (!currentTemplate) return;
@@ -306,8 +335,7 @@ async function _doGenerate() {
   btn.textContent = usingAI ? '🤖 AI Generating…' : 'Generating…';
   btn.disabled = true;
 
-  const loadingEl = document.getElementById('ai-loading');
-  if (usingAI && loadingEl) loadingEl.style.display = 'flex';
+  if (usingAI) _showLoading();
 
   try {
     const resp = await fetch('/api/generate-chart', {
@@ -333,7 +361,7 @@ async function _doGenerate() {
   } finally {
     btn.textContent = 'Generate Chart →';
     btn.disabled = false;
-    if (loadingEl) loadingEl.style.display = 'none';
+    _hideLoading();
   }
 }
 
@@ -390,12 +418,10 @@ async function sendRefinement() {
   if (!currentText) return;
 
   const sendBtn = document.getElementById('chat-send-btn');
-  const loadingEl = document.getElementById('ai-loading');
-
   input.disabled = true;
   sendBtn.disabled = true;
   sendBtn.textContent = '…';
-  if (loadingEl) loadingEl.style.display = 'flex';
+  _showLoading();
 
   try {
     const patientName = document.getElementById('patient-name').value.trim();
@@ -432,7 +458,7 @@ async function sendRefinement() {
     sendBtn.disabled = false;
     sendBtn.textContent = '↑ Refine';
     input.focus();
-    if (loadingEl) loadingEl.style.display = 'none';
+    _hideLoading();
   }
 }
 
