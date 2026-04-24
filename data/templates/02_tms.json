@@ -10,6 +10,7 @@
         {"key": "stable",    "label": "Stable"},
         {"key": "helping",   "label": "Helping"},
         {"key": "side_effects", "label": "Side Effects"},
+        {"key": "side_effect_rec", "label": "Side Effect Treatment Recommendation", "type": "textarea"},
         {"key": "suicidal",  "label": "Suicidal"},
         {"key": "self_harm", "label": "Self Harm"},
         {"key": "fatigue",   "label": "Fatigue"},
