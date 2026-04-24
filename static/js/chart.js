@@ -286,7 +286,10 @@ async function sendRefinement() {
       }),
     });
     const data = await resp.json();
-    if (data.error) { alert(data.error); return; }
+    if (data.error) {
+      showOllamaDialog('AI Refinement Unavailable', _ollamaNotRunningHTML('llama3.1:8b'));
+      return;
+    }
 
     _pushDraft(data.chart);
     document.getElementById('chart-output').textContent = data.chart;
@@ -591,16 +594,23 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function checkOllamaStatus() {
   const badge = document.getElementById('ai-status');
+  badge.onclick = null;
   try {
     const data = await (await fetch('/api/ollama-status')).json();
     if (data.enabled && data.available) {
       badge.className = 'ai-status ai-on';
       badge.textContent = `🤖 AI · ${data.model}`;
       badge.title = 'Ollama is running — charts will be AI-generated';
-    } else if (data.enabled && !data.available) {
+    } else if (data.enabled && data.ollama_running && !data.model_ready) {
+      badge.className = 'ai-status ai-warn';
+      badge.textContent = '⚠️ Model not downloaded';
+      badge.title = 'Ollama is running but the model isn\'t pulled yet — click for help';
+      badge.onclick = () => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model));
+    } else if (data.enabled && !data.ollama_running) {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules (Ollama offline)';
-      badge.title = 'Ollama is not running — using rule-based generator';
+      badge.title = 'Ollama is not running — click for setup help';
+      badge.onclick = () => showOllamaDialog('Ollama Not Running', _ollamaNotRunningHTML(data.model));
     } else {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules';
@@ -610,6 +620,41 @@ async function checkOllamaStatus() {
     badge.className = 'ai-status ai-off';
     badge.textContent = '📝 Rules';
   }
+}
+
+function _ollamaNotRunningHTML(model) {
+  return `<p>Ollama is not running on this computer. Charts are being generated using the built-in rule-based generator instead.</p>
+<p><strong>To enable AI chart generation:</strong></p>
+<ol>
+  <li>Download and install Ollama from <strong>ollama.com</strong></li>
+  <li>Once installed, Ollama runs automatically in the menu bar</li>
+  <li>Open Terminal and run: <code>ollama pull ${model}</code><br>
+      <em style="color:#6b7280">(this is a ~5 GB download, only needed once)</em></li>
+  <li>Reload this page — the badge will turn green when ready</li>
+</ol>`;
+}
+
+function _ollamaModelNotPulledHTML(model) {
+  return `<p>Ollama is running but the <code>${model}</code> model hasn't been downloaded yet.</p>
+<p><strong>To download the model:</strong></p>
+<ol>
+  <li>Open Terminal (Finder → Applications → Utilities → Terminal)</li>
+  <li>Run: <code>ollama pull ${model}</code><br>
+      <em style="color:#6b7280">(~5 GB download, only needed once)</em></li>
+  <li>Wait for the download to finish, then reload this page</li>
+</ol>`;
+}
+
+function showOllamaDialog(title, bodyHTML) {
+  document.getElementById('ol-dialog-title').textContent = title;
+  document.getElementById('ol-dialog-body').innerHTML = bodyHTML;
+  document.getElementById('ol-overlay').classList.add('open');
+  document.getElementById('ol-dialog').classList.add('open');
+}
+
+function closeOllamaDialog() {
+  document.getElementById('ol-overlay').classList.remove('open');
+  document.getElementById('ol-dialog').classList.remove('open');
 }
 
 // ── Patient List Panel ────────────────────────────────────────────────────

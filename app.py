@@ -588,12 +588,24 @@ def parse_abn_route():
 
 # ── Ollama helpers ───────────────────────────────────────────────────────────
 
-def _is_ollama_available():
+def _ollama_status_detail():
+    """Return (ollama_running, model_ready) booleans."""
     try:
-        urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2)
-        return True
+        with urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2) as resp:
+            data = json.loads(resp.read())
+        names = [m.get('name', '') for m in data.get('models', [])]
+        model_ready = any(
+            n == OLLAMA_MODEL or n.startswith(OLLAMA_MODEL.split(':')[0] + ':')
+            for n in names
+        )
+        return True, model_ready
     except Exception:
-        return False
+        return False, False
+
+
+def _is_ollama_available():
+    running, ready = _ollama_status_detail()
+    return running and ready
 
 
 def _build_ollama_prompt(fields, template, chart_rules=''):
@@ -651,8 +663,17 @@ def _call_ollama(prompt):
 
 @app.route('/api/ollama-status')
 def ollama_status():
-    available = _is_ollama_available() if USE_OLLAMA else False
-    return jsonify({'enabled': USE_OLLAMA, 'available': available, 'model': OLLAMA_MODEL})
+    if USE_OLLAMA:
+        running, model_ready = _ollama_status_detail()
+    else:
+        running = model_ready = False
+    return jsonify({
+        'enabled': USE_OLLAMA,
+        'available': running and model_ready,
+        'ollama_running': running,
+        'model_ready': model_ready,
+        'model': OLLAMA_MODEL,
+    })
 
 
 @app.route('/api/generate-chart', methods=['POST'])
