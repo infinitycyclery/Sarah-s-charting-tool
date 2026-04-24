@@ -624,13 +624,13 @@ def _build_ollama_prompt(fields, template, chart_rules=''):
                 lines.append(f'- {field["label"]}: {val}')
 
     data_section  = '\n'.join(lines) if lines else '(No additional data provided)'
-    rules_section = f'\nAdditional chart rules to follow:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
+    rules_section = f'\nYou MUST follow these rules exactly — they override everything else:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
 
     return f"""You are a licensed psychiatric nurse practitioner writing a clinical progress note after a patient visit.
 
 Write a detailed, professional clinical note in flowing prose paragraphs. Rules:
 - No bullet points, no section headers, no markdown formatting
-- Write in third person using the patient's full name throughout
+- Write in third person referring to the patient as "the patient" (never use the patient's name)
 - Use natural clinical language a clinician would use
 - Include every detail provided below — do not omit anything
 - Do not invent information that was not provided
