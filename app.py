@@ -1072,10 +1072,26 @@ def import_data():
 
 @app.route('/api/update', methods=['POST'])
 def update_app():
+    app_dir = Path(__file__).resolve().parent
     try:
+        # Verify this is a git repository before attempting pull
+        check = subprocess.run(
+            ['git', 'rev-parse', '--is-inside-work-tree'],
+            cwd=app_dir,
+            capture_output=True, text=True, timeout=5
+        )
+        if check.returncode != 0:
+            return jsonify({
+                'ok': False,
+                'output': (
+                    'This app was not installed via git, so automatic updates are unavailable. '
+                    'To enable updates, reinstall by cloning the repository with git.'
+                ),
+            })
+
         result = subprocess.run(
             ['git', 'pull'],
-            cwd=Path(__file__).parent,
+            cwd=app_dir,
             capture_output=True, text=True, timeout=30
         )
         output = (result.stdout + result.stderr).strip()
