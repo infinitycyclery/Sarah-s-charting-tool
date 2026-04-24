@@ -8,7 +8,7 @@
       "label": "Yes / No",
       "fields": [
         {"key": "stable",       "label": "Stable",       "type": "yesno"},
-        {"key": "self_harm",    "label": "Self Harm",    "type": "yesno"},
+        {"key": "self_harm",    "label": "Self Harm",    "type": "yesno", "expandable": true},
         {"key": "fatigue",      "label": "Fatigue",      "type": "yesno"},
         {"key": "helping",      "label": "Helping",      "type": "yesno"},
         {"key": "suicidal",     "label": "Suicidal",     "type": "yesno"},

@@ -129,7 +129,7 @@ function _renderYesNoField(field) {
   fieldEl.appendChild(lbl);
 
   const toggle = document.createElement('div');
-  toggle.className = 'yesno-toggle';
+  toggle.className = 'yesno-toggle' + (field.expandable ? ' yesno-expandable' : '');
 
   const hidden = document.createElement('input');
   hidden.type = 'hidden';
@@ -140,19 +140,55 @@ function _renderYesNoField(field) {
   yesBtn.type = 'button';
   yesBtn.className = 'yesno-btn';
   yesBtn.textContent = 'Yes';
-  yesBtn.onclick = () => _setYesNo(toggle, hidden, 'yes');
 
   const noBtn = document.createElement('button');
   noBtn.type = 'button';
   noBtn.className = 'yesno-btn';
   noBtn.textContent = 'No';
-  noBtn.onclick = () => _setYesNo(toggle, hidden, 'no');
 
   toggle.appendChild(yesBtn);
   toggle.appendChild(noBtn);
   toggle.appendChild(hidden);
-  fieldEl.appendChild(toggle);
+
+  let detailArea = null;
+  if (field.expandable) {
+    const expandBtn = document.createElement('button');
+    expandBtn.type = 'button';
+    expandBtn.className = 'yesno-btn yesno-expand-btn';
+    expandBtn.textContent = '+';
+
+    detailArea = document.createElement('textarea');
+    detailArea.className = 'yesno-detail';
+    detailArea.placeholder = 'Add detail…';
+    detailArea.style.display = 'none';
+    detailArea.dataset.detailFor = field.key;
+
+    expandBtn.onclick = () => {
+      const open = detailArea.style.display === 'none';
+      detailArea.style.display = open ? 'block' : 'none';
+      expandBtn.classList.toggle('active-expand', open);
+      if (open) detailArea.focus();
+      _syncYesNoValue(toggle, hidden, detailArea);
+    };
+    detailArea.oninput = () => _syncYesNoValue(toggle, hidden, detailArea);
+
+    toggle.appendChild(expandBtn);
+    fieldEl.appendChild(toggle);
+    fieldEl.appendChild(detailArea);
+  } else {
+    fieldEl.appendChild(toggle);
+  }
+
+  yesBtn.onclick = () => { _setYesNo(toggle, hidden, 'yes'); _syncYesNoValue(toggle, hidden, detailArea); };
+  noBtn.onclick  = () => { _setYesNo(toggle, hidden, 'no');  _syncYesNoValue(toggle, hidden, detailArea); };
+
   return fieldEl;
+}
+
+function _syncYesNoValue(toggle, hidden, detailArea) {
+  const base = hidden.value.replace(/ — .*$/, '');
+  const detail = detailArea ? detailArea.value.trim() : '';
+  hidden.value = detail ? (base ? `${base} — ${detail}` : detail) : base;
 }
 
 function _renderTextField(field) {
@@ -178,18 +214,29 @@ function _renderTextField(field) {
 }
 
 function _setYesNo(toggle, hidden, val) {
-  toggle.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  toggle.querySelectorAll('.yesno-btn:not(.yesno-expand-btn)').forEach(b => b.classList.remove('active-yes', 'active-no'));
   const btn = val === 'yes' ? toggle.querySelector('.yesno-btn:first-child')
-                            : toggle.querySelector('.yesno-btn:last-of-type');
-  btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
-  hidden.value = val;
+                            : toggle.querySelectorAll('.yesno-btn:not(.yesno-expand-btn)')[1];
+  if (btn) btn.classList.add(val === 'yes' ? 'active-yes' : 'active-no');
+  const detail = hidden.value.includes(' — ') ? hidden.value.replace(/^[^—]*— /, '') : '';
+  hidden.value = detail ? `${val} — ${detail}` : val;
 }
 
 function _restoreYesNo(hiddenInput, val) {
   const toggle = hiddenInput.closest('.yesno-toggle');
   if (!toggle) return;
-  const v = val.toLowerCase().trim();
+  const [base, detail] = val.split(' — ');
+  const v = base.toLowerCase().trim();
   if (v === 'yes' || v === 'no') _setYesNo(toggle, hiddenInput, v);
+  if (detail) {
+    const detailArea = hiddenInput.closest('.abn-field').querySelector('.yesno-detail');
+    if (detailArea) {
+      detailArea.value = detail;
+      detailArea.style.display = 'block';
+      const expandBtn = toggle.querySelector('.yesno-expand-btn');
+      if (expandBtn) expandBtn.classList.add('active-expand');
+    }
+  }
 }
 
 // ── Generate Chart ─────────────────────────────────────────────────────────
@@ -504,8 +551,9 @@ function _setPatientName(name) {
 
 function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
-  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no', 'active-expand'));
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
+  document.querySelectorAll('.yesno-detail').forEach(el => { el.value = ''; el.style.display = 'none'; });
   _setPatientName('');
   clearChart();
   currentChartId = null;
