@@ -1,0 +1,22 @@
+FIRST TIME SETUP — Sarah's Charting Tool
+=========================================
+
+If double-clicking "Open Charting Tool.command" shows a permissions
+error, follow these steps once:
+
+  1. Open Terminal
+       Press Cmd+Space, type "Terminal", press Enter
+
+  2. In Terminal, type the word "bash" followed by a space:
+       bash
+       (do not press Enter yet)
+
+  3. Drag the file "install.sh" from this folder
+       into the Terminal window
+
+  4. Press Enter
+
+  5. Done! Double-click "Open Charting Tool.command" to start.
+
+You only need to do this once per download.
+After that, double-clicking the .command file will always work.

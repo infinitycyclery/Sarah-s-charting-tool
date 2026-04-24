@@ -1,6 +1,11 @@
 #!/bin/bash
 # Sarah's Charting Tool — First-Time Setup
-# Run this once after unzipping: bash install.sh
+#
+# HOW TO RUN THIS FILE:
+#   1. Open Terminal (Cmd+Space → type "Terminal" → Enter)
+#   2. Type:  bash  (with a space after it, do not press Enter yet)
+#   3. Drag THIS FILE into the Terminal window
+#   4. Press Enter
 
 cd "$(dirname "$0")"
 
