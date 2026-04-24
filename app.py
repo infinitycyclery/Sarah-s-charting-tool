@@ -5,10 +5,17 @@ import shutil
 import sqlite3
 import subprocess
 import tempfile
+import ssl
 import urllib.request
 import urllib.error
 import zipfile
 from pathlib import Path
+
+# SSL context that skips verification — needed on macOS where Python
+# doesn't use system certs, and on networks with SSL inspection proxies.
+_SSL_CTX = ssl.create_default_context()
+_SSL_CTX.check_hostname = False
+_SSL_CTX.verify_mode = ssl.CERT_NONE
 
 app = Flask(__name__)
 
@@ -1119,12 +1126,26 @@ def update_app():
         with tempfile.TemporaryDirectory() as tmp:
             tmp_path = Path(tmp)
             zip_path = tmp_path / 'update.zip'
+
+            # Try curl first — built into macOS, handles SSL + redirects reliably
+            downloaded = False
             try:
-                req = urllib.request.Request(_REPO_ZIP, headers=_HEADERS)
-                with urllib.request.urlopen(req, timeout=30) as resp:
-                    zip_path.write_bytes(resp.read())
-            except urllib.error.URLError as e:
-                return jsonify({'ok': False, 'output': f'Could not reach GitHub — {getattr(e, "reason", e)}'})
+                result = subprocess.run(
+                    ['curl', '-fsSL', '--insecure', '--max-time', '30', '-o', str(zip_path), _REPO_ZIP],
+                    capture_output=True, timeout=35
+                )
+                if result.returncode == 0 and zip_path.exists() and zip_path.stat().st_size > 1000:
+                    downloaded = True
+            except (FileNotFoundError, subprocess.TimeoutExpired):
+                pass
+
+            if not downloaded:
+                try:
+                    req = urllib.request.Request(_REPO_ZIP, headers=_HEADERS)
+                    with urllib.request.urlopen(req, timeout=30, context=_SSL_CTX) as resp:
+                        zip_path.write_bytes(resp.read())
+                except urllib.error.URLError as e:
+                    return jsonify({'ok': False, 'output': f'Could not reach GitHub — {getattr(e, "reason", e)}'})
 
             with zipfile.ZipFile(zip_path) as zf:
                 zf.extractall(tmp)
