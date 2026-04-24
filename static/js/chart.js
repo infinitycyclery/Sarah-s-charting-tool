@@ -198,8 +198,12 @@ async function _doGenerate() {
     if (data.error) { alert(data.error); return; }
 
     currentChartId = null;
-    showChart(data.chart, patientName);
+    showChart(data.chart, patientName, data.source);
     persistChart(patientName, data.chart, { ...fields });
+
+    if (usingAI && data.source !== 'ai') {
+      showFallbackToast();
+    }
 
     // refresh badge in case Ollama state changed mid-session
     checkOllamaStatus();
@@ -320,7 +324,7 @@ function _getFields() {
   return fields;
 }
 
-function showChart(text, patientName) {
+function showChart(text, patientName, source) {
   document.getElementById('chart-placeholder').style.display = 'none';
   const output = document.getElementById('chart-output');
   output.style.display = 'block';
@@ -337,10 +341,35 @@ function showChart(text, patientName) {
   document.getElementById('print-date').textContent = today;
   document.getElementById('print-header').style.display = 'flex';
 
+  setChartSourceBadge(source);
+
   // show chat footer + initialise draft history
   const footer = document.getElementById('chart-chat-footer');
   if (footer) footer.style.display = 'flex';
   _initDrafts(text);
+}
+
+function setChartSourceBadge(source) {
+  const badge = document.getElementById('chart-source-badge');
+  if (!badge) return;
+  if (source === 'ai') {
+    badge.textContent = '🤖 AI Generated';
+    badge.className = 'chart-source-badge source-ai';
+    badge.style.display = 'inline-block';
+  } else if (source === 'rules') {
+    badge.textContent = '📝 Rule-based';
+    badge.className = 'chart-source-badge source-rules';
+    badge.style.display = 'inline-block';
+  } else {
+    badge.style.display = 'none';
+  }
+}
+
+function showFallbackToast() {
+  const toast = document.getElementById('fallback-toast');
+  if (!toast) return;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 8000);
 }
 
 function clearChart() {
