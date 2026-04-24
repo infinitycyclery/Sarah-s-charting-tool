@@ -659,7 +659,7 @@ def _call_ollama(prompt):
         headers={'Content-Type': 'application/json'},
         method='POST',
     )
-    with urllib.request.urlopen(req, timeout=120) as resp:
+    with urllib.request.urlopen(req, timeout=300) as resp:
         result = json.loads(resp.read())
     return result.get('response', '').strip()
 
