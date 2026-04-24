@@ -981,7 +981,7 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   align-items: center;
   gap: 14px;
 }
-.pug-svg { width: 280px; height: auto; }
+.pug-svg { width: 210px; height: 210px; }
 .ai-loading-text {
   font-size: 0.95rem;
   font-weight: 600;
