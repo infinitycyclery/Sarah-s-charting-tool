@@ -661,7 +661,12 @@ def _call_ollama(prompt):
     )
     with urllib.request.urlopen(req, timeout=300) as resp:
         result = json.loads(resp.read())
-    return result.get('response', '').strip()
+    text = result.get('response', '').strip()
+    # Collapse hard line breaks within paragraphs so text reflows to full width
+    import re
+    text = re.sub(r'(?<!\n)\n(?!\n)', ' ', text)
+    text = re.sub(r'\n{3,}', '\n\n', text)
+    return text
 
 
 @app.route('/api/ollama-status')
