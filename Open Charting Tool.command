@@ -3,6 +3,9 @@
 
 cd "$(dirname "$0")"
 
+# Clear macOS quarantine so this and any updated files can run freely
+xattr -dr com.apple.quarantine . 2>/dev/null
+
 # Pull latest updates from GitHub
 echo "Checking for updates..."
 git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
