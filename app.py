@@ -1,15 +1,18 @@
 from flask import Flask, render_template, request, jsonify
 import json
 import re
+import shutil
 import sqlite3
 import subprocess
+import tempfile
 import urllib.request
 import urllib.error
+import zipfile
 from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '1.2'
+VERSION = '1.3'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
 OLLAMA_URL   = 'http://localhost:11434'
@@ -1070,25 +1073,65 @@ def import_data():
     })
 
 
+_REPO_ZIP = (
+    'https://github.com/infinitycyclery/sarah-s-charting-tool'
+    '/archive/refs/heads/claude/sarahs-charting-tool-XzAug.zip'
+)
+_PRESERVE = {'data', 'venv', '.git'}
+
+
 @app.route('/api/update', methods=['POST'])
 def update_app():
+    app_dir = Path(__file__).parent
+
+    # Git repo present — use git pull
+    if (app_dir / '.git').exists():
+        try:
+            result = subprocess.run(
+                ['git', 'pull'],
+                cwd=str(app_dir),
+                capture_output=True, text=True, timeout=30
+            )
+            output = (result.stdout + result.stderr).strip()
+            already_current = 'Already up to date' in output or 'Already up-to-date' in output
+            return jsonify({'ok': result.returncode == 0, 'output': output, 'current': already_current})
+        except subprocess.TimeoutExpired:
+            return jsonify({'ok': False, 'output': 'Timed out — check your internet connection.'})
+        except Exception as e:
+            return jsonify({'ok': False, 'output': str(e)})
+
+    # No .git (downloaded as zip) — fetch latest zip from GitHub
     try:
-        result = subprocess.run(
-            ['git', 'pull'],
-            cwd=Path(__file__).parent,
-            capture_output=True, text=True, timeout=30
-        )
-        output = (result.stdout + result.stderr).strip()
-        already_current = 'Already up to date' in output or 'Already up-to-date' in output
-        return jsonify({
-            'ok':      result.returncode == 0,
-            'output':  output,
-            'current': already_current,
-        })
-    except subprocess.TimeoutExpired:
-        return jsonify({'ok': False, 'output': 'Timed out — check your internet connection.'})
+        with tempfile.TemporaryDirectory() as tmp:
+            tmp_path = Path(tmp)
+            zip_path = tmp_path / 'update.zip'
+            try:
+                urllib.request.urlretrieve(_REPO_ZIP, str(zip_path))
+            except urllib.error.URLError:
+                return jsonify({'ok': False, 'output': 'Could not reach GitHub — check your internet connection.'})
+
+            with zipfile.ZipFile(zip_path) as zf:
+                zf.extractall(tmp)
+
+            extracted_dirs = [d for d in tmp_path.iterdir() if d.is_dir()]
+            if not extracted_dirs:
+                return jsonify({'ok': False, 'output': 'Update package was empty.'})
+            extracted = extracted_dirs[0]
+
+            for item in extracted.iterdir():
+                if item.name in _PRESERVE:
+                    continue
+                dest = app_dir / item.name
+                if item.is_dir():
+                    if dest.exists():
+                        shutil.rmtree(dest)
+                    shutil.copytree(item, dest)
+                else:
+                    shutil.copy2(item, dest)
+
+        return jsonify({'ok': True, 'output': 'Updated to the latest version.', 'current': False})
     except Exception as e:
-        return jsonify({'ok': False, 'output': str(e)})
+        return jsonify({'ok': False, 'output': f'Update failed: {e}'})
 
 
 if __name__ == '__main__':

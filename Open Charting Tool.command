@@ -3,9 +3,29 @@
 
 cd "$(dirname "$0")"
 
+REPO_ZIP="https://github.com/infinitycyclery/sarah-s-charting-tool/archive/refs/heads/claude/sarahs-charting-tool-XzAug.zip"
+
 # Pull latest updates from GitHub
 echo "Checking for updates..."
-git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
+if git rev-parse --git-dir > /dev/null 2>&1; then
+    # Git repo present — use git pull
+    git pull --quiet && echo "Up to date." || echo "Could not reach GitHub — using local version."
+else
+    # No .git (downloaded as zip) — fetch latest zip from GitHub
+    TMPDIR_UPDATE=$(mktemp -d)
+    if curl -sL --connect-timeout 10 "$REPO_ZIP" -o "$TMPDIR_UPDATE/update.zip" 2>/dev/null; then
+        unzip -q "$TMPDIR_UPDATE/update.zip" -d "$TMPDIR_UPDATE/" 2>/dev/null
+        EXTRACTED=$(find "$TMPDIR_UPDATE" -mindepth 1 -maxdepth 1 -type d | head -1)
+        if [ -n "$EXTRACTED" ]; then
+            # Copy everything except data/ venv/ .git/
+            rsync -a --exclude=data/ --exclude=venv/ --exclude=.git/ "$EXTRACTED/" . 2>/dev/null
+            echo "Updated to latest version."
+        fi
+    else
+        echo "Could not reach GitHub — using local version."
+    fi
+    rm -rf "$TMPDIR_UPDATE"
+fi
 
 # First-time setup: create virtual environment and install Flask
 if [ ! -d "venv" ]; then
