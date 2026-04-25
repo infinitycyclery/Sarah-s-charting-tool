@@ -1070,6 +1070,10 @@ async function plShowCharts(patientId, patientName) {
       const filterBar = document.createElement('div');
       filterBar.className = 'pl-filter-bar';
       filterBar.id = 'pl-filter-bar';
+      const lbl = document.createElement('span');
+      lbl.className = 'pl-filter-label';
+      lbl.textContent = 'Filter:';
+      filterBar.appendChild(lbl);
       const allBtn = document.createElement('button');
       allBtn.className = 'pl-filter-btn active';
       allBtn.textContent = 'All';
