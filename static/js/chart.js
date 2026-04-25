@@ -1476,10 +1476,13 @@ function renderVacCharts(data) {
     card.className = `vac-card${isFinished ? ' finished' : ''}`;
     card.id = `vac-card-${c.id}`;
 
-    const d = new Date(c.created_at.replace(' ', 'T')).toLocaleString('en-US', {
+    const created = new Date(c.created_at.replace(' ', 'T'));
+    const d = created.toLocaleString('en-US', {
       month: 'short', day: 'numeric', year: 'numeric',
       hour: 'numeric', minute: '2-digit',
     });
+    const daysAgo = Math.floor((Date.now() - created.getTime()) / 86400000);
+    const daysLabel = daysAgo === 0 ? 'Today' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
 
     card.innerHTML = `
       <div class="vac-card-inner">
@@ -1493,10 +1496,7 @@ function renderVacCharts(data) {
           <div class="vac-card-preview">${esc(c.preview)}</div>
         </div>
         <div class="vac-card-right">
-          <button class="vac-status-btn ${isFinished ? 'finished' : 'active'}"
-                  onclick="event.stopPropagation();toggleVacStatus(${c.id}, '${c.status}')">
-            ${isFinished ? '✓ Finished' : '● Active'}
-          </button>
+          <span class="vac-days-ago">${daysLabel}</span>
         </div>
       </div>`;
     card.onclick = () => vacLoadChart(c.id, c.patient_name);

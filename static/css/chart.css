@@ -945,15 +945,15 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 }
 .vac-card-right { display: flex; flex-direction: column; gap: 6px; align-items: flex-end; flex-shrink: 0; padding-top: 2px; }
 
-.vac-status-btn {
-  font-size: 0.74rem; font-weight: 700; border-radius: 20px;
-  padding: 4px 13px; cursor: pointer; border: 2px solid;
-  transition: all .15s; white-space: nowrap; font-family: inherit;
+.vac-days-ago {
+  font-size: 0.74rem; font-weight: 700;
+  color: #6366f1;
+  background: rgba(99,102,241,.10);
+  border: 1px solid rgba(99,102,241,.25);
+  border-radius: 20px;
+  padding: 4px 12px;
+  white-space: nowrap;
 }
-.vac-status-btn.active   { color: #16a34a; border-color: #16a34a; background: #f0fdf4; }
-.vac-status-btn.active:hover   { background: #dcfce7; }
-.vac-status-btn.finished { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
-.vac-status-btn.finished:hover { background: #fee2e2; }
 
 
 /* ── Chart Output ── */
