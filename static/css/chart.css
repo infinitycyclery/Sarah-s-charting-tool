@@ -394,7 +394,9 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   flex-direction: column;
   overflow: hidden;
 }
-.left-panel  { width: 38%; border-right: 2px solid #d1d9e6; background: #fff; position: relative; }
+.left-panel  { width: 38%; border-right: 2px solid #d1d9e6; background: #fff; position: relative; transition: width .25s ease; }
+.left-panel.abn-expanded  { width: 72%; }
+.left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
 /* No-patient guard overlay */
 .no-patient-overlay {
@@ -453,6 +455,20 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .panel-header-actions { display: flex; gap: 8px; }
 
 /* ── Reset ABN Button ── */
+.btn-expand-abn {
+  background: none;
+  border: 1px solid #c7d2fe;
+  border-radius: 6px;
+  color: #6366f1;
+  padding: 3px 8px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all .15s;
+  line-height: 1;
+}
+.btn-expand-abn:hover { background: #eef2ff; border-color: #818cf8; }
+.btn-expand-abn.expanded { border-color: #6366f1; background: #eef2ff; }
+
 .btn-reset-abn {
   background: none;
   border: 1px solid #f97316;

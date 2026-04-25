@@ -539,7 +539,28 @@ function _getFields() {
   return fields;
 }
 
+function toggleAbnExpand() {
+  const panel = document.getElementById('left-panel');
+  const btn   = document.getElementById('btn-expand-abn');
+  const expanded = panel.classList.toggle('abn-expanded');
+  btn.classList.toggle('expanded', expanded);
+  btn.textContent = expanded ? '⤡' : '⤢';
+  btn.title = expanded ? 'Collapse notes panel' : 'Expand notes panel';
+}
+
+function _collapseAbn() {
+  const panel = document.getElementById('left-panel');
+  const btn   = document.getElementById('btn-expand-abn');
+  if (panel.classList.contains('abn-expanded')) {
+    panel.classList.remove('abn-expanded');
+    btn.classList.remove('expanded');
+    btn.textContent = '⤢';
+    btn.title = 'Expand notes panel';
+  }
+}
+
 function showChart(text, patientName, source) {
+  _collapseAbn();
   document.getElementById('chart-placeholder').style.display = 'none';
   const output = document.getElementById('chart-output');
   output.style.display = 'block';
