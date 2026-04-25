@@ -548,6 +548,15 @@ function toggleAbnExpand() {
   btn.title = expanded ? 'Collapse notes panel' : 'Expand notes panel';
 }
 
+function _expandAbn() {
+  const panel = document.getElementById('left-panel');
+  const btn   = document.getElementById('btn-expand-abn');
+  panel.classList.add('abn-expanded');
+  btn.classList.add('expanded');
+  btn.textContent = '⤡';
+  btn.title = 'Collapse notes panel';
+}
+
 function _collapseAbn() {
   const panel = document.getElementById('left-panel');
   const btn   = document.getElementById('btn-expand-abn');
@@ -716,6 +725,7 @@ async function ncSubmitNewPatient() {
   _resetChart();
   _setPatientName(fullName);
   closeNewChartDialog();
+  _expandAbn();
   if (ncSelectedTemplateId) await selectTemplate(ncSelectedTemplateId);
 }
 
@@ -756,6 +766,7 @@ function ncSelectExistingPatient(patientId, patientName) {
   _resetChart();
   _setPatientName(patientName);
   closeNewChartDialog();
+  _expandAbn();
   showChartsInDropdown(patientId, patientName);
   if (ncSelectedTemplateId) selectTemplate(ncSelectedTemplateId);
 }
