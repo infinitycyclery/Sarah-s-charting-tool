@@ -1800,6 +1800,44 @@ body.abn-expanded #chart-order-num { display: none !important; }
 /* Ol-body code blocks */
 [data-theme="dark"] .ol-body code { background: var(--c-surface-3); border-color: var(--c-border); color: #93c5fd; }
 
+/* ── Brand navy text (#1a3a5c) — swap to legible light colors ── */
+[data-theme="dark"] .nc-tpl-tile          { color: var(--c-text); border-color: var(--c-border); }
+[data-theme="dark"] .nc-tpl-tile:hover    { color: #93c5fd; border-color: #3b82f6; background: rgba(59,130,246,0.1); }
+[data-theme="dark"] .pd-chart-tpl         { color: #93c5fd; }
+[data-theme="dark"] .rules-panel-header   { color: var(--c-text); }
+[data-theme="dark"] .rules-tpl-tab        { color: var(--c-text-2); border-color: var(--c-border); }
+[data-theme="dark"] .pl-tpl-tile-id       { color: #93c5fd; }
+[data-theme="dark"] .pl-tpl-tile          { border-color: var(--c-border); }
+[data-theme="dark"] .pl-tpl-tile:hover    { background: rgba(59,130,246,0.1); border-color: #3b82f6; }
+[data-theme="dark"] .pl-chart-tpl         { color: #93c5fd; }
+[data-theme="dark"] .pl-back-btn:hover    { color: var(--c-text); }
+[data-theme="dark"] .draft-pill           { border-color: var(--c-border); }
+[data-theme="dark"] .draft-pill:hover     { border-color: #6366f1; color: #a5b4fc; }
+[data-theme="dark"] .draft-pill.active    { background: #3730a3; border-color: #6366f1; color: #e0e7ff; }
+[data-theme="dark"] .vac-pg-btn           { border-color: var(--c-border); }
+[data-theme="dark"] .vac-pg-btn:hover:not(:disabled) { border-color: #6366f1; color: #a5b4fc; }
+[data-theme="dark"] .pd-back:hover        { color: var(--c-text); }
+[data-theme="dark"] .pl-filter-btn        { border-color: var(--c-border); color: var(--c-text-2); }
+[data-theme="dark"] .pl-filter-btn:hover  { background: rgba(99,102,241,0.15); color: #a5b4fc; border-color: #6366f1; }
+[data-theme="dark"] .pl-filter-btn.active { background: #3730a3; border-color: #6366f1; color: #e0e7ff; }
+
+/* ── Indigo text (#4338ca) — lighten for dark bg ── */
+[data-theme="dark"] .topbar-patient      { color: #a5b4fc; border-color: rgba(99,102,241,0.35); background: rgba(99,102,241,0.15); }
+[data-theme="dark"] .chart-order-num    { color: #a5b4fc; border-color: rgba(99,102,241,0.3); background: rgba(99,102,241,0.12); }
+[data-theme="dark"] .vac-order-num      { color: #a5b4fc; }
+[data-theme="dark"] .pl-chart-order-badge { color: #a5b4fc; background: rgba(99,102,241,0.1); border-right-color: rgba(99,102,241,0.2); }
+[data-theme="dark"] .nc-btn-existing    { color: #93c5fd; }
+[data-theme="dark"] .no-patient-msg     { color: #a5b4fc; }
+
+/* ── #cbd5e1 borders — swap to dark theme border ── */
+[data-theme="dark"] .btn-action  { border-color: var(--c-border); }
+[data-theme="dark"] .btn-rules   { border-color: var(--c-border); color: var(--c-text-2); background: rgba(255,255,255,0.05); }
+[data-theme="dark"] .btn-rules:hover { background: rgba(255,255,255,0.1); }
+[data-theme="dark"] .btn-action:hover:not(:disabled) { border-color: #6366f1; color: #a5b4fc; }
+[data-theme="dark"] .chat-input  { border-color: var(--c-border); color: var(--c-text-input); }
+[data-theme="dark"] .chat-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.2); }
+[data-theme="dark"] .vac-days-ago { color: #a5b4fc; background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); }
+
 /* Dark mode toggle button */
 .btn-dark-toggle {
   background: rgba(255,255,255,0.12);
