@@ -888,7 +888,7 @@ async function checkOllamaStatus() {
     const data = await (await fetch('/api/ollama-status')).json();
     if (data.enabled && data.available) {
       badge.className = 'ai-status ai-on';
-      badge.textContent = `🤖 AI · ${data.model}`;
+      badge.innerHTML = '<img src="/static/img/llama-head.png" class="ai-status-llama"> AI Lama is running';
       badge.title = 'Ollama is running — charts will be AI-generated';
     } else if (data.enabled && data.ollama_running && !data.model_ready) {
       badge.className = 'ai-status ai-warn';
