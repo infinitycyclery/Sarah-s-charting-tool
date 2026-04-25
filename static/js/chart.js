@@ -544,7 +544,7 @@ function _setAbnExpand(expand) {
   const btn   = document.getElementById('btn-expand-abn');
   panel.classList.toggle('abn-expanded', expand);
   btn.classList.toggle('expanded', expand);
-  btn.innerHTML = expand ? '⤡ Collapse' : '⤢ Expand';
+  btn.textContent = expand ? '⤡ Collapse' : '⤢ Expand';
   btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
 }
 
