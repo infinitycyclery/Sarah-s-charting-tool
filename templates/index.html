@@ -34,6 +34,7 @@
     <button class="btn-new-chart" onclick="openNewChartDialog()">+ New Chart</button>
     <button class="btn-top btn-vac" onclick="openVac()">📋 View All Charts</button>
     <button class="btn-top" onclick="openPatientList()">👥 Patient List</button>
+    <button class="btn-dark-toggle" id="btn-dark-toggle" onclick="toggleDarkMode()">🌙 Dark</button>
     <div class="tpl-divider"></div>
     {% for tpl in templates %}
     <div class="btn-tpl" data-template-id="{{ tpl.id }}" title="{{ tpl.description }}">

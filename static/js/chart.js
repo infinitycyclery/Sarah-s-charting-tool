@@ -1026,13 +1026,25 @@ async function _doAbnSave() {
 
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
-  // Auto-save ABN notes on any field change (before chart is generated)
   document.getElementById('abn-form-body').addEventListener('input', _scheduleAbnSave);
   document.getElementById('abn-form-body').addEventListener('change', _scheduleAbnSave);
   checkOllamaStatus();
-  _setPatientName(''); // enforce no-patient state on load
+  _setPatientName('');
   _startIdleTimer();
+  _applyDarkMode(localStorage.getItem('theme') === 'dark');
 });
+
+// ── Dark Mode ─────────────────────────────────────────────────────────────
+function _applyDarkMode(dark) {
+  document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
+  const btn = document.getElementById('btn-dark-toggle');
+  if (btn) btn.textContent = dark ? '☀ Light' : '🌙 Dark';
+}
+function toggleDarkMode() {
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  localStorage.setItem('theme', isDark ? 'light' : 'dark');
+  _applyDarkMode(!isDark);
+}
 
 // ── Privacy Screen ────────────────────────────────────────────────────────
 const IDLE_TIMEOUT_MS = 10_000;
