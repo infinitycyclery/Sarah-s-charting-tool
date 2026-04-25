@@ -1075,7 +1075,7 @@ function toggleDarkMode() {
 }
 
 // ── Privacy Screen ────────────────────────────────────────────────────────
-const IDLE_TIMEOUT_MS = 10_000;
+const IDLE_TIMEOUT_MS = 60_000;
 let _idleTimer = null;
 
 function _startIdleTimer() {
