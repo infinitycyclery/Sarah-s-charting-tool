@@ -677,9 +677,25 @@ function clearChart() {
 let ncSelectedTemplateId = null;
 
 function openNewChartDialog() {
+  _patientFirstMode = false;
   ncSelectedTemplateId = null;
   document.querySelectorAll('.nc-tpl-tile').forEach(b => b.classList.remove('selected'));
   ncShowScreen('template');
+  document.getElementById('nc-overlay').classList.add('open');
+  document.getElementById('nc-dialog').classList.add('open');
+}
+
+// Opens dialog patient-first: select patient → then select chart type
+let _patientFirstMode = false;
+let _patientFirstPendingId = null;
+let _patientFirstPendingName = null;
+function openPatientFirstDialog() {
+  _patientFirstMode = true;
+  _patientFirstPendingId = null;
+  _patientFirstPendingName = null;
+  ncSelectedTemplateId = null;
+  document.querySelectorAll('.nc-tpl-tile').forEach(b => b.classList.remove('selected'));
+  ncShowScreen('existing');
   document.getElementById('nc-overlay').classList.add('open');
   document.getElementById('nc-dialog').classList.add('open');
 }
@@ -697,6 +713,17 @@ function ncPickTemplate(templateId) {
   const label = document.querySelector(`.nc-tpl-tile[data-tpl-id="${templateId}"] .nc-tpl-tile-name`);
   document.getElementById('nc-chosen-type-label').textContent =
     label ? `Chart type: ${label.textContent}` : '';
+  // Patient-first mode: patient already selected, start chart immediately
+  if (_patientFirstMode && _patientFirstPendingId) {
+    const id = _patientFirstPendingId, name = _patientFirstPendingName;
+    _patientFirstMode = false;
+    _resetChart();
+    _setPatientName(name);
+    closeNewChartDialog();
+    showChartsInDropdown(id, name);
+    selectTemplate(templateId);
+    return;
+  }
   ncShowScreen('choice');
 }
 
@@ -751,6 +778,12 @@ async function ncSubmitNewPatient() {
   const last  = document.getElementById('nc-last-name').value.trim();
   if (!first && !last) { document.getElementById('nc-first-name').focus(); return; }
   const fullName = [first, last].filter(Boolean).join(' ');
+  if (_patientFirstMode) {
+    _patientFirstPendingId = null;
+    _patientFirstPendingName = fullName;
+    ncShowScreen('template');
+    return;
+  }
   _resetChart();
   _setPatientName(fullName);
   closeNewChartDialog();
@@ -791,6 +824,12 @@ async function _ncDoSearch(q) {
 }
 
 function ncSelectExistingPatient(patientId, patientName) {
+  if (_patientFirstMode) {
+    _patientFirstPendingId = patientId;
+    _patientFirstPendingName = patientName;
+    ncShowScreen('template');
+    return;
+  }
   _resetChart();
   _setPatientName(patientName);
   closeNewChartDialog();
