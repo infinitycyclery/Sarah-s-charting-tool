@@ -532,18 +532,37 @@ function _setAbnExpand(expand) {
   btn.classList.toggle('expanded', expand);
   btn.textContent = expand ? '⤡ Collapse' : '⤢ Expand';
   btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
-  expand ? _abnSplitColumns() : _abnMergeColumns();
+  // columns stay in place; only panel width changes
 }
 
 function _abnSplitColumns() {
   const body = document.getElementById('abn-form-body');
-  if (body.querySelector('.abn-col')) return; // already split
+  if (body.querySelector('.abn-col')) return;
   const groups = [...body.querySelectorAll(':scope > .abn-group')];
   if (!groups.length) return;
+
+  // Flatten all items out of groups, weighted by visual height
+  const items = [];
+  groups.forEach(g => {
+    [...g.children].forEach(child => {
+      const weight = child.classList.contains('yesno-grid')
+        ? child.querySelectorAll('.yesno-field').length * 2
+        : child.querySelector('textarea') ? 2 : 1;
+      items.push({ el: child, weight });
+    });
+  });
+
+  const target = items.reduce((s, i) => s + i.weight, 0) / 2;
   const col1 = document.createElement('div'); col1.className = 'abn-col';
   const col2 = document.createElement('div'); col2.className = 'abn-col';
-  const half = Math.ceil(groups.length / 2);
-  groups.forEach((g, i) => { g.remove(); (i < half ? col1 : col2).appendChild(g); });
+  let w = 0;
+  items.forEach(item => {
+    const col = w < target ? col1 : col2;
+    col.appendChild(item.el);
+    if (col === col1) w += item.weight;
+  });
+
+  groups.forEach(g => g.remove());
   body.appendChild(col1);
   body.appendChild(col2);
 }
