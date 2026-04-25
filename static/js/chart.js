@@ -177,6 +177,7 @@ function _renderYesNoField(field) {
       _syncYesNoValue(toggle, hidden, detailArea);
       detailArea.style.height = 'auto';
       detailArea.style.height = detailArea.scrollHeight + 'px';
+      _updateYesNoAnswered();
     };
 
     fieldEl.appendChild(toggle);
@@ -187,7 +188,8 @@ function _renderYesNoField(field) {
 
   const _updateYesNoAnswered = () => {
     const base = hidden.value.replace(/ — .*$/, '').trim();
-    fieldEl.classList.toggle('answered', base === 'yes' || base === 'no');
+    const hasDetail = detailArea ? detailArea.value.trim().length > 0 : false;
+    fieldEl.classList.toggle('answered', base === 'yes' || base === 'no' || hasDetail);
   };
 
   yesBtn.onclick = () => {
