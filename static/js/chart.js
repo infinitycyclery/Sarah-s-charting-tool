@@ -754,7 +754,6 @@ async function ncSubmitNewPatient() {
   _resetChart();
   _setPatientName(fullName);
   closeNewChartDialog();
-  _expandAbn();
   if (ncSelectedTemplateId) await selectTemplate(ncSelectedTemplateId);
 }
 
@@ -795,7 +794,6 @@ function ncSelectExistingPatient(patientId, patientName) {
   _resetChart();
   _setPatientName(patientName);
   closeNewChartDialog();
-  _expandAbn();
   showChartsInDropdown(patientId, patientName);
   if (ncSelectedTemplateId) selectTemplate(ncSelectedTemplateId);
 }
