@@ -704,7 +704,7 @@ function closeNewChartDialog() {
   document.getElementById('nc-dialog').classList.remove('open');
 }
 
-function ncPickTemplate(templateId) {
+async function ncPickTemplate(templateId) {
   ncSelectedTemplateId = templateId;
   document.querySelectorAll('.nc-tpl-tile').forEach(b =>
     b.classList.toggle('selected', b.dataset.tplId === templateId)
@@ -716,7 +716,7 @@ function ncPickTemplate(templateId) {
   if (_patientFirstMode && _patientFirstPendingId) {
     const id = _patientFirstPendingId, name = _patientFirstPendingName;
     _patientFirstMode = false;
-    _resetChart();
+    await _resetChart();
     _setPatientName(name);
     closeNewChartDialog();
     showChartsInDropdown(id, name);
@@ -753,7 +753,12 @@ function _setPatientName(name) {
   );
 }
 
-function _resetChart() {
+async function _resetChart() {
+  // Flush any pending ABN save BEFORE wiping the form, so in-progress answers aren't lost
+  clearTimeout(_abnSaveTimer);
+  clearTimeout(autoSaveTimer);
+  await _doAbnSave();
+
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
@@ -767,11 +772,9 @@ function _resetChart() {
   _setPatientName('');
   clearChart();
   currentChartId = null;
-  clearTimeout(autoSaveTimer);
-  clearTimeout(_abnSaveTimer);
 }
 
-function newChart() { _resetChart(); }
+async function newChart() { await _resetChart(); }
 
 async function ncSubmitNewPatient() {
   const first = document.getElementById('nc-first-name').value.trim();
@@ -784,7 +787,7 @@ async function ncSubmitNewPatient() {
     ncShowScreen('template');
     return;
   }
-  _resetChart();
+  await _resetChart();
   _setPatientName(fullName);
   closeNewChartDialog();
   if (ncSelectedTemplateId) await selectTemplate(ncSelectedTemplateId);
@@ -823,14 +826,14 @@ async function _ncDoSearch(q) {
   }
 }
 
-function ncSelectExistingPatient(patientId, patientName) {
+async function ncSelectExistingPatient(patientId, patientName) {
   if (_patientFirstMode) {
     _patientFirstPendingId = patientId;
     _patientFirstPendingName = patientName;
     ncShowScreen('template');
     return;
   }
-  _resetChart();
+  await _resetChart();
   _setPatientName(patientName);
   closeNewChartDialog();
   showChartsInDropdown(patientId, patientName);
@@ -1442,8 +1445,8 @@ function plNewChartForPatient(patientId, patientName) {
     const btn = document.createElement('button');
     btn.className = 'pl-tpl-tile';
     btn.innerHTML = `<span class="pl-tpl-tile-id">${esc(tplId)}</span><span class="pl-tpl-tile-name">${esc(tplName)}</span>`;
-    btn.onclick = () => {
-      _resetChart();
+    btn.onclick = async () => {
+      await _resetChart();
       _setPatientName(patientName);
       closePatientList();
       selectTemplate(tplId);
