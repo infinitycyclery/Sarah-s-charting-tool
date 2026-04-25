@@ -834,6 +834,9 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   box-shadow: 0 0 0 3px rgba(59,130,246,.1);
 }
 textarea.abn-input { min-height: 58px; resize: vertical; }
+.textarea-field { flex-direction: row; align-items: flex-start; gap: 8px; }
+.textarea-field .abn-label { flex: 0 0 140px; padding-top: 8px; }
+.textarea-field .abn-input { flex: 1; min-width: 0; width: auto; }
 
 /* ── Yes/No Toggles ── */
 .yesno-grid {

@@ -227,6 +227,7 @@ function _renderTextField(field) {
   fieldEl.appendChild(lbl);
 
   const isTextarea = field.type === 'textarea';
+  if (isTextarea) fieldEl.classList.add('textarea-field');
   const input = document.createElement(isTextarea ? 'textarea' : 'input');
   input.className = 'abn-input';
   input.id = `abn_${field.key}`;
