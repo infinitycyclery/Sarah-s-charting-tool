@@ -1260,7 +1260,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
   align-items: center;
   gap: 14px;
 }
-.pug-svg { width: 210px; height: 210px; }
+.pug-gif { width: 210px; height: auto; border-radius: 12px; }
 .ai-loading-text {
   font-size: 0.95rem;
   font-weight: 600;
