@@ -876,14 +876,11 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   min-width: 44px;
 }
 .yesno-btn:not(:last-child) { border-right: 1px solid #e2e8f0; }
-.yesno-btn:hover:not(.active-yes):not(.active-no):not(.active-expand) { background: #f1f5f9; color: #475569; }
+.yesno-btn:hover:not(.active-yes):not(.active-no) { background: #f1f5f9; color: #475569; }
 .yesno-btn.active-yes { background: #dcfce7; color: #15803d; }
 .yesno-btn.active-no  { background: #fee2e2; color: #b91c1c; }
-.yesno-expand-btn { flex: 0 0 34px; font-size: 1rem; color: #94a3b8; }
-.yesno-expand-btn.active-expand { background: #eff6ff; color: #2563eb; }
-.yesno-expand-btn.has-detail { background: rgba(99,102,241,.18); color: #4338ca; box-shadow: 0 0 0 2px rgba(99,102,241,.4); }
 .yesno-detail {
-  display: none;
+  display: block;
   flex: 1;
   min-width: 0;
   border: 1px solid #bfdbfe;
@@ -892,7 +889,8 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   font-size: 0.82rem;
   font-family: inherit;
   background: #eff6ff;
-  resize: none;
+  resize: vertical;
+  min-height: 34px;
   height: 34px;
   color: #1e3a5f;
   transition: border-color .15s;

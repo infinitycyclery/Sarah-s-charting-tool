@@ -174,32 +174,15 @@ function _renderYesNoField(field) {
 
   let detailArea = null;
   if (field.expandable) {
-    const expandBtn = document.createElement('button');
-    expandBtn.type = 'button';
-    expandBtn.className = 'yesno-btn yesno-expand-btn';
-    expandBtn.textContent = '+';
-
     detailArea = document.createElement('textarea');
     detailArea.className = 'yesno-detail';
     detailArea.placeholder = 'Add detail…';
-    detailArea.style.display = 'none';
     detailArea.dataset.detailFor = field.key;
 
-    expandBtn.onclick = () => {
-      const open = detailArea.style.display === 'none';
-      detailArea.style.display = open ? 'block' : 'none';
-      expandBtn.classList.toggle('active-expand', open);
-      expandBtn.textContent = open ? '−' : '+';
-      if (open) detailArea.focus();
-      _syncYesNoValue(toggle, hidden, detailArea);
-    };
     detailArea.oninput = () => {
       _syncYesNoValue(toggle, hidden, detailArea);
-      expandBtn.classList.toggle('has-detail', detailArea.value.trim().length > 0);
     };
-    expandBtn.addEventListener('mousedown', e => e.preventDefault());
 
-    toggle.appendChild(expandBtn);
     fieldEl.appendChild(toggle);
     fieldEl.appendChild(detailArea);
   } else {
@@ -209,13 +192,7 @@ function _renderYesNoField(field) {
   yesBtn.onclick = () => {
     _setYesNo(toggle, hidden, 'yes');
     _syncYesNoValue(toggle, hidden, detailArea);
-    // Suicidal YES: auto-open detail and require a note
     if (field.key === 'suicidal' && detailArea) {
-      if (detailArea.style.display === 'none') {
-        detailArea.style.display = 'block';
-        const expandBtn = toggle.querySelector('.yesno-expand-btn');
-        if (expandBtn) { expandBtn.classList.add('active-expand'); expandBtn.textContent = '−'; }
-      }
       detailArea.placeholder = 'Required: describe suicidal ideation…';
       detailArea.classList.add('suicidal-required');
       detailArea.focus();
@@ -280,13 +257,6 @@ function _restoreYesNo(hiddenInput, val) {
     const detailArea = hiddenInput.closest('.abn-field').querySelector('.yesno-detail');
     if (detailArea) {
       detailArea.value = detail;
-      detailArea.style.display = 'block';
-      const expandBtn = toggle.querySelector('.yesno-expand-btn');
-      if (expandBtn) {
-        expandBtn.classList.add('active-expand');
-        expandBtn.classList.add('has-detail');
-        expandBtn.textContent = '−';
-      }
     }
   }
 }
