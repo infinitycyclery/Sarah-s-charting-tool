@@ -1228,19 +1228,14 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   padding: 12px 20px;
   border-bottom: 1px solid #f1f5f9;
   gap: 12px;
+  cursor: pointer;
+  transition: background .1s;
 }
+.pl-row:hover { background: #f0f7ff; }
 .pl-row-info { flex: 1; min-width: 0; }
 .pl-row-name { font-weight: 600; font-size: 0.92rem; color: #1a202c; }
 .pl-row-meta { font-size: 0.75rem; color: #94a3b8; margin-top: 2px; }
 .pl-row-actions { display: flex; gap: 8px; flex-shrink: 0; }
-
-.pl-btn-select {
-  background: #f0fdf4; color: #15803d;
-  border: 1px solid #bbf7d0; border-radius: 6px;
-  padding: 5px 12px; font-size: 0.78rem; font-weight: 600;
-  cursor: pointer; transition: background .1s;
-}
-.pl-btn-select:hover { background: #dcfce7; }
 
 .pl-btn-edit {
   background: #eff6ff; color: #1d4ed8;

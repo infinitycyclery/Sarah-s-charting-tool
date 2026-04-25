@@ -913,10 +913,10 @@ function _plMakeRow(p) {
       <div class="pl-row-meta">${p.chart_count} chart${p.chart_count !== 1 ? 's' : ''} · Last visit: ${lastVisit}</div>
     </div>
     <div class="pl-row-actions">
-      <button class="pl-btn-select" onclick="plShowCharts(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">⊕ Select</button>
-      <button class="pl-btn-edit" onclick="plStartEdit(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">✏ Edit</button>
-      <button class="pl-btn-delete" onclick="plStartDelete(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">🗑 Delete</button>
+      <button class="pl-btn-edit" onclick="event.stopPropagation();plStartEdit(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">✏ Edit</button>
+      <button class="pl-btn-delete" onclick="event.stopPropagation();plStartDelete(${p.id}, '${esc(p.name).replace(/'/g, "\\'")}')">🗑 Delete</button>
     </div>`;
+  row.onclick = () => plShowCharts(p.id, p.name);
   return row;
 }
 
@@ -957,10 +957,10 @@ function plCancelEdit(patientId, originalName) {
       <div class="pl-row-meta">${lastVisitEl ? lastVisitEl.textContent : ''}</div>
     </div>
     <div class="pl-row-actions">
-      <button class="pl-btn-select" onclick="plShowCharts(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">⊕ Select</button>
-      <button class="pl-btn-edit" onclick="plStartEdit(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">✏ Edit</button>
-      <button class="pl-btn-delete" onclick="plStartDelete(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">🗑 Delete</button>
+      <button class="pl-btn-edit" onclick="event.stopPropagation();plStartEdit(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">✏ Edit</button>
+      <button class="pl-btn-delete" onclick="event.stopPropagation();plStartDelete(${patientId}, '${esc(originalName).replace(/'/g, "\\'")}')">🗑 Delete</button>
     </div>`;
+  row.onclick = () => plShowCharts(patientId, originalName);
 }
 
 function plStartDelete(patientId, name) {
