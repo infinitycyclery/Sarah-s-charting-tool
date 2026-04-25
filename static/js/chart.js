@@ -608,8 +608,6 @@ function showChart(text, patientName, source) {
   document.getElementById('btn-delete').disabled = false;
   document.getElementById('btn-save').classList.add('save-active');
   document.getElementById('btn-copy').disabled = false;
-  document.getElementById('btn-print').disabled = false;
-
   const today = new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' });
   document.getElementById('print-patient-name').textContent = patientName || '';
   document.getElementById('print-template-name').textContent = currentTemplate ? currentTemplate.name : '';
@@ -666,7 +664,6 @@ function clearChart() {
   document.getElementById('btn-delete').disabled = true;
   document.getElementById('btn-save').className = 'save-indicator';
   document.getElementById('btn-copy').disabled = true;
-  document.getElementById('btn-print').disabled = true;
   document.getElementById('print-header').style.display = 'none';
   const footer = document.getElementById('chart-chat-footer');
   if (footer) footer.style.display = 'none';
