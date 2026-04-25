@@ -768,11 +768,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 
 /* ── ABN Form Groups ── */
 .abn-group {
-  margin-bottom: 10px;
-  background: #fff;
-  border: 1px solid #e8ecf2;
-  border-radius: 12px;
-  padding: 12px 14px;
+  margin-bottom: 16px;
 }
 .abn-group-label {
   font-size: 0.63rem;
@@ -780,9 +776,9 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   text-transform: uppercase;
   letter-spacing: 0.1em;
   color: #94a3b8;
-  padding-bottom: 8px;
+  padding-bottom: 6px;
   margin-bottom: 10px;
-  border-bottom: 1px solid #f1f5f9;
+  border-bottom: 1px solid #e8ecf2;
 }
 .abn-field { margin-bottom: 9px; display: flex; flex-direction: column; gap: 4px; }
 .abn-field:last-child { margin-bottom: 0; }
