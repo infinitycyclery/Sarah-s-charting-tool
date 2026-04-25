@@ -918,8 +918,13 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .btn-action:disabled { opacity: 0.35; cursor: not-allowed; }
 
 /* When notes panel is expanded, shrink action buttons to icon-only */
-.abn-expanded ~ #right-panel .btn-action { padding: 4px 7px; font-size: 0.85rem; }
-.abn-expanded ~ #right-panel .btn-action .btn-label { display: none; }
+body.abn-expanded .btn-action { padding: 4px 6px; font-size: 0.85rem; gap: 0; }
+body.abn-expanded .btn-action .btn-label { display: none; }
+body.abn-expanded #panel-header-actions { gap: 4px; }
+/* Hide patient name and chart badges in right panel header when expanded — saves space */
+body.abn-expanded #topbar-patient-name,
+body.abn-expanded #chart-source-badge,
+body.abn-expanded #chart-order-num { display: none !important; }
 
 .btn-delete { border-color: #f97316; color: #f97316; }
 .btn-delete:hover:not(:disabled) { background: #fff7ed; border-color: #ea580c; color: #ea580c; }

@@ -543,6 +543,7 @@ function _setAbnExpand(expand) {
   const panel = document.getElementById('left-panel');
   const btn   = document.getElementById('btn-expand-abn');
   panel.classList.toggle('abn-expanded', expand);
+  document.body.classList.toggle('abn-expanded', expand);
   btn.classList.toggle('expanded', expand);
   btn.textContent = expand ? '⤡ Collapse' : '⤢ Expand';
   btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
