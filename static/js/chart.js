@@ -175,6 +175,8 @@ function _renderYesNoField(field) {
 
     detailArea.oninput = () => {
       _syncYesNoValue(toggle, hidden, detailArea);
+      detailArea.style.height = 'auto';
+      detailArea.style.height = detailArea.scrollHeight + 'px';
     };
 
     fieldEl.appendChild(toggle);

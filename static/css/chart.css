@@ -846,9 +846,10 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   font-size: 0.82rem;
   font-family: inherit;
   background: #eff6ff;
-  resize: vertical;
+  resize: none;
   min-height: 34px;
   height: 34px;
+  overflow: hidden;
   color: #1e3a5f;
   transition: border-color .15s;
 }
