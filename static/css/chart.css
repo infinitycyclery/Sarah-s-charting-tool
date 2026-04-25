@@ -1774,6 +1774,20 @@ body.abn-expanded #chart-order-num { display: none !important; }
 [data-theme="dark"] .nc-btn-existing  { background: rgba(59,130,246,0.12); }
 [data-theme="dark"] .nc-btn-existing:hover { background: rgba(59,130,246,0.22); }
 
+/* Yes/No buttons and detail fields — lighter so they read clearly */
+[data-theme="dark"] .yesno-btn            { background: #3a3a3c; color: var(--c-text-2); }
+[data-theme="dark"] .yesno-btn:hover:not(.active-yes):not(.active-no) { background: #48484a; color: var(--c-text); }
+[data-theme="dark"] .yesno-toggle         { border-color: #48484a; }
+[data-theme="dark"] .yesno-btn:not(:last-child) { border-right-color: #48484a; }
+[data-theme="dark"] .yesno-detail         { background: #3a3a3c; border-color: #4a6080; color: var(--c-text-input); }
+[data-theme="dark"] .yesno-detail::placeholder { color: #636366; }
+[data-theme="dark"] .yesno-detail:focus   { background: #48484a; border-color: #6366f1; }
+
+/* ABN text inputs — same lighter treatment */
+[data-theme="dark"] .abn-input            { background: #3a3a3c; border-color: #48484a; color: var(--c-text-input); }
+[data-theme="dark"] .abn-input::placeholder { color: #636366; }
+[data-theme="dark"] .abn-input:focus      { background: #48484a; border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.15); }
+
 /* Yes/No active states */
 [data-theme="dark"] .yesno-btn.active-yes { background: rgba(22,163,74,0.22); color: #4ade80; }
 [data-theme="dark"] .yesno-btn.active-no  { background: rgba(185,28,28,0.22); color: #f87171; }
