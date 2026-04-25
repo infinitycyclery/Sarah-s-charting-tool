@@ -539,34 +539,18 @@ function _getFields() {
   return fields;
 }
 
-function toggleAbnExpand() {
+function _setAbnExpand(expand) {
   const panel = document.getElementById('left-panel');
   const btn   = document.getElementById('btn-expand-abn');
-  const expanded = panel.classList.toggle('abn-expanded');
-  btn.classList.toggle('expanded', expanded);
-  btn.textContent = expanded ? '⤡' : '⤢';
-  btn.title = expanded ? 'Collapse notes panel' : 'Expand notes panel';
+  panel.classList.toggle('abn-expanded', expand);
+  btn.classList.toggle('expanded', expand);
+  btn.innerHTML = expand ? '⤡ Collapse' : '⤢ Expand';
+  btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
 }
 
-function _expandAbn() {
-  const panel = document.getElementById('left-panel');
-  const btn   = document.getElementById('btn-expand-abn');
-  panel.classList.add('abn-expanded');
-  btn.classList.add('expanded');
-  btn.textContent = '⤡';
-  btn.title = 'Collapse notes panel';
-}
-
-function _collapseAbn() {
-  const panel = document.getElementById('left-panel');
-  const btn   = document.getElementById('btn-expand-abn');
-  if (panel.classList.contains('abn-expanded')) {
-    panel.classList.remove('abn-expanded');
-    btn.classList.remove('expanded');
-    btn.textContent = '⤢';
-    btn.title = 'Expand notes panel';
-  }
-}
+function toggleAbnExpand() { _setAbnExpand(!document.getElementById('left-panel').classList.contains('abn-expanded')); }
+function _expandAbn()      { _setAbnExpand(true);  }
+function _collapseAbn()    { _setAbnExpand(false); }
 
 function showChart(text, patientName, source) {
   _collapseAbn();
