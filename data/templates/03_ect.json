@@ -2,5 +2,52 @@
   "id": "ECT",
   "name": "Electroconvulsive Therapy",
   "description": "Electroconvulsive Therapy session",
-  "sections": []
+  "generator": "ect",
+  "abn_groups": [
+    {
+      "label": "Yes / No",
+      "fields": [
+        {"key": "stable",       "label": "Stable",                  "type": "yesno", "expandable": true},
+        {"key": "improvement",  "label": "Improvement?",            "type": "yesno", "expandable": true},
+        {"key": "side_effects", "label": "Physical Side Effects",   "type": "yesno", "expandable": true},
+        {"key": "cognitive_se", "label": "Cognitive Side Effects?", "type": "yesno", "expandable": true},
+        {"key": "suicidal",     "label": "Suicidal",                "type": "yesno", "expandable": true},
+        {"key": "self_harm",    "label": "Self Harm",               "type": "yesno", "expandable": true},
+        {"key": "fatigue",      "label": "Fatigue",                 "type": "yesno", "expandable": true},
+        {"key": "age",          "label": "Age"},
+        {"key": "gender",       "label": "Gender"}
+      ]
+    },
+    {
+      "label": "Symptom Update",
+      "fields": [
+        {"key": "side_effect_rec",    "label": "Side Effect Treatment Recommendation",       "type": "textarea"},
+        {"key": "socially_isolating", "label": "Socially Isolating"},
+        {"key": "productive",         "label": "Initiating / Completing Tasks",              "type": "yesno", "expandable": true},
+        {"key": "concentration",      "label": "Challenges w/ Prolonged Concentration",      "type": "yesno", "expandable": true},
+        {"key": "sleep",              "label": "Sleeping More or Less"},
+        {"key": "anhedonia",          "label": "Anhedonia"},
+        {"key": "collateral",         "label": "Friend / Family Comments",                   "type": "textarea"}
+      ]
+    },
+    {
+      "label": "Additional Notes",
+      "fields": [
+        {"key": "physical_health", "label": "Recent Change to Physical Health", "type": "textarea"},
+        {"key": "med_change",      "label": "Med Change",                       "type": "textarea"},
+        {"key": "work",            "label": "Challenges at Work",               "type": "textarea"},
+        {"key": "pmh",             "label": "Past Medical History",             "type": "textarea"}
+      ]
+    },
+    {
+      "label": "Treatment Data",
+      "fields": [
+        {"key": "session_num",  "label": "Number of Treatments"},
+        {"key": "phase",        "label": "Intensive / Continuation / Maintenance"},
+        {"key": "settings",     "label": "Settings Used"},
+        {"key": "frequency",    "label": "Frequency of Treatment"},
+        {"key": "freq_change",  "label": "Should Frequency Be Changed?", "type": "yesno", "expandable": true}
+      ]
+    }
+  ]
 }
