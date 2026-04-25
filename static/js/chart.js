@@ -864,11 +864,13 @@ async function checkOllamaStatus() {
       badge.textContent = '⚠️ Model not downloaded';
       badge.title = 'Ollama is running but the model isn\'t pulled yet — click for help';
       badge.onclick = () => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model));
+      setTimeout(() => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model)), 2000);
     } else if (data.enabled && !data.ollama_running) {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules (Ollama offline)';
       badge.title = 'Ollama is not running — click for setup help';
       badge.onclick = () => showOllamaDialog('Ollama Not Running', _ollamaNotRunningHTML(data.model));
+      setTimeout(() => showOllamaDialog('Ollama Not Running', _ollamaNotRunningHTML(data.model)), 2000);
     } else {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules';
