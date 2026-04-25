@@ -23,6 +23,21 @@ else
     source venv/bin/activate
 fi
 
+# Launch Ollama if it isn't already running
+if ! pgrep -x "Ollama" > /dev/null 2>&1; then
+    echo "Starting Ollama..."
+    open -a Ollama 2>/dev/null || echo "Ollama app not found — AI features may be unavailable."
+    for i in $(seq 1 15); do
+        if curl -s http://localhost:11434/api/tags > /dev/null 2>&1; then
+            echo "Ollama ready."
+            break
+        fi
+        sleep 1
+    done
+else
+    echo "Ollama already running."
+fi
+
 echo ""
 echo "  Sarah's Charting Tool"
 echo "  ─────────────────────────────────"
