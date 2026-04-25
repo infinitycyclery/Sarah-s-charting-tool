@@ -1494,15 +1494,12 @@ function renderVacCharts(data) {
         </div>
         <div class="vac-card-right">
           <button class="vac-status-btn ${isFinished ? 'finished' : 'active'}"
-                  onclick="toggleVacStatus(${c.id}, '${c.status}')">
+                  onclick="event.stopPropagation();toggleVacStatus(${c.id}, '${c.status}')">
             ${isFinished ? '✓ Finished' : '● Active'}
-          </button>
-          <button class="vac-load-btn"
-                  onclick="vacLoadChart(${c.id}, '${esc(c.patient_name)}')">
-            Open →
           </button>
         </div>
       </div>`;
+    card.onclick = () => vacLoadChart(c.id, c.patient_name);
     list.appendChild(card);
   });
 

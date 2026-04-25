@@ -918,9 +918,10 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .vac-card {
   background: #fff; border: 1px solid #e2e8f0;
   border-radius: 10px; position: relative; overflow: hidden;
-  transition: box-shadow .15s;
+  transition: box-shadow .15s, background .1s;
+  cursor: pointer;
 }
-.vac-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); }
+.vac-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); background: #f8fbff; }
 
 /* Finished: greyed out */
 .vac-card.finished { opacity: 0.5; filter: grayscale(60%); }
@@ -952,12 +953,6 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .vac-status-btn.finished { color: #dc2626; border-color: #dc2626; background: #fef2f2; }
 .vac-status-btn.finished:hover { background: #fee2e2; }
 
-.vac-load-btn {
-  font-size: 0.74rem; font-weight: 600; border-radius: 6px;
-  padding: 4px 12px; cursor: pointer; border: 1px solid #cbd5e1;
-  background: #fff; color: #475569; transition: all .15s; font-family: inherit;
-}
-.vac-load-btn:hover { border-color: #1a3a5c; color: #1a3a5c; }
 
 /* ── Chart Output ── */
 .chart-output {
