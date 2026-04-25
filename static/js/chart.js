@@ -105,6 +105,8 @@ function toggleChartRules() {
 function renderAbnForm(template) {
   const body = document.getElementById('abn-form-body');
   body.innerHTML = '';
+  const srch = document.getElementById('abn-search');
+  if (srch) { srch.value = ''; }
 
   if (!template.abn_groups) {
     body.innerHTML = '<div class="empty-hint">No notes template defined for this chart type yet.</div>';
@@ -842,6 +844,32 @@ function ncSelectExistingPatient(patientId, patientName) {
 function promptResetAbn() {
   document.getElementById('rabn-overlay').classList.add('open');
   document.getElementById('rabn-dialog').classList.add('open');
+}
+
+// ── ABN Field Search ──────────────────────────────────────────────────────
+function abnSearch(query) {
+  const q = query.trim().toLowerCase();
+  const body = document.getElementById('abn-form-body');
+
+  // Collect all top-level field blocks (works in both single and two-column layout)
+  const fields = [...body.querySelectorAll('.abn-field, .yesno-field, .yesno-grid')];
+
+  if (!q) {
+    fields.forEach(f => { f.classList.remove('abn-search-dim', 'abn-search-match'); });
+    return;
+  }
+
+  let firstMatch = null;
+  fields.forEach(f => {
+    const label = f.querySelector('.abn-label');
+    const text = label ? label.textContent.toLowerCase() : '';
+    const matches = text.includes(q);
+    f.classList.toggle('abn-search-match', matches);
+    f.classList.toggle('abn-search-dim', !matches);
+    if (matches && !firstMatch) firstMatch = f;
+  });
+
+  if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 function cancelResetAbn() {
