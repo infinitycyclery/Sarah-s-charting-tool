@@ -359,11 +359,11 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   cursor: default;
   pointer-events: none;
   text-align: center;
-  display: inline-flex;
+  display: none;
   align-items: center;
   justify-content: center;
 }
-.btn-tpl.active { background: #fff; border-color: #fff; color: #1a3a5c; }
+.btn-tpl.active { display: inline-flex; background: #fff; border-color: #fff; color: #1a3a5c; }
 .tpl-id { display: block; font-weight: 800; font-size: 0.95rem; }
 .tpl-name { display: none; }
 
