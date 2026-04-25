@@ -922,12 +922,7 @@ def delete_chart(chart_id):
         row = conn.execute('SELECT patient_id FROM charts WHERE id=?', (chart_id,)).fetchone()
         if not row:
             return jsonify({'error': 'Not found'}), 404
-        patient_id = row['patient_id']
         conn.execute('DELETE FROM charts WHERE id=?', (chart_id,))
-        # Remove patient record if they have no charts left
-        remaining = conn.execute('SELECT COUNT(*) FROM charts WHERE patient_id=?', (patient_id,)).fetchone()[0]
-        if remaining == 0:
-            conn.execute('DELETE FROM patients WHERE id=?', (patient_id,))
         conn.commit()
         return jsonify({'ok': True})
     finally:
