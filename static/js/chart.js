@@ -914,7 +914,7 @@ async function checkOllamaStatus() {
 }
 
 function _ollamaNotRunningHTML(model) {
-  return `<p>The Ai Lama is not currently running Sarah... go to the desktop and start up the Lama tool then come back :)</p>`;
+  return `<p>The Ai Lama is not currently running Sarah... go to the desktop and start up the Lama tool then come back and REFRESH THE PAGE :)</p>`;
 }
 
 function _ollamaModelNotPulledHTML(model) {
