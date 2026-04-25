@@ -838,8 +838,8 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .yesno-btn.active-no  { background: #fee2e2; color: #b91c1c; }
 .yesno-detail {
   display: block;
-  flex: 1;
-  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   border: 1px solid #bfdbfe;
   border-radius: 7px;
   padding: 5px 9px;
