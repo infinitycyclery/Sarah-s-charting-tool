@@ -115,11 +115,6 @@ function renderAbnForm(template) {
     const groupEl = document.createElement('div');
     groupEl.className = 'abn-group';
 
-    const labelEl = document.createElement('div');
-    labelEl.className = 'abn-group-label';
-    labelEl.textContent = group.label;
-    groupEl.appendChild(labelEl);
-
     let yesnoGrid = null;
     group.fields.forEach(field => {
       if (field.type === 'yesno') {
