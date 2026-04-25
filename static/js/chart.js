@@ -661,6 +661,12 @@ function _setPatientName(name) {
   document.getElementById('patient-name').value = name;
   const lbl = document.getElementById('topbar-patient-name');
   if (lbl) { lbl.textContent = name; lbl.style.display = name ? '' : 'none'; }
+  const hasPatient = !!name.trim();
+  const overlay = document.getElementById('no-patient-overlay');
+  if (overlay) overlay.classList.toggle('active', !hasPatient);
+  document.querySelectorAll('.btn-tpl').forEach(btn =>
+    btn.classList.toggle('patient-required', !hasPatient)
+  );
 }
 
 function _resetChart() {
@@ -879,6 +885,7 @@ function scheduleAutoSave() {
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
   checkOllamaStatus();
+  _setPatientName(''); // enforce no-patient state on load
 });
 
 async function checkOllamaStatus() {

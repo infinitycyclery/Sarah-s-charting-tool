@@ -381,7 +381,39 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   flex-direction: column;
   overflow: hidden;
 }
-.left-panel  { width: 38%; border-right: 2px solid #d1d9e6; background: #fff; }
+.left-panel  { width: 38%; border-right: 2px solid #d1d9e6; background: #fff; position: relative; }
+
+/* No-patient guard overlay */
+.no-patient-overlay {
+  display: none;
+  position: absolute;
+  inset: 0;
+  background: rgba(255,255,255,0.82);
+  backdrop-filter: blur(3px);
+  z-index: 20;
+  align-items: center;
+  justify-content: center;
+  pointer-events: all;
+}
+.no-patient-overlay.active { display: flex; }
+.no-patient-msg {
+  background: #fff;
+  border: 2px solid #c7d2fe;
+  border-radius: 12px;
+  padding: 22px 32px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #4338ca;
+  text-align: center;
+  box-shadow: 0 4px 24px rgba(99,102,241,.13);
+}
+
+/* Dim chart-type buttons when no patient is active */
+.btn-tpl.patient-required {
+  opacity: 0.38;
+  pointer-events: none;
+  cursor: not-allowed;
+}
 .right-panel { flex: 1; background: #fafbfc; }
 
 .panel-header {
