@@ -606,7 +606,7 @@ function showChart(text, patientName, source) {
   output.textContent = text;
 
   document.getElementById('btn-delete').disabled = false;
-  document.getElementById('btn-save').disabled = false;
+  document.getElementById('btn-save').classList.add('save-active');
   document.getElementById('btn-copy').disabled = false;
   document.getElementById('btn-print').disabled = false;
 
@@ -664,7 +664,7 @@ function clearChart() {
   document.getElementById('chart-output').style.display = 'none';
   document.getElementById('chart-output').textContent = '';
   document.getElementById('btn-delete').disabled = true;
-  document.getElementById('btn-save').disabled = true;
+  document.getElementById('btn-save').className = 'save-indicator';
   document.getElementById('btn-copy').disabled = true;
   document.getElementById('btn-print').disabled = true;
   document.getElementById('print-header').style.display = 'none';
@@ -1000,6 +1000,8 @@ async function persistChart(patientName, chartText, fieldsOverride) {
 }
 
 function showSaveStatus() {
+  const ind = document.getElementById('btn-save');
+  if (ind) { ind.className = 'save-indicator save-active save-saved'; ind.textContent = ''; }
   const el = document.getElementById('save-status');
   if (!el) return;
   const t = new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
@@ -1021,6 +1023,8 @@ function scheduleAutoSave() {
 let _abnSaveTimer = null;
 function _scheduleAbnSave() {
   clearTimeout(_abnSaveTimer);
+  const ind = document.getElementById('btn-save');
+  if (ind) { ind.className = 'save-indicator save-active save-pending'; ind.textContent = ''; }
   _abnSaveTimer = setTimeout(_doAbnSave, 2000);
 }
 

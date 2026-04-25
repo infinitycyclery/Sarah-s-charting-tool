@@ -944,6 +944,38 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 .btn-action:hover:not(:disabled) { border-color: #1a3a5c; color: #1a3a5c; }
 .btn-action:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-copy-lg { padding: 8px 28px; font-size: 0.88rem; font-weight: 700; }
+
+/* ── Save Indicator ── */
+.save-indicator {
+  display: none;
+  align-items: center;
+  gap: 5px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.save-indicator.save-active { display: inline-flex; }
+.save-indicator.save-pending {
+  color: var(--c-text-4);
+  border: 1px solid var(--c-border);
+}
+.save-indicator.save-pending::before {
+  content: '';
+  width: 10px; height: 10px;
+  border: 2px solid var(--c-border);
+  border-top-color: #6366f1;
+  border-radius: 50%;
+  animation: saveSpinner .7s linear infinite;
+}
+.save-indicator.save-saved {
+  color: #16a34a;
+  border: 1px solid rgba(22,163,74,.35);
+  background: rgba(22,163,74,.08);
+}
+.save-indicator.save-saved::before { content: '✓ Saved'; }
+@keyframes saveSpinner { to { transform: rotate(360deg); } }
 body.abn-expanded .btn-copy-lg { padding: 8px 14px; }
 
 /* When notes panel is expanded, shrink action buttons to icon-only */
