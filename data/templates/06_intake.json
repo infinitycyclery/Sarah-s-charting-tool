@@ -1,0 +1,14 @@
+{
+  "id": "INTAKE",
+  "name": "Intake",
+  "description": "New patient intake evaluation",
+  "generator": "intake",
+  "abn_groups": [
+    {
+      "label": "Intake Notes",
+      "fields": [
+        {"key": "placeholder", "label": "Notes (coming soon)", "type": "textarea"}
+      ]
+    }
+  ]
+}
