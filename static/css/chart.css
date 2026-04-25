@@ -1876,6 +1876,27 @@ body.abn-expanded #chart-order-num { display: none !important; }
 .abn-search-input::placeholder { color: var(--c-text-4); }
 .abn-search-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.12); }
 
+.abn-search-bar {
+  display: flex;
+  justify-content: center;
+  padding: 5px 12px;
+  background: var(--c-surface-3);
+  border-bottom: 1px solid var(--c-border);
+  flex-shrink: 0;
+}
+.abn-search-clear-btn {
+  background: none;
+  border: 1px solid #f97316;
+  border-radius: 14px;
+  color: #f97316;
+  font-size: 0.76rem;
+  font-weight: 700;
+  padding: 3px 14px;
+  cursor: pointer;
+  transition: background .12s;
+}
+.abn-search-clear-btn:hover { background: rgba(249,115,22,.1); }
+
 .abn-search-dim  { opacity: 0.22; pointer-events: none; }
 .abn-search-match .abn-label { text-decoration: underline; text-decoration-color: currentColor; text-underline-offset: 2px; }
 

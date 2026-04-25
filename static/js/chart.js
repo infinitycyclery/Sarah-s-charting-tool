@@ -107,6 +107,8 @@ function renderAbnForm(template) {
   body.innerHTML = '';
   const srch = document.getElementById('abn-search');
   if (srch) { srch.value = ''; }
+  const bar = document.getElementById('abn-search-bar');
+  if (bar) bar.style.display = 'none';
 
   if (!template.abn_groups) {
     body.innerHTML = '<div class="empty-hint">No notes template defined for this chart type yet.</div>';
@@ -855,6 +857,9 @@ function abnSearch(query) {
   // no label of its own and would override matches inside it via opacity inheritance.
   const fields = [...body.querySelectorAll('.abn-field, .yesno-field')];
 
+  const bar = document.getElementById('abn-search-bar');
+  if (bar) bar.style.display = q ? 'flex' : 'none';
+
   if (!q) {
     fields.forEach(f => f.classList.remove('abn-search-dim', 'abn-search-match'));
     return;
@@ -871,6 +876,12 @@ function abnSearch(query) {
   });
 
   if (firstMatch) firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function abnClearSearch() {
+  const input = document.getElementById('abn-search');
+  if (input) { input.value = ''; input.focus(); }
+  abnSearch('');
 }
 
 function cancelResetAbn() {
