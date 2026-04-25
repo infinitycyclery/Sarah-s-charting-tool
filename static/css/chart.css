@@ -301,6 +301,11 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   cursor: pointer; padding: 6px 4px;
 }
 .nc-btn-back-small:hover { color: #1a202c; }
+.nc-btn-new-from-existing {
+  color: #4338ca !important;
+  font-weight: 600;
+}
+.nc-btn-new-from-existing:hover { color: #312e81 !important; }
 
 .nc-btn-start {
   background: #22c55e; color: #fff;
