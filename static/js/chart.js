@@ -25,6 +25,8 @@ async function selectTemplate(templateId) {
 // ── Chart Rules ───────────────────────────────────────────────────────────
 function _rulesKey(templateId) { return `chart_rules_${templateId}`; }
 
+let _rulesEditingTpl = null;
+
 function _updateRulesBtn() {
   const btn = document.getElementById('btn-rules');
   if (!btn) return;
@@ -37,16 +39,31 @@ function _loadChartRules(templateId) {
   const ta = document.getElementById('rules-textarea');
   if (!ta) return;
   ta.value = localStorage.getItem(_rulesKey(templateId)) || '';
-  const title = document.getElementById('rules-panel-title');
-  if (title) title.textContent = `📋 Chart Rules — ${templateId}`;
   _updateRulesBtn();
 }
 
+function rulesSelectTpl(templateId) {
+  // save whatever is in the textarea for the previous template
+  if (_rulesEditingTpl) {
+    const ta = document.getElementById('rules-textarea');
+    if (ta) localStorage.setItem(_rulesKey(_rulesEditingTpl), ta.value);
+  }
+  _rulesEditingTpl = templateId;
+  _loadChartRules(templateId);
+  document.querySelectorAll('.rules-tpl-tab').forEach(b =>
+    b.classList.toggle('active', b.dataset.tplId === templateId)
+  );
+  const title = document.getElementById('rules-panel-title');
+  if (title) title.textContent = `📋 Chart Rules — ${templateId}`;
+  document.getElementById('rules-textarea').focus();
+}
+
 function saveChartRules() {
-  if (!currentTemplate) return;
+  const tplId = _rulesEditingTpl || (currentTemplate && currentTemplate.id);
+  if (!tplId) return;
   const ta = document.getElementById('rules-textarea');
   if (!ta) return;
-  localStorage.setItem(_rulesKey(currentTemplate.id), ta.value);
+  localStorage.setItem(_rulesKey(tplId), ta.value);
   _updateRulesBtn();
 }
 
@@ -57,8 +74,6 @@ function getChartRules() {
 
 function applyChartRules() {
   saveChartRules();
-  const btn = document.getElementById('rules-apply-btn-el');
-  // brief flash confirmation
   const applyBtn = document.querySelector('.rules-apply-btn');
   if (applyBtn) {
     applyBtn.textContent = '✓ Applied!';
@@ -77,8 +92,12 @@ function toggleChartRules() {
   const open     = panel.style.display === 'none' || panel.style.display === '';
   panel.style.display    = open ? 'flex' : 'none';
   formBody.style.display = open ? 'none' : '';
+  if (open) {
+    const startTpl = (currentTemplate && currentTemplate.id) || _rulesEditingTpl;
+    if (startTpl) rulesSelectTpl(startTpl);
+    else document.getElementById('rules-textarea').focus();
+  }
   _updateRulesBtn();
-  if (open) document.getElementById('rules-textarea').focus();
 }
 
 // ── Render ABN Form ────────────────────────────────────────────────────────

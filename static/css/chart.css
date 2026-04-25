@@ -438,6 +438,29 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   cursor: pointer; padding: 0 4px;
 }
 .rules-close-btn:hover { color: #475569; }
+.rules-tpl-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  padding: 8px 14px;
+  border-bottom: 1px solid #e8ecf2;
+  background: #f8fafc;
+  flex-shrink: 0;
+}
+.rules-tpl-tab {
+  padding: 3px 10px;
+  border-radius: 6px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all .1s;
+  letter-spacing: .02em;
+}
+.rules-tpl-tab:hover { background: #f0f7ff; color: #1d4ed8; border-color: #bfdbfe; }
+.rules-tpl-tab.active { background: #1a3a5c; color: white; border-color: #1a3a5c; }
 .rules-textarea {
   flex: 1;
   resize: none;

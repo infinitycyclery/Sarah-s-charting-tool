@@ -62,6 +62,11 @@
         <span id="rules-panel-title">📋 Chart Rules</span>
         <button class="rules-close-btn" onclick="toggleChartRules()">✕</button>
       </div>
+      <div class="rules-tpl-tabs">
+        {% for tpl in templates %}
+        <button class="rules-tpl-tab" data-tpl-id="{{ tpl.id }}" onclick="rulesSelectTpl('{{ tpl.id }}')">{{ tpl.id }}</button>
+        {% endfor %}
+      </div>
       <textarea class="rules-textarea" id="rules-textarea"
                 placeholder="Add rules or structure instructions for the AI when generating this chart type.
 
