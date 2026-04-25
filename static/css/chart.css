@@ -912,9 +912,14 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   cursor: pointer;
   color: #475569;
   transition: all .15s;
+  white-space: nowrap;
 }
 .btn-action:hover:not(:disabled) { border-color: #1a3a5c; color: #1a3a5c; }
 .btn-action:disabled { opacity: 0.35; cursor: not-allowed; }
+
+/* When notes panel is expanded, shrink action buttons to icon-only */
+.abn-expanded ~ #right-panel .btn-action { padding: 4px 7px; font-size: 0.85rem; }
+.abn-expanded ~ #right-panel .btn-action .btn-label { display: none; }
 
 .btn-delete { border-color: #f97316; color: #f97316; }
 .btn-delete:hover:not(:disabled) { background: #fff7ed; border-color: #ea580c; color: #ea580c; }
