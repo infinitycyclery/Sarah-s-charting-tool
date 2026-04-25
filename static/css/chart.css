@@ -490,25 +490,24 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 
 /* ── Reset ABN Button ── */
 .btn-expand-abn {
-  position: absolute;
-  right: -38px;
-  top: 50%;
-  transform: translateY(-50%);
-  z-index: 10;
+  position: relative;
+  flex: 0 0 auto;
+  align-self: center;
   background: #6366f1;
   border: none;
-  border-radius: 0 8px 8px 0;
+  border-radius: 8px;
   color: #fff;
-  padding: 10px 8px;
-  font-size: 0.72rem;
+  padding: 10px 7px;
+  font-size: 0.7rem;
   font-weight: 700;
   cursor: pointer;
-  transition: background .15s, right .25s ease;
+  transition: background .15s;
   white-space: nowrap;
   writing-mode: vertical-rl;
   text-orientation: mixed;
   letter-spacing: 0.05em;
-  box-shadow: 2px 0 8px rgba(99,102,241,.25);
+  box-shadow: 0 2px 8px rgba(99,102,241,.3);
+  z-index: 10;
 }
 .btn-expand-abn:hover { background: #4f46e5; }
 .btn-expand-abn.expanded { background: #4338ca; }
