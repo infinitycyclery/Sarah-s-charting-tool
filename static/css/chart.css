@@ -406,6 +406,13 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   color: #4338ca;
   text-align: center;
   box-shadow: 0 4px 24px rgba(99,102,241,.13);
+  cursor: pointer;
+  transition: background .15s, box-shadow .15s, transform .1s;
+}
+.no-patient-msg:hover {
+  background: #eef2ff;
+  box-shadow: 0 6px 28px rgba(99,102,241,.22);
+  transform: translateY(-1px);
 }
 
 /* Dim chart-type buttons when no patient is active */
