@@ -398,8 +398,8 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .left-panel.abn-expanded  { width: 72%; }
 .left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
-/* Expanded layout: two independent columns via JS — no void gaps */
-.abn-expanded #abn-form-body {
+/* Two-column layout — always active */
+#abn-form-body {
   display: flex;
   flex-direction: row;
   gap: 10px;
@@ -413,7 +413,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   flex-direction: column;
   gap: 10px;
 }
-.abn-expanded .abn-group { margin-bottom: 0; }
+.abn-group { margin-bottom: 0; }
 
 /* No-patient guard overlay */
 .no-patient-overlay {

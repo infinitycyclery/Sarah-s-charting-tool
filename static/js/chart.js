@@ -132,8 +132,7 @@ function renderAbnForm(template) {
 
     body.appendChild(groupEl);
   });
-  // Re-split into columns if already in expanded mode
-  if (document.body.classList.contains('abn-expanded')) _abnSplitColumns();
+  _abnSplitColumns();
 }
 
 function _renderYesNoField(field) {
