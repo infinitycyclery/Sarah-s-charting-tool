@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 130" fill="none">
+  <!-- Left ear -->
+  <path d="M32 42 C28 28 34 14 40 12 C46 10 50 22 46 36" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="white"/>
+  <!-- Right ear -->
+  <path d="M88 42 C92 28 86 14 80 12 C74 10 70 22 74 36" stroke="#111" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="white"/>
+  <!-- Head / body blob -->
+  <ellipse cx="60" cy="80" rx="46" ry="44" fill="white" stroke="#111" stroke-width="5"/>
+  <!-- Muzzle area -->
+  <ellipse cx="60" cy="95" rx="20" ry="15" fill="white" stroke="#111" stroke-width="4"/>
+  <!-- Left eye -->
+  <ellipse cx="46" cy="72" rx="4" ry="5" fill="#111"/>
+  <!-- Right eye -->
+  <ellipse cx="74" cy="72" rx="4" ry="5" fill="#111"/>
+  <!-- Nose -->
+  <ellipse cx="60" cy="93" rx="4" ry="3" fill="#111"/>
+</svg>
