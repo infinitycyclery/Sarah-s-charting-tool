@@ -1865,7 +1865,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
   max-width: 220px;
   border: 1px solid var(--c-border);
   border-radius: 16px;
-  padding: 6px 12px;
+  padding: 9px 12px;
   font-size: 0.82rem;
   font-family: inherit;
   background: var(--c-input-bg);
