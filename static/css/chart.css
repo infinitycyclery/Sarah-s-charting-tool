@@ -1219,6 +1219,15 @@ body.abn-expanded #chart-order-num { display: none !important; }
   animation: privacyFadeIn .4s ease;
 }
 .privacy-overlay.active { display: flex; }
+.privacy-hint {
+  color: rgba(255,255,255,0.55);
+  font-size: 0.85rem;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-align: center;
+  pointer-events: none;
+  user-select: none;
+}
 @keyframes privacyFadeIn {
   from { opacity: 0; backdrop-filter: blur(0px); }
   to   { opacity: 1; }
