@@ -398,13 +398,14 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .left-panel.abn-expanded  { width: 72%; }
 .left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
-/* Two-column layout — always active */
-#abn-form-body {
+/* Collapsed: single column */
+#abn-form-body { padding: 12px; }
+/* Expanded: two balanced columns */
+body.abn-expanded #abn-form-body {
   display: flex;
   flex-direction: row;
   gap: 10px;
   align-items: flex-start;
-  padding: 12px;
 }
 .abn-col {
   flex: 1;
@@ -413,7 +414,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   flex-direction: column;
   gap: 10px;
 }
-.abn-group { margin-bottom: 0; }
+.abn-group { margin-bottom: 6px; }
 
 /* No-patient guard overlay */
 .no-patient-overlay {

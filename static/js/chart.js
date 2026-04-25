@@ -132,7 +132,7 @@ function renderAbnForm(template) {
 
     body.appendChild(groupEl);
   });
-  _abnSplitColumns();
+  if (document.body.classList.contains('abn-expanded')) _abnSplitColumns();
 }
 
 function _renderYesNoField(field) {
@@ -532,19 +532,21 @@ function _setAbnExpand(expand) {
   btn.classList.toggle('expanded', expand);
   btn.textContent = expand ? '⤡ Collapse' : '⤢ Expand';
   btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
-  // columns stay in place; only panel width changes
+  expand ? _abnSplitColumns() : _abnMergeColumns();
 }
 
 function _abnSplitColumns() {
   const body = document.getElementById('abn-form-body');
   if (body.querySelector('.abn-col')) return;
-  const groups = [...body.querySelectorAll(':scope > .abn-group')];
-  if (!groups.length) return;
 
-  // Flatten all items out of groups, weighted by visual height
+  // Items may be inside .abn-group wrappers (first render) or flat in body (after merge)
+  const groups = [...body.querySelectorAll(':scope > .abn-group')];
+  const sources = groups.length ? groups : [body];
+
   const items = [];
-  groups.forEach(g => {
-    [...g.children].forEach(child => {
+  sources.forEach(src => {
+    [...src.children].forEach(child => {
+      if (child.classList.contains('abn-col')) return;
       const weight = child.classList.contains('yesno-grid')
         ? child.querySelectorAll('.yesno-field').length * 2
         : child.querySelector('textarea') ? 2 : 1;
@@ -571,7 +573,7 @@ function _abnSplitColumns() {
 function _abnMergeColumns() {
   const body = document.getElementById('abn-form-body');
   body.querySelectorAll('.abn-col').forEach(col => {
-    [...col.children].forEach(g => body.appendChild(g));
+    [...col.children].forEach(item => body.appendChild(item));
     col.remove();
   });
 }
