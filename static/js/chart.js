@@ -185,6 +185,11 @@ function _renderYesNoField(field) {
     fieldEl.appendChild(toggle);
   }
 
+  const _updateYesNoAnswered = () => {
+    const base = hidden.value.replace(/ — .*$/, '').trim();
+    fieldEl.classList.toggle('answered', base === 'yes' || base === 'no');
+  };
+
   yesBtn.onclick = () => {
     if (yesBtn.classList.contains('active-yes')) {
       _clearYesNo(toggle, hidden);
@@ -202,6 +207,7 @@ function _renderYesNoField(field) {
         detailArea.focus();
       }
     }
+    _updateYesNoAnswered();
   };
   noBtn.onclick = () => {
     if (noBtn.classList.contains('active-no')) {
@@ -219,6 +225,7 @@ function _renderYesNoField(field) {
         detailArea.classList.remove('suicidal-required', 'suicidal-missing');
       }
     }
+    _updateYesNoAnswered();
   };
 
   return fieldEl;
@@ -247,6 +254,9 @@ function _renderTextField(field) {
   input.dataset.key = field.key;
   if (!isTextarea) input.type = 'text';
   if (field.default) input.value = field.default;
+  input.addEventListener('input', () => {
+    fieldEl.classList.toggle('answered', input.value.trim().length > 0);
+  });
 
   fieldEl.appendChild(input);
   return fieldEl;
@@ -1301,6 +1311,8 @@ async function loadChartRecord(chartId, patientName) {
       if (!el) return;
       el.value = val;
       _restoreYesNo(el, val);
+      const fieldEl = el.closest('.abn-field, .yesno-field');
+      if (fieldEl && val.trim()) fieldEl.classList.add('answered');
     });
 
     showChart(data.chart_text, data.patient_name || patientName);

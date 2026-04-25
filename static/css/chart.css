@@ -777,7 +777,9 @@ body.abn-expanded #abn-form-body {
   color: #6b7280;
   text-transform: uppercase;
   letter-spacing: 0.05em;
+  transition: color .15s;
 }
+.answered .abn-label { color: #16a34a; }
 .abn-input {
   border: 1px solid #e2e8f0;
   border-radius: 8px;
