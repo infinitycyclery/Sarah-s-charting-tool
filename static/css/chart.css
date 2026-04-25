@@ -15,13 +15,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   position: relative;
 }
 .topbar-left { display: flex; align-items: center; gap: 10px; flex-shrink: 0; overflow: visible; }
-.topbar-center {
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-  pointer-events: none;
-}
-.topbar-center .topbar-patient { pointer-events: auto; }
+
 .topbar-right { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: flex-end; }
 
 .app-title { color: #fff; font-weight: 700; font-size: 1rem; white-space: nowrap; }
@@ -107,15 +101,15 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .patient-name-input:focus { outline: none; border-color: rgba(255,255,255,0.7); background: rgba(255,255,255,0.2); }
 
 .topbar-patient {
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.3);
+  background: rgba(99,102,241,.10);
+  border: 1px solid rgba(99,102,241,.25);
   border-radius: 20px;
-  color: #fff;
-  font-size: 0.85rem;
-  font-weight: 600;
-  padding: 5px 14px;
+  color: #4338ca;
+  font-size: 0.82rem;
+  font-weight: 700;
+  padding: 3px 12px;
   white-space: nowrap;
-  max-width: 200px;
+  max-width: 240px;
   overflow: hidden;
   text-overflow: ellipsis;
 }
