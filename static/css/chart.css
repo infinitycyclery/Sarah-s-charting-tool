@@ -24,16 +24,16 @@
 }
 
 [data-theme="dark"] {
-  --c-page: #1c1c1e;
-  --c-surface: #2c2c2e;
-  --c-surface-2: #252527;
-  --c-surface-3: #323234;
-  --c-surface-4: #2c2c2e;
-  --c-input-bg: #1c1c1e;
-  --c-input-focus: #2c2c2e;
+  --c-page: #28282a;
+  --c-surface: #323234;
+  --c-surface-2: #2e2e30;
+  --c-surface-3: #3a3a3c;
+  --c-surface-4: #323234;
+  --c-input-bg: #28282a;
+  --c-input-focus: #323234;
   --c-border: #48484a;
   --c-border-2: #3a3a3c;
-  --c-border-subtle: #2c2c2e;
+  --c-border-subtle: #323234;
   --c-hover: #3a3a3c;
   --c-text: #f2f2f7;
   --c-text-2: #aeaeb2;
