@@ -557,7 +557,8 @@ function _abnSplitColumns() {
   const col2 = document.createElement('div'); col2.className = 'abn-col';
   let w = 0;
   items.forEach(item => {
-    const col = w < target ? col1 : col2;
+    // Put in col1 only if its midpoint still falls below target
+    const col = (w + item.weight / 2) < target ? col1 : col2;
     col.appendChild(item.el);
     if (col === col1) w += item.weight;
   });
