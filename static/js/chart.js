@@ -137,6 +137,8 @@ function renderAbnForm(template) {
 
     body.appendChild(groupEl);
   });
+  // Re-split into columns if already in expanded mode
+  if (document.body.classList.contains('abn-expanded')) _abnSplitColumns();
 }
 
 function _renderYesNoField(field) {
@@ -547,6 +549,28 @@ function _setAbnExpand(expand) {
   btn.classList.toggle('expanded', expand);
   btn.textContent = expand ? '⤡ Collapse' : '⤢ Expand';
   btn.title = expand ? 'Collapse notes panel' : 'Expand notes panel';
+  expand ? _abnSplitColumns() : _abnMergeColumns();
+}
+
+function _abnSplitColumns() {
+  const body = document.getElementById('abn-form-body');
+  if (body.querySelector('.abn-col')) return; // already split
+  const groups = [...body.querySelectorAll(':scope > .abn-group')];
+  if (!groups.length) return;
+  const col1 = document.createElement('div'); col1.className = 'abn-col';
+  const col2 = document.createElement('div'); col2.className = 'abn-col';
+  const half = Math.ceil(groups.length / 2);
+  groups.forEach((g, i) => { g.remove(); (i < half ? col1 : col2).appendChild(g); });
+  body.appendChild(col1);
+  body.appendChild(col2);
+}
+
+function _abnMergeColumns() {
+  const body = document.getElementById('abn-form-body');
+  body.querySelectorAll('.abn-col').forEach(col => {
+    [...col.children].forEach(g => body.appendChild(g));
+    col.remove();
+  });
 }
 
 function toggleAbnExpand() { _setAbnExpand(!document.getElementById('left-panel').classList.contains('abn-expanded')); }
