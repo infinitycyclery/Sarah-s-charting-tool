@@ -1064,9 +1064,9 @@ async function plShowCharts(patientId, patientName) {
       return;
     }
 
-    // Build filter bar (only if multiple chart types exist)
+    // Build filter bar
     const types = [...new Set(charts.map(c => c.template_id))];
-    if (types.length > 1) {
+    {
       const filterBar = document.createElement('div');
       filterBar.className = 'pl-filter-bar';
       filterBar.id = 'pl-filter-bar';
