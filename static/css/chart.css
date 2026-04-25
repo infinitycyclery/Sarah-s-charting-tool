@@ -398,17 +398,13 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .left-panel.abn-expanded  { width: 72%; }
 .left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
-/* Expanded layout: groups flow into 2 columns, no gaps */
+/* Expanded layout: single scrollable column, but use the extra width */
 .abn-expanded #abn-form-body {
-  columns: 2;
-  column-gap: 12px;
+  columns: unset;
   display: block;
   padding: 12px;
 }
-.abn-expanded .abn-group {
-  break-inside: avoid;
-  margin-bottom: 10px;
-}
+.abn-expanded .abn-group { margin-bottom: 10px; break-inside: unset; }
 /* Yes/No grid: 3 columns instead of 2 when expanded */
 .abn-expanded .yesno-grid {
   grid-template-columns: 1fr 1fr 1fr;
