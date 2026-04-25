@@ -202,8 +202,29 @@ function _renderYesNoField(field) {
     fieldEl.appendChild(toggle);
   }
 
-  yesBtn.onclick = () => { _setYesNo(toggle, hidden, 'yes'); _syncYesNoValue(toggle, hidden, detailArea); };
-  noBtn.onclick  = () => { _setYesNo(toggle, hidden, 'no');  _syncYesNoValue(toggle, hidden, detailArea); };
+  yesBtn.onclick = () => {
+    _setYesNo(toggle, hidden, 'yes');
+    _syncYesNoValue(toggle, hidden, detailArea);
+    // Suicidal YES: auto-open detail and require a note
+    if (field.key === 'suicidal' && detailArea) {
+      if (detailArea.style.display === 'none') {
+        detailArea.style.display = 'block';
+        const expandBtn = toggle.querySelector('.yesno-expand-btn');
+        if (expandBtn) { expandBtn.classList.add('active-expand'); expandBtn.textContent = '−'; }
+      }
+      detailArea.placeholder = 'Required: describe suicidal ideation…';
+      detailArea.classList.add('suicidal-required');
+      detailArea.focus();
+    }
+  };
+  noBtn.onclick = () => {
+    _setYesNo(toggle, hidden, 'no');
+    _syncYesNoValue(toggle, hidden, detailArea);
+    if (field.key === 'suicidal' && detailArea) {
+      detailArea.placeholder = 'Add detail…';
+      detailArea.classList.remove('suicidal-required', 'suicidal-missing');
+    }
+  };
 
   return fieldEl;
 }
@@ -338,6 +359,27 @@ async function owDeleteReplace() {
 
 async function _doGenerate() {
   if (!currentTemplate) return;
+
+  // Suicidal YES requires a detail note before generating
+  const suicidalHidden = document.querySelector('[data-key="suicidal"]');
+  if (suicidalHidden) {
+    const val = suicidalHidden.value.trim().toLowerCase();
+    const isYes = val === 'yes' || val.startsWith('yes —') || val.startsWith('yes—');
+    const hasDetail = val.includes(' — ') && val.split(' — ')[1].trim().length > 0;
+    if (isYes && !hasDetail) {
+      const detailArea = document.querySelector('[data-detail-for="suicidal"]');
+      if (detailArea) {
+        detailArea.style.display = 'block';
+        detailArea.classList.add('suicidal-missing');
+        detailArea.placeholder = 'Required: describe suicidal ideation…';
+        const expandBtn = detailArea.closest('.abn-field')?.querySelector('.yesno-expand-btn');
+        if (expandBtn) { expandBtn.classList.add('active-expand'); expandBtn.textContent = '−'; }
+        detailArea.focus();
+        setTimeout(() => detailArea.classList.remove('suicidal-missing'), 1200);
+      }
+      return;
+    }
+  }
 
   const fields = {};
   document.querySelectorAll('[data-key]').forEach(el => {
@@ -619,7 +661,11 @@ function _resetChart() {
   document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no', 'active-expand', 'has-detail'));
   document.querySelectorAll('.yesno-expand-btn').forEach(b => { b.textContent = '+'; });
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
-  document.querySelectorAll('.yesno-detail').forEach(el => { el.value = ''; el.style.display = 'none'; });
+  document.querySelectorAll('.yesno-detail').forEach(el => {
+    el.value = ''; el.style.display = 'none';
+    el.placeholder = 'Add detail…';
+    el.classList.remove('suicidal-required', 'suicidal-missing');
+  });
   _setPatientName('');
   clearChart();
   currentChartId = null;

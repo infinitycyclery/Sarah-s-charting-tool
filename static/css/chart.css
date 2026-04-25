@@ -703,6 +703,11 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   transition: border-color .15s;
 }
 .yesno-detail:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.1); }
+.yesno-detail.suicidal-required { border-color: #f97316; background: rgba(249,115,22,.05); }
+.yesno-detail.suicidal-missing  { border-color: #ef4444 !important; background: rgba(239,68,68,.07); animation: suicidalShake .35s; }
+@keyframes suicidalShake {
+  0%,100%{transform:translateX(0)} 20%{transform:translateX(-5px)} 60%{transform:translateX(5px)}
+}
 
 /* ── Generate Button ── */
 .btn-generate {
