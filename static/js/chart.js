@@ -729,14 +729,15 @@ function _setPatientName(name) {
 
 function _resetChart() {
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
-  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no', 'active-expand', 'has-detail'));
-  document.querySelectorAll('.yesno-expand-btn').forEach(b => { b.textContent = '+'; });
+  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-detail').forEach(el => {
-    el.value = ''; el.style.display = 'none';
+    el.value = '';
+    el.style.height = '34px';
     el.placeholder = 'Add detail…';
     el.classList.remove('suicidal-required', 'suicidal-missing');
   });
+  document.querySelectorAll('.abn-field, .yesno-field').forEach(el => el.classList.remove('answered'));
   _setPatientName('');
   clearChart();
   currentChartId = null;
@@ -814,13 +815,14 @@ function confirmResetAbn() {
   cancelResetAbn();
   document.querySelectorAll('.abn-input').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
-  document.querySelectorAll('.yesno-expand-btn').forEach(b => { b.textContent = '+'; b.classList.remove('active-expand', 'has-detail'); });
   document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
   document.querySelectorAll('.yesno-detail').forEach(el => {
-    el.value = ''; el.style.display = 'none';
+    el.value = '';
+    el.style.height = '34px';
     el.placeholder = 'Add detail…';
     el.classList.remove('suicidal-required', 'suicidal-missing');
   });
+  document.querySelectorAll('.abn-field, .yesno-field').forEach(el => el.classList.remove('answered'));
 }
 
 // ── Delete Chart ──────────────────────────────────────────────────────────
