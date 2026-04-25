@@ -1317,6 +1317,29 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 }
 .pl-empty { text-align: center; color: #94a3b8; font-size: 0.85rem; padding: 60px 20px; }
 
+.pl-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 10px 16px;
+  border-bottom: 1px solid #f1f5f9;
+  background: #f8fafc;
+}
+.pl-filter-btn {
+  padding: 4px 12px;
+  border-radius: 20px;
+  border: 1px solid #e2e8f0;
+  background: white;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #64748b;
+  cursor: pointer;
+  transition: all .12s;
+  letter-spacing: .02em;
+}
+.pl-filter-btn:hover { background: #f0f7ff; color: #1d4ed8; border-color: #bfdbfe; }
+.pl-filter-btn.active { background: #1a3a5c; color: white; border-color: #1a3a5c; }
+
 /* Inline new patient form */
 .pl-new-patient-form {
   display: flex;

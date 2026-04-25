@@ -1064,9 +1064,41 @@ async function plShowCharts(patientId, patientName) {
       return;
     }
 
+    // Build filter bar (only if multiple chart types exist)
+    const types = [...new Set(charts.map(c => c.template_id))];
+    if (types.length > 1) {
+      const filterBar = document.createElement('div');
+      filterBar.className = 'pl-filter-bar';
+      filterBar.id = 'pl-filter-bar';
+      const allBtn = document.createElement('button');
+      allBtn.className = 'pl-filter-btn active';
+      allBtn.textContent = 'All';
+      allBtn.dataset.filter = '';
+      filterBar.appendChild(allBtn);
+      types.forEach(tid => {
+        const btn = document.createElement('button');
+        btn.className = 'pl-filter-btn';
+        btn.textContent = tid;
+        btn.dataset.filter = tid;
+        filterBar.appendChild(btn);
+      });
+      filterBar.onclick = e => {
+        const btn = e.target.closest('.pl-filter-btn');
+        if (!btn) return;
+        filterBar.querySelectorAll('.pl-filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        const f = btn.dataset.filter;
+        list.querySelectorAll('.pl-chart-row').forEach(row => {
+          row.style.display = (!f || row.dataset.tplId === f) ? '' : 'none';
+        });
+      };
+      list.appendChild(filterBar);
+    }
+
     charts.forEach(c => {
       const row = document.createElement('div');
       row.className = 'pl-chart-row';
+      row.dataset.tplId = c.template_id;
       const d = new Date(c.updated_at.replace(' ', 'T')).toLocaleString('en-US', {
         month: 'short', day: 'numeric', year: 'numeric', hour: 'numeric', minute: '2-digit',
       });
