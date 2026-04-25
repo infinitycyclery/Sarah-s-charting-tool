@@ -875,7 +875,7 @@ function abnSearch(query) {
 
 function abnClearSearch() {
   const input = document.getElementById('abn-search');
-  if (input) { input.value = ''; input.focus(); }
+  if (input) input.value = '';
   abnSearch('');
 }
 
