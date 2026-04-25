@@ -1079,12 +1079,47 @@ body.abn-expanded #chart-order-num { display: none !important; }
 .vac-empty, .vac-loading { text-align: center; color: #94a3b8; font-size: 0.88rem; padding: 50px 20px; }
 
 /* Chart card */
+/* ── VAC Bulk Select ── */
+.vac-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 18px;
+  background: #f1f5f9;
+  border-bottom: 1px solid #e2e8f0;
+  font-size: 0.82rem;
+}
+.vac-select-all-label { display: flex; align-items: center; gap: 6px; font-weight: 600; color: #374151; cursor: pointer; user-select: none; }
+.vac-selected-count { color: #6b7280; flex: 1; }
+.vac-bulk-delete-btn {
+  padding: 5px 14px;
+  border-radius: 7px;
+  border: 1px solid #fca5a5;
+  background: #fee2e2;
+  color: #b91c1c;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .12s;
+}
+.vac-bulk-delete-btn:disabled { opacity: 0.4; cursor: default; }
+.vac-bulk-delete-btn:not(:disabled):hover { background: #fecaca; }
+.vac-check-wrap {
+  display: flex;
+  align-items: center;
+  padding: 0 4px 0 14px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+.vac-check-wrap input[type=checkbox] { width: 16px; height: 16px; cursor: pointer; accent-color: #3b82f6; }
 .vac-card {
+  display: flex; align-items: center;
   background: #fff; border: 1px solid #e2e8f0;
   border-radius: 10px; position: relative; overflow: hidden;
   transition: box-shadow .15s, background .1s;
   cursor: pointer;
 }
+.vac-card .vac-card-inner { flex: 1; }
 .vac-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.08); background: #f8fbff; }
 
 /* Finished: greyed out */

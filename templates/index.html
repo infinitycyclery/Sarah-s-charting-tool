@@ -241,6 +241,13 @@ Examples:
            oninput="vacSearch(this.value)" autocomplete="off">
     <button class="vac-close" onclick="closeVac()">✕</button>
   </div>
+  <div class="vac-bulk-bar" id="vac-bulk-bar" style="display:none;">
+    <label class="vac-select-all-label">
+      <input type="checkbox" id="vac-select-all" onchange="vacToggleSelectAll(this.checked)"> Select all
+    </label>
+    <span class="vac-selected-count" id="vac-selected-count">0 selected</span>
+    <button class="vac-bulk-delete-btn" id="vac-bulk-delete-btn" onclick="vacBulkDelete()" disabled>🗑 Delete Selected</button>
+  </div>
   <div class="vac-pagination-bar" id="vac-pagination-top"></div>
   <div class="vac-list" id="vac-list"></div>
   <div class="vac-pagination-bar" id="vac-pagination-bot"></div>

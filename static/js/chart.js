@@ -1641,6 +1641,9 @@ async function loadVacCharts() {
 function renderVacCharts(data) {
   const list = document.getElementById('vac-list');
   list.innerHTML = '';
+  document.getElementById('vac-bulk-bar').style.display = data.charts.length ? 'flex' : 'none';
+  document.getElementById('vac-select-all').checked = false;
+  _vacUpdateBulkBar();
 
   if (!data.charts.length) {
     list.innerHTML = '<div class="vac-empty">No charts found.</div>';
@@ -1664,6 +1667,9 @@ function renderVacCharts(data) {
     const daysLabel = daysAgo === 0 ? 'Today' : daysAgo === 1 ? '1 day ago' : `${daysAgo} days ago`;
 
     card.innerHTML = `
+      <label class="vac-check-wrap" onclick="event.stopPropagation()">
+        <input type="checkbox" class="vac-card-check" data-id="${c.id}" onchange="_vacUpdateBulkBar()">
+      </label>
       <div class="vac-card-inner">
         <div class="vac-card-left">
           <span class="vac-tpl-badge">${esc(c.template_id)}</span>
@@ -1684,6 +1690,30 @@ function renderVacCharts(data) {
 
   renderVacPagination(data, 'vac-pagination-top');
   renderVacPagination(data, 'vac-pagination-bot');
+}
+
+function _vacUpdateBulkBar() {
+  const checks = [...document.querySelectorAll('.vac-card-check:checked')];
+  const total  = document.querySelectorAll('.vac-card-check').length;
+  const count  = checks.length;
+  document.getElementById('vac-selected-count').textContent = `${count} selected`;
+  document.getElementById('vac-bulk-delete-btn').disabled = count === 0;
+  document.getElementById('vac-select-all').checked = count > 0 && count === total;
+  document.getElementById('vac-select-all').indeterminate = count > 0 && count < total;
+}
+
+function vacToggleSelectAll(checked) {
+  document.querySelectorAll('.vac-card-check').forEach(cb => cb.checked = checked);
+  _vacUpdateBulkBar();
+}
+
+async function vacBulkDelete() {
+  const ids = [...document.querySelectorAll('.vac-card-check:checked')].map(cb => Number(cb.dataset.id));
+  if (!ids.length) return;
+  if (!confirm(`Delete ${ids.length} chart${ids.length > 1 ? 's' : ''}? This cannot be undone.`)) return;
+
+  await Promise.all(ids.map(id => fetch(`/api/chart/${id}`, { method: 'DELETE' })));
+  loadVacCharts();
 }
 
 function renderVacPagination(data, containerId) {
