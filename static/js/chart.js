@@ -1046,17 +1046,11 @@ function _startIdleTimer() {
 }
 
 function _resetIdleTimer() {
-  clearTimeout(_idleTimer);
-  _idleTimer = setTimeout(_activatePrivacy, IDLE_TIMEOUT_MS);
-}
-
-function _activatePrivacy() {
-  document.getElementById('privacy-overlay').classList.add('active');
-}
-
-function resumeCharting() {
   document.getElementById('privacy-overlay').classList.remove('active');
-  _resetIdleTimer();
+  clearTimeout(_idleTimer);
+  _idleTimer = setTimeout(() => {
+    document.getElementById('privacy-overlay').classList.add('active');
+  }, IDLE_TIMEOUT_MS);
 }
 
 async function checkOllamaStatus() {

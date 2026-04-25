@@ -1223,23 +1223,6 @@ body.abn-expanded #chart-order-num { display: none !important; }
   from { opacity: 0; backdrop-filter: blur(0px); }
   to   { opacity: 1; }
 }
-.privacy-resume-btn {
-  background: #fff;
-  color: #1a3a5c;
-  border: none;
-  border-radius: 14px;
-  padding: 18px 40px;
-  font-size: 1.15rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-  letter-spacing: 0.02em;
-  transition: transform .15s, box-shadow .15s;
-}
-.privacy-resume-btn:hover {
-  transform: scale(1.04);
-  box-shadow: 0 12px 40px rgba(0,0,0,0.4);
-}
 
 /* ── Save Status ── */
 .save-status {
