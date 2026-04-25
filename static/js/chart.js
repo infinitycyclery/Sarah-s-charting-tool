@@ -190,20 +190,38 @@ function _renderYesNoField(field) {
   }
 
   yesBtn.onclick = () => {
-    _setYesNo(toggle, hidden, 'yes');
-    _syncYesNoValue(toggle, hidden, detailArea);
-    if (field.key === 'suicidal' && detailArea) {
-      detailArea.placeholder = 'Required: describe suicidal ideation…';
-      detailArea.classList.add('suicidal-required');
-      detailArea.focus();
+    if (yesBtn.classList.contains('active-yes')) {
+      _clearYesNo(toggle, hidden);
+      _syncYesNoValue(toggle, hidden, detailArea);
+      if (field.key === 'suicidal' && detailArea) {
+        detailArea.placeholder = 'Add detail…';
+        detailArea.classList.remove('suicidal-required', 'suicidal-missing');
+      }
+    } else {
+      _setYesNo(toggle, hidden, 'yes');
+      _syncYesNoValue(toggle, hidden, detailArea);
+      if (field.key === 'suicidal' && detailArea) {
+        detailArea.placeholder = 'Required: describe suicidal ideation…';
+        detailArea.classList.add('suicidal-required');
+        detailArea.focus();
+      }
     }
   };
   noBtn.onclick = () => {
-    _setYesNo(toggle, hidden, 'no');
-    _syncYesNoValue(toggle, hidden, detailArea);
-    if (field.key === 'suicidal' && detailArea) {
-      detailArea.placeholder = 'Add detail…';
-      detailArea.classList.remove('suicidal-required', 'suicidal-missing');
+    if (noBtn.classList.contains('active-no')) {
+      _clearYesNo(toggle, hidden);
+      _syncYesNoValue(toggle, hidden, detailArea);
+      if (field.key === 'suicidal' && detailArea) {
+        detailArea.placeholder = 'Add detail…';
+        detailArea.classList.remove('suicidal-required', 'suicidal-missing');
+      }
+    } else {
+      _setYesNo(toggle, hidden, 'no');
+      _syncYesNoValue(toggle, hidden, detailArea);
+      if (field.key === 'suicidal' && detailArea) {
+        detailArea.placeholder = 'Add detail…';
+        detailArea.classList.remove('suicidal-required', 'suicidal-missing');
+      }
     }
   };
 
@@ -236,6 +254,12 @@ function _renderTextField(field) {
 
   fieldEl.appendChild(input);
   return fieldEl;
+}
+
+function _clearYesNo(toggle, hidden) {
+  toggle.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  const detail = hidden.value.includes(' — ') ? hidden.value.replace(/^[^—]*— /, '') : '';
+  hidden.value = detail ? `— ${detail}` : '';
 }
 
 function _setYesNo(toggle, hidden, val) {
