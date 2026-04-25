@@ -571,7 +571,6 @@ def refine_chart():
 
     prompt = f"""You are a licensed psychiatric nurse practitioner. You wrote the following clinical chart note and are now being asked to revise it based on an instruction.
 
-Patient: {patient_name}
 Visit Type: {template_name}
 {rules_section}
 Current chart:
@@ -648,7 +647,6 @@ Write a detailed, professional clinical note in flowing prose paragraphs. Rules:
 - Do not invent information that was not provided
 - End with a concise Assessment and Plan paragraph
 {rules_section}
-Patient: {patient_name}
 Visit Type: {template_name}
 
 Clinical data from today's visit:
