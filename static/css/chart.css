@@ -398,6 +398,38 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .left-panel.abn-expanded  { width: 72%; }
 .left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
+/* Expanded layout: groups in 2 columns, tighter spacing */
+.abn-expanded #abn-form-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  align-items: start;
+  padding: 12px;
+}
+.abn-expanded .abn-group { margin-bottom: 0; }
+/* Yes/No grid: 3 columns instead of 2 when expanded */
+.abn-expanded .yesno-grid {
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 6px;
+}
+/* Text inputs side by side within a group when expanded */
+.abn-expanded .abn-group .abn-field:not(.yesno-field) {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 6px;
+}
+.abn-expanded .abn-group .abn-field:not(.yesno-field) .abn-label {
+  min-width: 100px;
+  max-width: 130px;
+  white-space: normal;
+}
+/* Textareas stay full width */
+.abn-expanded .abn-group .abn-field:not(.yesno-field) textarea {
+  grid-column: 1 / -1;
+}
+
 /* No-patient guard overlay */
 .no-patient-overlay {
   display: none;
