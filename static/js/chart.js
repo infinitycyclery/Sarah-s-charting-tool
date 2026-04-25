@@ -19,6 +19,7 @@ async function selectTemplate(templateId) {
   clearChart();
   document.getElementById('btn-generate').disabled = false;
   document.getElementById('btn-rules').disabled = false;
+  document.getElementById('btn-reset-abn').disabled = false;
   _loadChartRules(templateId);
 }
 
@@ -194,6 +195,12 @@ function _renderYesNoField(field) {
       _syncYesNoValue(toggle, hidden, detailArea);
       expandBtn.classList.toggle('has-detail', detailArea.value.trim().length > 0);
     };
+    expandBtn.addEventListener('mousedown', e => e.preventDefault());
+    detailArea.addEventListener('blur', () => {
+      detailArea.style.display = 'none';
+      expandBtn.classList.remove('active-expand');
+      expandBtn.textContent = '+';
+    });
 
     toggle.appendChild(expandBtn);
     fieldEl.appendChild(toggle);
@@ -724,6 +731,30 @@ function ncSelectExistingPatient(patientId, patientName) {
   closeNewChartDialog();
   showChartsInDropdown(patientId, patientName);
   if (ncSelectedTemplateId) selectTemplate(ncSelectedTemplateId);
+}
+
+// ── Reset ABN Fields ─────────────────────────────────────────────────────
+function promptResetAbn() {
+  document.getElementById('rabn-overlay').classList.add('open');
+  document.getElementById('rabn-dialog').classList.add('open');
+}
+
+function cancelResetAbn() {
+  document.getElementById('rabn-overlay').classList.remove('open');
+  document.getElementById('rabn-dialog').classList.remove('open');
+}
+
+function confirmResetAbn() {
+  cancelResetAbn();
+  document.querySelectorAll('.abn-input').forEach(el => el.value = '');
+  document.querySelectorAll('.yesno-btn').forEach(b => b.classList.remove('active-yes', 'active-no'));
+  document.querySelectorAll('.yesno-expand-btn').forEach(b => { b.textContent = '+'; b.classList.remove('active-expand', 'has-detail'); });
+  document.querySelectorAll('.yesno-toggle input[type=hidden]').forEach(el => el.value = '');
+  document.querySelectorAll('.yesno-detail').forEach(el => {
+    el.value = ''; el.style.display = 'none';
+    el.placeholder = 'Add detail…';
+    el.classList.remove('suicidal-required', 'suicidal-missing');
+  });
 }
 
 // ── Delete Chart ──────────────────────────────────────────────────────────
