@@ -1852,6 +1852,13 @@ body.abn-expanded #chart-order-num { display: none !important; }
 [data-theme="dark"] .chat-input:focus { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,.2); }
 [data-theme="dark"] .vac-days-ago { color: #a5b4fc; background: rgba(99,102,241,0.15); border-color: rgba(99,102,241,0.3); }
 
+/* ── Scrollbars ── */
+[data-theme="dark"] ::-webkit-scrollbar { width: 8px; height: 8px; }
+[data-theme="dark"] ::-webkit-scrollbar-track { background: var(--c-surface-2); }
+[data-theme="dark"] ::-webkit-scrollbar-thumb { background: #48484a; border-radius: 4px; }
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover { background: #636366; }
+[data-theme="dark"] ::-webkit-scrollbar-corner { background: var(--c-surface-2); }
+
 /* Dark mode toggle button */
 .btn-dark-toggle {
   background: rgba(255,255,255,0.12);
