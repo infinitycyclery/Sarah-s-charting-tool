@@ -239,6 +239,7 @@ Examples:
     <input class="vac-search" id="vac-search" type="text"
            placeholder="Search by patient name…"
            oninput="vacSearch(this.value)" autocomplete="off">
+    <button class="btn-new-chart vac-new-chart-btn" onclick="closeVac(); openNewChartDialog();">+ New Chart</button>
     <button class="vac-close" onclick="closeVac()">✕</button>
   </div>
   <div class="vac-bulk-bar" id="vac-bulk-bar" style="display:none;">

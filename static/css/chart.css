@@ -1051,6 +1051,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
 }
 .vac-search::placeholder { color: rgba(255,255,255,0.5); }
 .vac-search:focus { border-color: rgba(255,255,255,0.6); background: rgba(255,255,255,0.2); }
+.vac-new-chart-btn { flex-shrink: 0; font-size: 0.82rem; padding: 6px 14px; }
 .vac-close {
   margin-left: auto; background: none; border: none;
   color: rgba(255,255,255,0.7); cursor: pointer; font-size: 1rem;
