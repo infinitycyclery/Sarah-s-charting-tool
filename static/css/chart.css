@@ -126,6 +126,8 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 }
 .btn-top.btn-admin { background: rgba(255,255,255,0.15); border-color: rgba(255,255,255,0.35); }
 .btn-top.btn-admin:hover { background: rgba(255,255,255,0.28); }
+.btn-top.btn-vac { background: rgba(99,102,241,.25); border-color: rgba(99,102,241,.5); color: #c7d2fe; }
+.btn-top.btn-vac:hover { background: rgba(99,102,241,.4); }
 .admin-menu { position: relative; display: inline-block; }
 .admin-dropdown {
   position: absolute;
