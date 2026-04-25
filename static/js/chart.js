@@ -851,17 +851,18 @@ function abnSearch(query) {
   const q = query.trim().toLowerCase();
   const body = document.getElementById('abn-form-body');
 
-  // Collect all top-level field blocks (works in both single and two-column layout)
-  const fields = [...body.querySelectorAll('.abn-field, .yesno-field, .yesno-grid')];
+  // Target only individual fields — never the yesno-grid wrapper, which has
+  // no label of its own and would override matches inside it via opacity inheritance.
+  const fields = [...body.querySelectorAll('.abn-field, .yesno-field')];
 
   if (!q) {
-    fields.forEach(f => { f.classList.remove('abn-search-dim', 'abn-search-match'); });
+    fields.forEach(f => f.classList.remove('abn-search-dim', 'abn-search-match'));
     return;
   }
 
   let firstMatch = null;
   fields.forEach(f => {
-    const label = f.querySelector('.abn-label');
+    const label = f.querySelector(':scope > .abn-label');
     const text = label ? label.textContent.toLowerCase() : '';
     const matches = text.includes(q);
     f.classList.toggle('abn-search-match', matches);
