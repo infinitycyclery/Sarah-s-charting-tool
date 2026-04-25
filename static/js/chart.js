@@ -900,8 +900,8 @@ async function checkOllamaStatus() {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules (Ollama offline)';
       badge.title = 'Ollama is not running — click for setup help';
-      badge.onclick = () => showOllamaDialog('Ollama Not Running', _ollamaNotRunningHTML(data.model));
-      setTimeout(() => showOllamaDialog('Ollama Not Running', _ollamaNotRunningHTML(data.model)), 2000);
+      badge.onclick = () => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML(data.model));
+      setTimeout(() => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML(data.model)), 2000);
     } else {
       badge.className = 'ai-status ai-off';
       badge.textContent = '📝 Rules';
@@ -914,15 +914,7 @@ async function checkOllamaStatus() {
 }
 
 function _ollamaNotRunningHTML(model) {
-  return `<p>Ollama is not running on this computer. Charts are being generated using the built-in rule-based generator instead.</p>
-<p><strong>To enable AI chart generation:</strong></p>
-<ol>
-  <li>Download and install Ollama from <strong>ollama.com</strong></li>
-  <li>Once installed, Ollama runs automatically in the menu bar</li>
-  <li>Open Terminal and run: <code>ollama pull ${model}</code><br>
-      <em style="color:#6b7280">(this is a ~5 GB download, only needed once)</em></li>
-  <li>Reload this page — the badge will turn green when ready</li>
-</ol>`;
+  return `<p>The Ai Lama is not currently running Sarah... go to the desktop and start up the Lama tool then come back :)</p>`;
 }
 
 function _ollamaModelNotPulledHTML(model) {
