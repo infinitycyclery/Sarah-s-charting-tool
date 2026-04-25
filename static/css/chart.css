@@ -414,28 +414,6 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   gap: 10px;
 }
 .abn-expanded .abn-group { margin-bottom: 0; }
-/* Yes/No grid: 3 columns instead of 2 when expanded */
-.abn-expanded .yesno-grid {
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 6px;
-}
-/* Text inputs side by side within a group when expanded */
-.abn-expanded .abn-group .abn-field:not(.yesno-field) {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-}
-.abn-expanded .abn-group .abn-field:not(.yesno-field) .abn-label {
-  min-width: 100px;
-  max-width: 130px;
-  white-space: normal;
-}
-/* Textareas stay full width */
-.abn-expanded .abn-group .abn-field:not(.yesno-field) textarea {
-  grid-column: 1 / -1;
-}
 
 /* No-patient guard overlay */
 .no-patient-overlay {
@@ -834,9 +812,7 @@ body { display: flex; flex-direction: column; overflow: hidden; }
   box-shadow: 0 0 0 3px rgba(59,130,246,.1);
 }
 textarea.abn-input { min-height: 58px; resize: vertical; }
-body.abn-expanded .textarea-field { flex-direction: row; align-items: flex-start; gap: 8px; }
-body.abn-expanded .textarea-field .abn-label { flex: 0 0 140px; padding-top: 8px; }
-body.abn-expanded .textarea-field .abn-input { flex: 1; min-width: 0; width: auto; }
+
 
 /* ── Yes/No Toggles ── */
 .yesno-grid {
@@ -847,16 +823,9 @@ body.abn-expanded .textarea-field .abn-input { flex: 1; min-width: 0; width: aut
 }
 .yesno-field {
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 8px;
+  flex-direction: column;
+  gap: 4px;
   margin-bottom: 0;
-}
-.yesno-field .abn-label {
-  flex: 0 0 140px;
-  min-width: 0;
-  white-space: normal;
-  line-height: 1.3;
 }
 .yesno-toggle {
   display: flex;
