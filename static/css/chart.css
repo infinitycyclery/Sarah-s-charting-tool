@@ -1775,8 +1775,8 @@ body.abn-expanded #chart-order-num { display: none !important; }
 [data-theme="dark"] .nc-btn-existing:hover { background: rgba(59,130,246,0.22); }
 
 /* Yes/No buttons and detail fields — lighter so they read clearly */
-[data-theme="dark"] .yesno-btn            { background: #3a3a3c; color: var(--c-text-2); }
-[data-theme="dark"] .yesno-btn:hover:not(.active-yes):not(.active-no) { background: #48484a; color: var(--c-text); }
+[data-theme="dark"] .yesno-btn            { background: #505052; color: var(--c-text-2); }
+[data-theme="dark"] .yesno-btn:hover:not(.active-yes):not(.active-no) { background: #5c5c5e; color: var(--c-text); }
 [data-theme="dark"] .yesno-toggle         { border-color: #48484a; }
 [data-theme="dark"] .yesno-btn:not(:last-child) { border-right-color: #48484a; }
 [data-theme="dark"] .yesno-detail         { background: #3a3a3c; border-color: #4a6080; color: var(--c-text-input); }
