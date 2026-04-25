@@ -107,8 +107,6 @@ function renderAbnForm(template) {
   body.innerHTML = '';
   const srch = document.getElementById('abn-search');
   if (srch) { srch.value = ''; }
-  const bar = document.getElementById('abn-search-bar');
-  if (bar) bar.style.display = 'none';
 
   if (!template.abn_groups) {
     body.innerHTML = '<div class="empty-hint">No notes template defined for this chart type yet.</div>';
@@ -857,9 +855,6 @@ function abnSearch(query) {
   // no label of its own and would override matches inside it via opacity inheritance.
   const fields = [...body.querySelectorAll('.abn-field, .yesno-field')];
 
-  const bar = document.getElementById('abn-search-bar');
-  if (bar) bar.style.display = q ? 'flex' : 'none';
-
   if (!q) {
     fields.forEach(f => f.classList.remove('abn-search-dim', 'abn-search-match'));
     return;
@@ -1068,6 +1063,9 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
   document.getElementById('abn-form-body').addEventListener('input', _scheduleAbnSave);
   document.getElementById('abn-form-body').addEventListener('change', _scheduleAbnSave);
+  document.getElementById('abn-form-body').addEventListener('focusin', () => {
+    if (document.getElementById('abn-search').value) abnClearSearch();
+  });
   checkOllamaStatus();
   _setPatientName('');
   _startIdleTimer();
