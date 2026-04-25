@@ -1031,7 +1031,33 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('abn-form-body').addEventListener('change', _scheduleAbnSave);
   checkOllamaStatus();
   _setPatientName(''); // enforce no-patient state on load
+  _startIdleTimer();
 });
+
+// ── Privacy Screen ────────────────────────────────────────────────────────
+const IDLE_TIMEOUT_MS = 10_000;
+let _idleTimer = null;
+
+function _startIdleTimer() {
+  ['mousemove', 'mousedown', 'keydown', 'touchstart', 'scroll', 'click'].forEach(evt =>
+    document.addEventListener(evt, _resetIdleTimer, { passive: true })
+  );
+  _resetIdleTimer();
+}
+
+function _resetIdleTimer() {
+  clearTimeout(_idleTimer);
+  _idleTimer = setTimeout(_activatePrivacy, IDLE_TIMEOUT_MS);
+}
+
+function _activatePrivacy() {
+  document.getElementById('privacy-overlay').classList.add('active');
+}
+
+function resumeCharting() {
+  document.getElementById('privacy-overlay').classList.remove('active');
+  _resetIdleTimer();
+}
 
 async function checkOllamaStatus() {
   const badge = document.getElementById('ai-status');
