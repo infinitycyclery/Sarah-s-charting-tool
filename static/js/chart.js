@@ -769,6 +769,7 @@ function _resetChart() {
   clearChart();
   currentChartId = null;
   clearTimeout(autoSaveTimer);
+  clearTimeout(_abnSaveTimer);
 }
 
 function newChart() { _resetChart(); }
@@ -981,8 +982,53 @@ function scheduleAutoSave() {
   }, AUTOSAVE_DELAY);
 }
 
+// ── ABN field auto-save (saves even before chart is generated) ─────────────
+let _abnSaveTimer = null;
+function _scheduleAbnSave() {
+  clearTimeout(_abnSaveTimer);
+  _abnSaveTimer = setTimeout(_doAbnSave, 2000);
+}
+
+async function _doAbnSave() {
+  const name = document.getElementById('patient-name').value.trim();
+  if (!name || !currentTemplate) return;
+
+  const fields = {};
+  document.querySelectorAll('[data-key]').forEach(el => {
+    if (el.value.trim()) fields[el.dataset.key] = el.value.trim();
+  });
+  delete fields['patient_name'];
+  if (!Object.keys(fields).length) return;
+
+  try {
+    const chartText = document.getElementById('chart-output').innerText.trim();
+    const resp = await fetch('/api/save-chart', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        patient_name: name,
+        template_id:  currentTemplate.id,
+        fields,
+        chart_text:   chartText,
+        chart_id:     currentChartId,
+      }),
+    });
+    const data = await resp.json();
+    if (data.chart_id) {
+      currentChartId = data.chart_id;
+      if (data.order_num !== undefined) setChartOrderNum(data.order_num);
+      showSaveStatus();
+    }
+  } catch (e) {
+    console.warn('ABN auto-save failed:', e);
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('chart-output').addEventListener('input', scheduleAutoSave);
+  // Auto-save ABN notes on any field change (before chart is generated)
+  document.getElementById('abn-form-body').addEventListener('input', _scheduleAbnSave);
+  document.getElementById('abn-form-body').addEventListener('change', _scheduleAbnSave);
   checkOllamaStatus();
   _setPatientName(''); // enforce no-patient state on load
 });

@@ -889,6 +889,8 @@ def get_patient_charts(patient_id):
             txt = d['chart_text']
             d['preview'] = (txt[:140] + '…') if len(txt) > 140 else txt
             d['preview'] = d['preview'].replace('\n', ' ')
+            if not d['preview'].strip():
+                d['preview'] = '(notes in progress)'
             result.append(d)
         return jsonify(result)
     finally:
