@@ -398,15 +398,17 @@ body { display: flex; flex-direction: column; overflow: hidden; }
 .left-panel.abn-expanded  { width: 72%; }
 .left-panel.abn-expanded + .right-panel { width: 28%; min-width: 0; }
 
-/* Expanded layout: groups in 2 columns, tighter spacing */
+/* Expanded layout: groups flow into 2 columns, no gaps */
 .abn-expanded #abn-form-body {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 10px;
-  align-items: start;
+  columns: 2;
+  column-gap: 12px;
+  display: block;
   padding: 12px;
 }
-.abn-expanded .abn-group { margin-bottom: 0; }
+.abn-expanded .abn-group {
+  break-inside: avoid;
+  margin-bottom: 10px;
+}
 /* Yes/No grid: 3 columns instead of 2 when expanded */
 .abn-expanded .yesno-grid {
   grid-template-columns: 1fr 1fr 1fr;
