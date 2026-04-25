@@ -194,6 +194,12 @@ function _renderYesNoField(field) {
       _syncYesNoValue(toggle, hidden, detailArea);
       expandBtn.classList.toggle('has-detail', detailArea.value.trim().length > 0);
     };
+    expandBtn.addEventListener('mousedown', e => e.preventDefault());
+    detailArea.addEventListener('blur', () => {
+      detailArea.style.display = 'none';
+      expandBtn.classList.remove('active-expand');
+      expandBtn.textContent = '+';
+    });
 
     toggle.appendChild(expandBtn);
     fieldEl.appendChild(toggle);
