@@ -10,7 +10,7 @@
         {"key": "stable",       "label": "Stable",       "type": "yesno", "expandable": true},
         {"key": "self_harm",    "label": "Self Harm",    "type": "yesno", "expandable": true},
         {"key": "fatigue",      "label": "Fatigue",      "type": "yesno", "expandable": true},
-        {"key": "helping",      "label": "Helping",      "type": "yesno", "expandable": true},
+        {"key": "helping",      "label": "Improvement?",  "type": "yesno", "expandable": true},
         {"key": "suicidal",     "label": "Suicidal",     "type": "yesno", "expandable": true},
         {"key": "side_effects", "label": "Side Effects", "type": "yesno", "expandable": true},
         {"key": "age",          "label": "Age"},
@@ -22,7 +22,8 @@
       "fields": [
         {"key": "symptom_update",     "label": "General Symptom Update",  "type": "textarea"},
         {"key": "socially_isolating", "label": "Socially Isolating"},
-        {"key": "productive",         "label": "Productive"},
+        {"key": "productive",         "label": "Initiating / Completing Tasks", "type": "yesno", "expandable": true},
+        {"key": "concentration",      "label": "Challenges w/ Prolonged Concentration", "type": "yesno", "expandable": true},
         {"key": "sleep",              "label": "Sleeping More or Less"},
         {"key": "anhedonia",          "label": "Anhedonia"},
         {"key": "collateral",         "label": "Friend / Family Comments", "type": "textarea"}
