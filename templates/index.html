@@ -96,6 +96,12 @@ Examples:
       <textarea class="notepad-textarea" id="notepad-textarea"
         placeholder="Jot down anything here — notes persist between sessions…"
         oninput="saveNotepad()"></textarea>
+      <div class="notepad-footer">
+        <label class="notepad-include-label">
+          <input type="checkbox" id="notepad-include-toggle" onchange="saveNotepad()">
+          Include notepad during generation
+        </label>
+      </div>
     </div>
 
     <div class="panel-footer no-print">

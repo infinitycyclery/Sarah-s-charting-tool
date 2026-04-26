@@ -410,7 +410,7 @@ async function _doGenerate() {
     const resp = await fetch('/api/generate-chart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules() }),
+      body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules(), notepad_context: _getNotepadContext() }),
     });
     const data = await resp.json();
     if (data.error) { alert(data.error); return; }
@@ -1118,12 +1118,21 @@ function toggleNotepad() {
   if (!isOpen) {
     const ta = document.getElementById('notepad-textarea');
     ta.value = localStorage.getItem('notepad') || '';
+    document.getElementById('notepad-include-toggle').checked =
+      localStorage.getItem('notepad-include') === '1';
     ta.focus();
   }
 }
 
 function saveNotepad() {
   localStorage.setItem('notepad', document.getElementById('notepad-textarea').value);
+  localStorage.setItem('notepad-include',
+    document.getElementById('notepad-include-toggle').checked ? '1' : '0');
+}
+
+function _getNotepadContext() {
+  if (localStorage.getItem('notepad-include') !== '1') return '';
+  return (localStorage.getItem('notepad') || '').trim();
 }
 
 // ── Privacy Screen ────────────────────────────────────────────────────────

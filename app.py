@@ -622,7 +622,7 @@ def _is_ollama_available():
     return running and ready
 
 
-def _build_ollama_prompt(fields, template, chart_rules=''):
+def _build_ollama_prompt(fields, template, chart_rules='', notepad_context=''):
     patient_name  = fields.get('patient_name', 'the patient')
     template_name = template.get('name', template.get('id', 'visit'))
 
@@ -634,8 +634,9 @@ def _build_ollama_prompt(fields, template, chart_rules=''):
             if val and key != 'patient_name':
                 lines.append(f'- {field["label"]}: {val}')
 
-    data_section  = '\n'.join(lines) if lines else '(No additional data provided)'
-    rules_section = f'\nYou MUST follow these rules exactly — they override everything else:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
+    data_section     = '\n'.join(lines) if lines else '(No additional data provided)'
+    rules_section    = f'\nYou MUST follow these rules exactly — they override everything else:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
+    notepad_section  = f'\nAdditional clinician notes to incorporate:\n{notepad_context.strip()}\n' if notepad_context.strip() else ''
 
     return f"""You are a licensed psychiatric nurse practitioner writing a clinical progress note after a patient visit.
 
@@ -646,7 +647,7 @@ Write a detailed, professional clinical note in flowing prose paragraphs. Rules:
 - Include every detail provided below — do not omit anything
 - Do not invent information that was not provided
 - End with a concise Assessment and Plan paragraph
-{rules_section}
+{rules_section}{notepad_section}
 Visit Type: {template_name}
 
 Clinical data from today's visit:
@@ -696,17 +697,18 @@ def ollama_status():
 
 @app.route('/api/generate-chart', methods=['POST'])
 def generate_chart():
-    data        = request.get_json(silent=True) or {}
-    template_id  = data.get('template_id', '')
-    fields       = data.get('fields', {})
-    chart_rules  = data.get('chart_rules', '')
-    template     = load_template(template_id)
+    data             = request.get_json(silent=True) or {}
+    template_id      = data.get('template_id', '')
+    fields           = data.get('fields', {})
+    chart_rules      = data.get('chart_rules', '')
+    notepad_context  = data.get('notepad_context', '')
+    template         = load_template(template_id)
     if not template:
         return jsonify({'error': 'Template not found'}), 404
 
     if USE_OLLAMA:
         try:
-            prompt     = _build_ollama_prompt(fields, template, chart_rules)
+            prompt     = _build_ollama_prompt(fields, template, chart_rules, notepad_context)
             chart_text = _call_ollama(prompt)
             return jsonify({'chart': chart_text, 'source': 'ai'})
         except Exception as e:

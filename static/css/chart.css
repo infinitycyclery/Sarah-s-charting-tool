@@ -2010,6 +2010,19 @@ body.abn-expanded #chart-order-num { display: none !important; }
   background: var(--c-surface); color: var(--c-text);
 }
 .notepad-textarea::placeholder { color: var(--c-text-4); }
+.notepad-footer {
+  flex-shrink: 0; padding: 10px 16px;
+  border-top: 1px solid var(--c-border);
+  background: var(--c-surface-3);
+}
+.notepad-include-label {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 0.82rem; font-weight: 600; color: var(--c-text-2);
+  cursor: pointer; user-select: none;
+}
+.notepad-include-label input[type=checkbox] {
+  width: 15px; height: 15px; accent-color: #16a34a; cursor: pointer;
+}
 
 /* AI status in footer context — adapt colors for light background */
 .panel-footer .ai-status.ai-on  { background: rgba(22,163,74,.12); color: #16a34a; }
