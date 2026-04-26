@@ -2010,6 +2010,22 @@ body.abn-expanded #chart-order-num { display: none !important; }
   background: var(--c-surface); color: var(--c-text);
 }
 .notepad-textarea::placeholder { color: var(--c-text-4); }
+.notepad-move-btn {
+  margin-left: auto;
+  background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2);
+  color: rgba(255,255,255,0.85); border-radius: 6px;
+  padding: 3px 9px; font-size: 0.75rem; font-weight: 600;
+  cursor: pointer; font-family: inherit; white-space: nowrap;
+  transition: background .15s;
+}
+.notepad-move-btn:hover { background: rgba(255,255,255,0.2); }
+
+/* Notepad positioned in the right panel — covers chart area, no footer offset */
+.notepad-panel--right {
+  top: 44px;
+  bottom: 0;
+}
+
 .notepad-footer {
   flex-shrink: 0; padding: 10px 16px;
   border-top: 1px solid var(--c-border);

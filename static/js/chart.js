@@ -1130,6 +1130,28 @@ function saveNotepad() {
     document.getElementById('notepad-include-toggle').checked ? '1' : '0');
 }
 
+let _notepadOnRight = false;
+
+function moveNotepad() {
+  const panel   = document.getElementById('notepad-panel');
+  const btn     = document.getElementById('notepad-move-btn');
+  const leftEl  = document.getElementById('left-panel');
+  const rightEl = document.getElementById('right-panel');
+
+  _notepadOnRight = !_notepadOnRight;
+  if (_notepadOnRight) {
+    rightEl.appendChild(panel);
+    panel.classList.add('notepad-panel--right');
+    btn.textContent = '⇤ Move Left';
+  } else {
+    // Re-insert before the panel-footer in the left panel
+    const footer = leftEl.querySelector('.panel-footer');
+    leftEl.insertBefore(panel, footer);
+    panel.classList.remove('notepad-panel--right');
+    btn.textContent = '⇥ Move Right';
+  }
+}
+
 function _getNotepadContext() {
   if (localStorage.getItem('notepad-include') !== '1') return '';
   return (localStorage.getItem('notepad') || '').trim();
