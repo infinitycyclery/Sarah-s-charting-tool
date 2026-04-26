@@ -27,7 +27,6 @@
       </div>
     </div>
     <span class="save-status" id="save-status"></span>
-    <button class="btn-top btn-notepad" id="btn-notepad" onclick="toggleNotepad()">🗒 Notepad</button>
   </div>
   <div class="topbar-center"></div>
   <div class="topbar-right">
@@ -51,7 +50,7 @@
   <!-- LEFT: Abbreviated Notes -->
   <div class="left-panel" id="left-panel">
     <div class="panel-header">
-      <span>Abbreviated Notes from Visit</span>
+      <button class="btn-notepad no-print" id="btn-notepad" onclick="toggleNotepad()">🗒 Notepad</button>
       <input type="search" id="abn-search" class="abn-search-input no-print" placeholder="🔍 Note search…" oninput="abnSearch(this.value)" autocomplete="off">
       <button class="btn-reset-abn no-print" id="btn-reset-abn" onclick="promptResetAbn()" disabled>↺ Reset Notes</button>
     </div>
