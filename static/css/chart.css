@@ -794,9 +794,9 @@ body.abn-expanded #abn-form-body {
 .chat-input:focus { border-color: #1a3a5c; box-shadow: 0 0 0 3px rgba(26,58,92,.1); }
 .chat-input::placeholder { color: #b0bec5; }
 .chat-send-btn {
-  background: #15803d;
-  color: #fff;
-  border: 2px solid #16a34a;
+  background: rgba(22,163,74,.08);
+  color: #16a34a;
+  border: 1px solid rgba(22,163,74,.35);
   border-radius: 22px;
   padding: 9px 20px;
   font-size: 0.86rem;
@@ -806,7 +806,7 @@ body.abn-expanded #abn-form-body {
   transition: background .15s, border-color .15s;
   flex-shrink: 0;
 }
-.chat-send-btn:hover { background: #166534; border-color: #15803d; }
+.chat-send-btn:hover { background: rgba(22,163,74,.16); border-color: rgba(22,163,74,.55); }
 .chat-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
 
 /* ── Empty State ── */
@@ -916,9 +916,9 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
 /* ── Generate Button ── */
 .btn-generate {
   width: 100%;
-  background: #15803d;
-  color: #fff;
-  border: 2px solid #16a34a;
+  background: rgba(22,163,74,.08);
+  color: #16a34a;
+  border: 1px solid rgba(22,163,74,.35);
   border-radius: 8px;
   padding: 10px;
   font-size: 0.9rem;
@@ -926,7 +926,7 @@ textarea.abn-input { min-height: 58px; resize: vertical; }
   cursor: pointer;
   transition: background .15s, border-color .15s;
 }
-.btn-generate:hover:not(:disabled) { background: #166534; border-color: #15803d; }
+.btn-generate:hover:not(:disabled) { background: rgba(22,163,74,.16); border-color: rgba(22,163,74,.55); }
 .btn-generate:disabled { opacity: 0.4; cursor: not-allowed; }
 
 /* ── Action Buttons ── */
