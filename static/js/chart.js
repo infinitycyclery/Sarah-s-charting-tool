@@ -1110,6 +1110,22 @@ function _autoThemeCheck() {
 // Run auto-check every minute
 setInterval(_autoThemeCheck, 60_000);
 
+// ── Notepad ───────────────────────────────────────────────────────────────
+function toggleNotepad() {
+  const panel = document.getElementById('notepad-panel');
+  const isOpen = panel.style.display !== 'none';
+  panel.style.display = isOpen ? 'none' : 'flex';
+  if (!isOpen) {
+    const ta = document.getElementById('notepad-textarea');
+    ta.value = localStorage.getItem('notepad') || '';
+    ta.focus();
+  }
+}
+
+function saveNotepad() {
+  localStorage.setItem('notepad', document.getElementById('notepad-textarea').value);
+}
+
 // ── Privacy Screen ────────────────────────────────────────────────────────
 const IDLE_TIMEOUT_MS = 60_000;
 let _idleTimer = null;
