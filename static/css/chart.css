@@ -1835,11 +1835,11 @@ body.abn-expanded #chart-order-num { display: none !important; }
 [data-theme="dark"] .vac-bulk-delete-btn { background: rgba(239,68,68,0.15); border-color: rgba(239,68,68,0.3); color: #f87171; }
 [data-theme="dark"] .vac-bulk-delete-btn:not(:disabled):hover { background: rgba(239,68,68,0.28); }
 
-/* Notepad — lighter in dark mode so it stands out from the panel */
-[data-theme="dark"] .notepad-panel    { background: #4a4a4c; }
-[data-theme="dark"] .notepad-header   { background: #404042; }
-[data-theme="dark"] .notepad-textarea { background: #4a4a4c; }
-[data-theme="dark"] .notepad-footer   { background: #404042; }
+/* Notepad — yellow-tinted, lighter in dark mode so it stands out from the panel */
+[data-theme="dark"] .notepad-panel    { background: #3a3618; }
+[data-theme="dark"] .notepad-header   { background: #2e2b10; }
+[data-theme="dark"] .notepad-textarea { background: #3a3618; }
+[data-theme="dark"] .notepad-footer   { background: #2e2b10; }
 [data-theme="dark"] .notepad-move-btn { background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); }
 [data-theme="dark"] .notepad-move-btn:hover { background: rgba(255,255,255,0.2); }
 
@@ -1991,7 +1991,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
 .notepad-panel {
   position: absolute;
   top: 44px; left: 0; right: 0; bottom: 52px;
-  background: #e9e9eb;
+  background: #fef9d9;
   border-top: 2px solid rgba(22,163,74,.4);
   z-index: 30;
   display: flex;
@@ -2000,7 +2000,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
 .notepad-header {
   display: flex; align-items: center; justify-content: space-between;
   padding: 8px 14px;
-  background: #dcdcde;
+  background: #f5edbe;
   border-bottom: 1px solid var(--c-border);
   font-size: 0.82rem; font-weight: 700; color: var(--c-text-2);
   flex-shrink: 0;
@@ -2015,7 +2015,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
   flex: 1; resize: none; border: none; outline: none;
   padding: 14px 16px;
   font-family: inherit; font-size: 0.88rem; line-height: 1.6;
-  background: #e9e9eb; color: var(--c-text);
+  background: #fef9d9; color: var(--c-text);
 }
 .notepad-textarea::placeholder { color: var(--c-text-4); }
 .notepad-move-btn {
@@ -2037,7 +2037,7 @@ body.abn-expanded #chart-order-num { display: none !important; }
 .notepad-footer {
   flex-shrink: 0; padding: 10px 16px;
   border-top: 1px solid var(--c-border);
-  background: #dcdcde;
+  background: #f5edbe;
 }
 .notepad-include-label {
   display: flex; align-items: center; gap: 8px;
