@@ -1624,12 +1624,62 @@ function esc(str) {
 // ── View All Charts ───────────────────────────────────────────────────────
 let vacPage = 1;
 let vacQuery = '';
-// ── Update ────────────────────────────────────────────────────────────────
+// ── Admin Password ────────────────────────────────────────────────────────
+let _adminUnlocked = false;
+let _adminLockTimer = null;
+const ADMIN_LOCK_MS = 5 * 60 * 1000; // re-lock after 5 minutes
+
+function _resetAdminLockTimer() {
+  clearTimeout(_adminLockTimer);
+  _adminLockTimer = setTimeout(() => {
+    _adminUnlocked = false;
+    document.getElementById('admin-dropdown').style.display = 'none';
+  }, ADMIN_LOCK_MS);
+}
+
 function toggleAdminMenu(e) {
   if (e) e.stopPropagation();
+  if (!_adminUnlocked) {
+    _openAdminLock();
+    return;
+  }
   const dd = document.getElementById('admin-dropdown');
   dd.style.display = dd.style.display === 'none' ? 'flex' : 'none';
 }
+
+function _openAdminLock() {
+  const modal = document.getElementById('admin-lock-modal');
+  const input = document.getElementById('admin-lock-input');
+  modal.style.display = 'flex';
+  input.value = '';
+  input.focus();
+}
+
+function _closeAdminLock() {
+  document.getElementById('admin-lock-modal').style.display = 'none';
+}
+
+function _submitAdminLock() {
+  const val = document.getElementById('admin-lock-input').value;
+  if (val === '0090') {
+    _adminUnlocked = true;
+    _resetAdminLockTimer();
+    _closeAdminLock();
+    const dd = document.getElementById('admin-dropdown');
+    dd.style.display = 'flex';
+  } else {
+    const input = document.getElementById('admin-lock-input');
+    input.value = '';
+    input.placeholder = 'Incorrect — try again';
+    input.classList.add('admin-lock-error');
+    setTimeout(() => {
+      input.placeholder = 'Password';
+      input.classList.remove('admin-lock-error');
+      input.focus();
+    }, 1200);
+  }
+}
+
 document.addEventListener('click', function(e) {
   const menu = document.getElementById('admin-menu');
   if (menu && !menu.contains(e.target)) {

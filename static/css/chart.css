@@ -1924,3 +1924,41 @@ body.abn-expanded #chart-order-num { display: none !important; }
   transition: background .15s;
 }
 .btn-dark-toggle:hover { background: rgba(255,255,255,0.22); }
+
+/* ── Admin Password Modal ── */
+.admin-lock-overlay {
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(0,0,0,0.5);
+  display: flex; align-items: center; justify-content: center;
+}
+.admin-lock-dialog {
+  background: var(--c-surface); border-radius: 14px;
+  padding: 28px 32px; width: 280px;
+  box-shadow: 0 24px 60px rgba(0,0,0,0.3);
+  display: flex; flex-direction: column; gap: 14px;
+}
+.admin-lock-title {
+  font-size: 1rem; font-weight: 700; color: var(--c-text); text-align: center;
+}
+.admin-lock-input {
+  width: 100%; padding: 10px 14px; border-radius: 8px;
+  border: 1.5px solid var(--c-border); background: var(--c-input-bg);
+  color: var(--c-text); font-size: 1rem; font-family: inherit;
+  text-align: center; letter-spacing: 0.2em; outline: none; box-sizing: border-box;
+  transition: border-color .15s;
+}
+.admin-lock-input:focus { border-color: #6366f1; }
+.admin-lock-input.admin-lock-error { border-color: #ef4444; color: #ef4444; }
+.admin-lock-btns { display: flex; gap: 10px; }
+.admin-lock-btn-cancel {
+  flex: 1; padding: 9px; border-radius: 8px; border: 1px solid var(--c-border);
+  background: var(--c-surface-2); color: var(--c-text-2);
+  font-size: 0.88rem; font-weight: 600; cursor: pointer; font-family: inherit;
+}
+.admin-lock-btn-cancel:hover { background: var(--c-hover); }
+.admin-lock-btn-ok {
+  flex: 1; padding: 9px; border-radius: 8px; border: none;
+  background: #1a3a5c; color: #fff;
+  font-size: 0.88rem; font-weight: 700; cursor: pointer; font-family: inherit;
+}
+.admin-lock-btn-ok:hover { background: #1e4a7a; }

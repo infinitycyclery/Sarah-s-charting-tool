@@ -321,5 +321,19 @@ Examples:
 <div class="privacy-overlay" id="privacy-overlay">
   <p class="privacy-hint">🔒 Tool blurred for patient privacy — move mouse to continue</p>
 </div>
+
+<!-- ── Admin Password Modal ── -->
+<div class="admin-lock-overlay" id="admin-lock-modal" style="display:none" onclick="if(event.target===this)_closeAdminLock()">
+  <div class="admin-lock-dialog">
+    <div class="admin-lock-title">⚙ Admin Access</div>
+    <input class="admin-lock-input" id="admin-lock-input" type="password"
+      placeholder="Password" maxlength="20"
+      onkeydown="if(event.key==='Enter')_submitAdminLock();if(event.key==='Escape')_closeAdminLock()">
+    <div class="admin-lock-btns">
+      <button class="admin-lock-btn-cancel" onclick="_closeAdminLock()">Cancel</button>
+      <button class="admin-lock-btn-ok" onclick="_submitAdminLock()">Unlock</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
