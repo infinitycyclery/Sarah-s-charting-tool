@@ -399,12 +399,10 @@ async function _doGenerate() {
   if (patientName) fields['patient_name'] = patientName;
 
   const btn = document.getElementById('btn-generate');
-  const badge = document.getElementById('ai-status');
-  const usingAI = badge && badge.classList.contains('ai-on');
-  btn.textContent = usingAI ? '🤖 AI Generating…' : 'Generating…';
+  btn.textContent = '🤖 AI Generating…';
   btn.disabled = true;
 
-  if (usingAI) _showLoading();
+  _showLoading();
 
   try {
     const resp = await fetch('/api/generate-chart', {
