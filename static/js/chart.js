@@ -638,9 +638,9 @@ function setChartSourceBadge(source) {
   const badge = document.getElementById('chart-source-badge');
   if (!badge) return;
   if (source === 'ai') {
-    badge.textContent = '🤖 AI Generated';
+    badge.innerHTML = '<img src="/static/img/llama-head.png" class="badge-llama-icon" alt=""> Generated with Llama';
     badge.className = 'chart-source-badge source-ai';
-    badge.style.display = 'inline-block';
+    badge.style.display = 'inline-flex';
   } else if (source === 'rules') {
     badge.textContent = '📝 Rule-based';
     badge.className = 'chart-source-badge source-rules';

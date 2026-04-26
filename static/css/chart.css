@@ -1400,6 +1400,13 @@ body.abn-expanded #chart-order-num { display: none !important; }
   padding: 2px 8px;
   border-radius: 8px;
   white-space: nowrap;
+  align-items: center;
+  gap: 5px;
+}
+.badge-llama-icon {
+  width: 16px; height: 16px;
+  object-fit: contain; border-radius: 3px;
+  display: inline-block; vertical-align: middle;
 }
 .chart-order-num {
   font-size: 0.68rem;
