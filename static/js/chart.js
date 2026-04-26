@@ -4,6 +4,9 @@ let currentTemplate   = null;
 let currentChartId    = null;
 let autoSaveTimer     = null;
 let _ollamaAvailable  = false;
+let _modelFast        = 'llama3.1:8b';
+let _modelQuality     = 'qwen2.5:32b';
+let _activeModel      = localStorage.getItem('ollama_model_pref') || 'fast';
 const AUTOSAVE_DELAY = 15_000; // 15 seconds after last edit
 
 // ── Template Selection ─────────────────────────────────────────────────────
@@ -409,7 +412,7 @@ async function _doGenerate() {
     const resp = await fetch('/api/generate-chart', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules(), notepad_context: _getNotepadContext() }),
+      body: JSON.stringify({ template_id: currentTemplate.id, fields, chart_rules: getChartRules(), notepad_context: _getNotepadContext(), model: _activeModel === 'quality' ? _modelQuality : _modelFast }),
     });
     const data = await resp.json();
     if (data.error) { alert(data.error); return; }
@@ -502,6 +505,7 @@ async function sendRefinement() {
         patient_name: patientName,
         template_id:  currentTemplate ? currentTemplate.id : '',
         chart_rules:  getChartRules(),
+        model:        _activeModel === 'quality' ? _modelQuality : _modelFast,
       }),
     });
     const data = await resp.json();
@@ -1219,13 +1223,37 @@ async function checkOllamaStatus() {
   try {
     const data = await (await fetch('/api/ollama-status')).json();
     _ollamaAvailable = data.enabled && data.available;
+    if (data.model_fast)    _modelFast    = data.model_fast;
+    if (data.model_quality) _modelQuality = data.model_quality;
+    _renderModelToggle(data);
     if (data.enabled && data.ollama_running && !data.model_ready) {
-      setTimeout(() => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model)), 2000);
+      setTimeout(() => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model_fast)), 2000);
     } else if (data.enabled && !data.ollama_running) {
-      setTimeout(() => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML(data.model)), 2000);
+      setTimeout(() => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML()), 2000);
     }
   } catch {
     _ollamaAvailable = false;
+  }
+}
+
+function setModel(m) {
+  _activeModel = m;
+  localStorage.setItem('ollama_model_pref', m);
+  _renderModelToggle();
+}
+
+function _renderModelToggle(statusData) {
+  const fast    = document.getElementById('model-toggle-fast');
+  const quality = document.getElementById('model-toggle-quality');
+  const wrap    = document.getElementById('model-toggle');
+  if (!fast || !quality || !wrap) return;
+  fast.classList.toggle('active', _activeModel === 'fast');
+  quality.classList.toggle('active', _activeModel === 'quality');
+  if (statusData) {
+    fast.disabled    = !statusData.fast_ready;
+    quality.disabled = !statusData.quality_ready;
+    fast.title    = statusData.fast_ready    ? `Fast — ${_modelFast}`    : `${_modelFast} not loaded`;
+    quality.title = statusData.quality_ready ? `Quality — ${_modelQuality}` : `${_modelQuality} not loaded`;
   }
 }
 

@@ -732,6 +732,36 @@ body.abn-expanded #abn-form-body {
 .btn-rules.active { background: #16a34a; color: #fff; border-color: #16a34a; }
 .btn-rules:disabled { opacity: 0.35; cursor: not-allowed; }
 
+/* ── Model Toggle ── */
+.model-toggle {
+  display: flex;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 8px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.model-toggle-btn {
+  background: rgba(26,58,92,0.08);
+  border: none;
+  color: #1a3a5c;
+  padding: 8px 12px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background .15s, color .15s;
+}
+.model-toggle-btn:first-child { border-right: 1.5px solid #cbd5e1; }
+.model-toggle-btn.active      { background: #6d28d9; color: #fff; }
+.model-toggle-btn:hover:not(.active):not(:disabled) { background: rgba(26,58,92,0.16); }
+.model-toggle-btn:disabled    { opacity: 0.35; cursor: not-allowed; }
+
+[data-theme="dark"] .model-toggle               { border-color: var(--c-border); }
+[data-theme="dark"] .model-toggle-btn           { background: rgba(255,255,255,0.05); color: var(--c-text-2); }
+[data-theme="dark"] .model-toggle-btn:first-child { border-right-color: var(--c-border); }
+[data-theme="dark"] .model-toggle-btn.active    { background: #7c3aed; color: #fff; }
+[data-theme="dark"] .model-toggle-btn:hover:not(.active):not(:disabled) { background: rgba(255,255,255,0.1); }
+
 /* ── Chart Chat Footer ── */
 .chart-chat-footer {
   border-top: 2px solid var(--c-border);

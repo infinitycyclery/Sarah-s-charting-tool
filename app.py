@@ -9,7 +9,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '2.2'
+VERSION = '2.3'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent
@@ -17,9 +17,10 @@ BASE_DIR = Path(__file__).parent
 _LOCAL_CFG_PATH = BASE_DIR / 'data' / 'local_config.json'
 _local_cfg = json.loads(_LOCAL_CFG_PATH.read_text()) if _LOCAL_CFG_PATH.exists() else {}
 
-OLLAMA_URL   = _local_cfg.get('ollama_url',   'http://localhost:11434')
-OLLAMA_MODEL = _local_cfg.get('ollama_model', 'llama3.1:8b')
-USE_OLLAMA   = _local_cfg.get('use_ollama',   True)
+OLLAMA_URL           = _local_cfg.get('ollama_url',           'http://localhost:11434')
+OLLAMA_MODEL_FAST    = _local_cfg.get('ollama_model_fast',    'llama3.1:8b')
+OLLAMA_MODEL_QUALITY = _local_cfg.get('ollama_model_quality', 'qwen2.5:32b')
+USE_OLLAMA           = _local_cfg.get('use_ollama',           True)
 TEMPLATES_DIR = BASE_DIR / 'data' / 'templates'
 ABBREVIATIONS_FILE = BASE_DIR / 'data' / 'abbreviations.json'
 DB_PATH = BASE_DIR / 'data' / 'charting.db'
@@ -593,9 +594,13 @@ Revision instruction: {message}
 
 Rewrite the complete revised chart note incorporating the requested changes. Keep all unchanged sections exactly as they were. Write in the same clinical style as the original. Output only the chart text — no preamble, no explanation, no headings."""
 
+    requested_model = data.get('model', OLLAMA_MODEL_FAST)
+    if requested_model not in (OLLAMA_MODEL_FAST, OLLAMA_MODEL_QUALITY):
+        requested_model = OLLAMA_MODEL_FAST
+
     if USE_OLLAMA:
         try:
-            refined = _call_ollama(prompt)
+            refined = _call_ollama(prompt, model=requested_model)
             return jsonify({'chart': refined, 'source': 'ai'})
         except Exception as e:
             app.logger.warning('Ollama refine failed: %s', e)
@@ -614,22 +619,22 @@ def parse_abn_route():
 # ── Ollama helpers ───────────────────────────────────────────────────────────
 
 def _ollama_status_detail():
-    """Return (ollama_running, model_ready) booleans."""
+    """Return (ollama_running, any_model_ready, fast_ready, quality_ready)."""
     try:
         with urllib.request.urlopen(f'{OLLAMA_URL}/api/tags', timeout=2) as resp:
             data = json.loads(resp.read())
         names = [m.get('name', '') for m in data.get('models', [])]
-        model_ready = any(
-            n == OLLAMA_MODEL or n.startswith(OLLAMA_MODEL.split(':')[0] + ':')
-            for n in names
-        )
-        return True, model_ready
+        def _has(model):
+            return any(n == model or n.startswith(model.split(':')[0] + ':') for n in names)
+        fast_ready    = _has(OLLAMA_MODEL_FAST)
+        quality_ready = _has(OLLAMA_MODEL_QUALITY)
+        return True, fast_ready or quality_ready, fast_ready, quality_ready
     except Exception:
-        return False, False
+        return False, False, False, False
 
 
 def _is_ollama_available():
-    running, ready = _ollama_status_detail()
+    running, ready, _, _ = _ollama_status_detail()
     return running and ready
 
 
@@ -667,9 +672,9 @@ Clinical data from today's visit:
 Write the complete clinical note now (3-5 paragraphs):"""
 
 
-def _call_ollama(prompt):
+def _call_ollama(prompt, model=None):
     payload = json.dumps({
-        'model':  OLLAMA_MODEL,
+        'model':  model or OLLAMA_MODEL_FAST,
         'prompt': prompt,
         'stream': False,
         'options': {'temperature': 0.65, 'num_predict': 900},
@@ -694,15 +699,18 @@ def _call_ollama(prompt):
 @app.route('/api/ollama-status')
 def ollama_status():
     if USE_OLLAMA:
-        running, model_ready = _ollama_status_detail()
+        running, model_ready, fast_ready, quality_ready = _ollama_status_detail()
     else:
-        running = model_ready = False
+        running = model_ready = fast_ready = quality_ready = False
     return jsonify({
-        'enabled': USE_OLLAMA,
-        'available': running and model_ready,
+        'enabled':       USE_OLLAMA,
+        'available':     running and model_ready,
         'ollama_running': running,
-        'model_ready': model_ready,
-        'model': OLLAMA_MODEL,
+        'model_ready':   model_ready,
+        'model_fast':    OLLAMA_MODEL_FAST,
+        'model_quality': OLLAMA_MODEL_QUALITY,
+        'fast_ready':    fast_ready,
+        'quality_ready': quality_ready,
     })
 
 
@@ -713,6 +721,9 @@ def generate_chart():
     fields           = data.get('fields', {})
     chart_rules      = data.get('chart_rules', '')
     notepad_context  = data.get('notepad_context', '')
+    requested_model  = data.get('model', OLLAMA_MODEL_FAST)
+    if requested_model not in (OLLAMA_MODEL_FAST, OLLAMA_MODEL_QUALITY):
+        requested_model = OLLAMA_MODEL_FAST
     template         = load_template(template_id)
     if not template:
         return jsonify({'error': 'Template not found'}), 404
@@ -720,8 +731,8 @@ def generate_chart():
     if USE_OLLAMA:
         try:
             prompt     = _build_ollama_prompt(fields, template, chart_rules, notepad_context)
-            chart_text = _call_ollama(prompt)
-            return jsonify({'chart': chart_text, 'source': 'ai'})
+            chart_text = _call_ollama(prompt, model=requested_model)
+            return jsonify({'chart': chart_text, 'source': 'ai', 'model': requested_model})
         except Exception as e:
             app.logger.warning('Ollama unavailable, falling back to rule-based: %s', e)
 

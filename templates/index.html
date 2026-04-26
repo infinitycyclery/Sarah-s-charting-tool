@@ -106,6 +106,10 @@ Examples:
 
     <div class="panel-footer no-print">
       <button class="btn-rules" id="btn-rules" onclick="toggleChartRules()" disabled>📋 Chart Rules</button>
+      <div class="model-toggle" id="model-toggle">
+        <button class="model-toggle-btn" id="model-toggle-fast"    onclick="setModel('fast')"    title="Fast — llama3.1:8b">⚡ Fast</button>
+        <button class="model-toggle-btn" id="model-toggle-quality" onclick="setModel('quality')" title="Quality — qwen2.5:32b">✨ Quality</button>
+      </div>
       <button class="btn-generate" id="btn-generate" onclick="generateChart()" disabled>
         Generate Chart →
       </button>
