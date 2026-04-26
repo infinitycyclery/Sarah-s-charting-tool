@@ -1,8 +1,9 @@
 'use strict';
 
-let currentTemplate = null;
-let currentChartId  = null;
-let autoSaveTimer   = null;
+let currentTemplate   = null;
+let currentChartId    = null;
+let autoSaveTimer     = null;
+let _ollamaAvailable  = false;
 const AUTOSAVE_DELAY = 15_000; // 15 seconds after last edit
 
 // ── Template Selection ─────────────────────────────────────────────────────
@@ -417,7 +418,7 @@ async function _doGenerate() {
     showChart(data.chart, patientName, data.source);
     persistChart(patientName, data.chart, { ...fields });
 
-    if (usingAI && data.source !== 'ai') {
+    if (_ollamaAvailable && data.source !== 'ai') {
       showFallbackToast();
     }
 
@@ -1215,34 +1216,16 @@ function _resetIdleTimer() {
 }
 
 async function checkOllamaStatus() {
-  const badge = document.getElementById('ai-status');
-  badge.onclick = null;
   try {
     const data = await (await fetch('/api/ollama-status')).json();
-    if (data.enabled && data.available) {
-      badge.className = 'ai-status ai-on';
-      badge.innerHTML = '<img src="/static/img/llama-head.png" class="ai-status-llama"> AI Lama is running';
-      badge.title = 'Ollama is running — charts will be AI-generated';
-    } else if (data.enabled && data.ollama_running && !data.model_ready) {
-      badge.className = 'ai-status ai-warn';
-      badge.textContent = '⚠️ Model not downloaded';
-      badge.title = 'Ollama is running but the model isn\'t pulled yet — click for help';
-      badge.onclick = () => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model));
+    _ollamaAvailable = data.enabled && data.available;
+    if (data.enabled && data.ollama_running && !data.model_ready) {
       setTimeout(() => showOllamaDialog('Model Not Downloaded', _ollamaModelNotPulledHTML(data.model)), 2000);
     } else if (data.enabled && !data.ollama_running) {
-      badge.className = 'ai-status ai-off';
-      badge.textContent = '📝 Rules (Ollama offline)';
-      badge.title = 'Ollama is not running — click for setup help';
-      badge.onclick = () => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML(data.model));
       setTimeout(() => showOllamaDialog('AI Lama Offline', _ollamaNotRunningHTML(data.model)), 2000);
-    } else {
-      badge.className = 'ai-status ai-off';
-      badge.textContent = '📝 Rules';
-      badge.title = 'AI generation is disabled';
     }
   } catch {
-    badge.className = 'ai-status ai-off';
-    badge.textContent = '📝 Rules';
+    _ollamaAvailable = false;
   }
 }
 
