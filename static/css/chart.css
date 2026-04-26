@@ -1136,6 +1136,45 @@ body.abn-expanded #chart-order-num { display: none !important; }
 }
 .ow-btn-replace:hover { background: #dc2626; }
 
+/* ── Quality Mode Warning Dialog ── */
+.qw-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.5); z-index: 400;
+}
+.qw-overlay.open { display: block; }
+
+.qw-dialog {
+  display: none; position: fixed;
+  top: 50%; left: 50%; transform: translate(-50%, -50%);
+  background: var(--c-surface); border-radius: 14px;
+  width: 480px; max-width: 92vw; z-index: 401;
+  box-shadow: 0 24px 64px rgba(0,0,0,0.25);
+  padding: 32px 28px 24px; text-align: center;
+}
+.qw-dialog.open { display: block; }
+
+.qw-icon  { font-size: 2.4rem; margin-bottom: 12px; }
+.qw-title { font-size: 1.05rem; font-weight: 700; color: var(--c-text); margin-bottom: 10px; }
+.qw-body  { font-size: 0.84rem; color: var(--c-text-3); line-height: 1.65; margin-bottom: 24px; }
+
+.qw-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+
+.qw-btn-back {
+  background: #22c55e; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.qw-btn-back:hover { background: #16a34a; }
+
+.qw-btn-confirm {
+  background: #f59e0b; color: #fff;
+  border: none; border-radius: 8px;
+  padding: 10px 18px; font-size: 0.82rem; font-weight: 700;
+  cursor: pointer; transition: background .15s;
+}
+.qw-btn-confirm:hover { background: #d97706; }
+
 /* ── View All Charts Panel ── */
 .vac-overlay {
   display: none; position: fixed; inset: 0;

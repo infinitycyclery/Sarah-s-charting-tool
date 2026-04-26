@@ -329,6 +329,18 @@ Examples:
   </div>
 </div>
 
+<!-- ── Quality Mode Warning Dialog ── -->
+<div class="qw-overlay" id="quality-warn-overlay"></div>
+<div class="qw-dialog" id="quality-warn-dialog">
+  <div class="qw-icon">⚠️</div>
+  <div class="qw-title">Heads up before you switch!</div>
+  <div class="qw-body">The High Quality toggle for the AI chart generator is <strong>not recommended for laptops</strong>. This option is for very high powered desktop computers. To generate a chart could take <strong>hours</strong> on a laptop.</div>
+  <div class="qw-actions">
+    <button class="qw-btn-back" onclick="qualityWarnCancel()">← Go back to Fast mode</button>
+    <button class="qw-btn-confirm" onclick="qualityWarnConfirm()">I want to try Quality mode, I have all day</button>
+  </div>
+</div>
+
 <!-- ── Fallback Warning Toast ── -->
 <div class="fallback-toast" id="fallback-toast">
   <span class="fallback-toast-icon">⚠️</span>

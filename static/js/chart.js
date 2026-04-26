@@ -1237,6 +1237,26 @@ async function checkOllamaStatus() {
 }
 
 function setModel(m) {
+  if (m === 'quality' && _activeModel !== 'quality') {
+    document.getElementById('quality-warn-overlay').classList.add('open');
+    document.getElementById('quality-warn-dialog').classList.add('open');
+    return;
+  }
+  _commitSetModel(m);
+}
+
+function qualityWarnConfirm() {
+  document.getElementById('quality-warn-overlay').classList.remove('open');
+  document.getElementById('quality-warn-dialog').classList.remove('open');
+  _commitSetModel('quality');
+}
+
+function qualityWarnCancel() {
+  document.getElementById('quality-warn-overlay').classList.remove('open');
+  document.getElementById('quality-warn-dialog').classList.remove('open');
+}
+
+function _commitSetModel(m) {
   _activeModel = m;
   localStorage.setItem('ollama_model_pref', m);
   _renderModelToggle();
