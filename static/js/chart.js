@@ -1073,20 +1073,42 @@ document.addEventListener('DOMContentLoaded', () => {
   checkOllamaStatus();
   _setPatientName('');
   _startIdleTimer();
-  _applyDarkMode(localStorage.getItem('theme') === 'dark');
+  const _manualTheme = localStorage.getItem('themeManual') ? localStorage.getItem('theme') : null;
+  _applyDarkMode(_manualTheme ? _manualTheme === 'dark' : _isDarkHour());
 });
 
 // ── Dark Mode ─────────────────────────────────────────────────────────────
+function _isDarkHour() {
+  const h = new Date().getHours();
+  return h >= 19 || h < 7; // dark 7 PM → 7 AM
+}
+
 function _applyDarkMode(dark) {
   document.documentElement.setAttribute('data-theme', dark ? 'dark' : 'light');
   const btn = document.getElementById('btn-dark-toggle');
   if (btn) btn.textContent = dark ? '☀ Light' : '🌙 Dark';
 }
+
 function toggleDarkMode() {
   const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  localStorage.setItem('theme', isDark ? 'light' : 'dark');
-  _applyDarkMode(!isDark);
+  const next = !isDark;
+  localStorage.setItem('theme', next ? 'dark' : 'light');
+  // If toggling back to what auto would choose anyway, drop the manual override
+  if (next === _isDarkHour()) {
+    localStorage.removeItem('themeManual');
+  } else {
+    localStorage.setItem('themeManual', '1');
+  }
+  _applyDarkMode(next);
 }
+
+function _autoThemeCheck() {
+  if (localStorage.getItem('themeManual')) return; // respect manual override
+  _applyDarkMode(_isDarkHour());
+}
+
+// Run auto-check every minute
+setInterval(_autoThemeCheck, 60_000);
 
 // ── Privacy Screen ────────────────────────────────────────────────────────
 const IDLE_TIMEOUT_MS = 60_000;
