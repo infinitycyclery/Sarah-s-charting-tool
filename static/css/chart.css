@@ -505,7 +505,7 @@ body.abn-expanded #abn-form-body {
   pointer-events: none;
   cursor: not-allowed;
 }
-.right-panel { flex: 1; background: var(--c-surface-4); }
+.right-panel { flex: 1; background: var(--c-surface-4); position: relative; }
 
 .panel-header {
   background: var(--c-surface-3);
