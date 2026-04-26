@@ -9,7 +9,7 @@ from pathlib import Path
 
 app = Flask(__name__)
 
-VERSION = '2.1'
+VERSION = '2.2'
 
 # ── Ollama AI Configuration ───────────────────────────────────────────────────
 BASE_DIR = Path(__file__).parent
@@ -69,6 +69,17 @@ def init_db():
                     SELECT COUNT(*) FROM charts c2 WHERE c2.id < charts.id
                 )
             """)
+            conn.commit()
+        except Exception:
+            pass
+        # Migration: add notepad columns
+        try:
+            conn.execute("ALTER TABLE charts ADD COLUMN notepad_text TEXT DEFAULT ''")
+            conn.commit()
+        except Exception:
+            pass
+        try:
+            conn.execute("ALTER TABLE charts ADD COLUMN notepad_include INTEGER DEFAULT 0")
             conn.commit()
         except Exception:
             pass
@@ -972,6 +983,23 @@ def get_all_charts():
             'page':   page,
             'pages':  max(1, (total + per_page - 1) // per_page),
         })
+    finally:
+        conn.close()
+
+
+@app.route('/api/chart/<int:chart_id>/notepad', methods=['PATCH'])
+def update_chart_notepad(chart_id):
+    data            = request.get_json(silent=True) or {}
+    notepad_text    = data.get('notepad_text', '')
+    notepad_include = 1 if data.get('notepad_include') else 0
+    conn = _db()
+    try:
+        conn.execute(
+            "UPDATE charts SET notepad_text=?, notepad_include=?, updated_at=datetime('now','localtime') WHERE id=?",
+            (notepad_text, notepad_include, chart_id)
+        )
+        conn.commit()
+        return jsonify({'ok': True})
     finally:
         conn.close()
 

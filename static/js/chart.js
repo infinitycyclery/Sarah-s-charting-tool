@@ -1056,11 +1056,14 @@ async function _doAbnSave() {
     const data = await resp.json();
     if (data.chart_id) {
       if (!currentChartId) {
-        // First save — migrate any notepad content from the 'new' temp key
+        // First save — migrate any notepad content from the 'new' temp key to the real chart key
         const tempText = localStorage.getItem('notepad_new');
         const tempInc  = localStorage.getItem('notepad_include_new');
         if (tempText) { localStorage.setItem(`notepad_chart_${data.chart_id}`, tempText); localStorage.removeItem('notepad_new'); }
         if (tempInc)  { localStorage.setItem(`notepad_include_${data.chart_id}`, tempInc); localStorage.removeItem('notepad_include_new'); }
+        // Push the migrated notepad to the DB immediately
+        currentChartId = data.chart_id;
+        _doNotepadDbSave();
       }
       currentChartId = data.chart_id;
       if (data.order_num !== undefined) setChartOrderNum(data.order_num);
@@ -1139,11 +1142,32 @@ function toggleNotepad() {
   }
 }
 
+let _notepadDbTimer = null;
+
 function saveNotepad() {
   const ta  = document.getElementById('notepad-textarea');
   const chk = document.getElementById('notepad-include-toggle');
   if (ta)  localStorage.setItem(_notepadKey(), ta.value);
   if (chk) localStorage.setItem(_notepadIncludeKey(), chk.checked ? '1' : '0');
+  clearTimeout(_notepadDbTimer);
+  _notepadDbTimer = setTimeout(_doNotepadDbSave, 1000);
+}
+
+async function _doNotepadDbSave() {
+  if (!currentChartId) return;
+  const ta      = document.getElementById('notepad-textarea');
+  const chk     = document.getElementById('notepad-include-toggle');
+  const text    = ta  ? ta.value    : (localStorage.getItem(_notepadKey()) || '');
+  const include = chk ? chk.checked : (localStorage.getItem(_notepadIncludeKey()) === '1');
+  try {
+    await fetch(`/api/chart/${currentChartId}/notepad`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ notepad_text: text, notepad_include: include }),
+    });
+  } catch (e) {
+    // Silent — localStorage still holds the data
+  }
 }
 
 let _notepadOnRight = false;
@@ -1564,6 +1588,11 @@ async function loadChartRecord(chartId, patientName) {
     showChart(data.chart_text, data.patient_name || patientName);
     if (data.order_num !== undefined && data.order_num !== null) setChartOrderNum(data.order_num);
     currentChartId = chartId;
+    // Sync notepad from DB into localStorage so _refreshNotepad reads it
+    if (data.notepad_text !== undefined) {
+      localStorage.setItem(`notepad_chart_${chartId}`, data.notepad_text || '');
+      localStorage.setItem(`notepad_include_${chartId}`, data.notepad_include ? '1' : '0');
+    }
     _refreshNotepad();
   } catch (e) {
     alert('Error loading chart: ' + e.message);
