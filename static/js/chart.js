@@ -772,6 +772,7 @@ async function _resetChart() {
   _setPatientName('');
   clearChart();
   currentChartId = null;
+  _refreshNotepad();
 }
 
 async function newChart() { await _resetChart(); }
@@ -1054,6 +1055,13 @@ async function _doAbnSave() {
     });
     const data = await resp.json();
     if (data.chart_id) {
+      if (!currentChartId) {
+        // First save — migrate any notepad content from the 'new' temp key
+        const tempText = localStorage.getItem('notepad_new');
+        const tempInc  = localStorage.getItem('notepad_include_new');
+        if (tempText) { localStorage.setItem(`notepad_chart_${data.chart_id}`, tempText); localStorage.removeItem('notepad_new'); }
+        if (tempInc)  { localStorage.setItem(`notepad_include_${data.chart_id}`, tempInc); localStorage.removeItem('notepad_include_new'); }
+      }
       currentChartId = data.chart_id;
       if (data.order_num !== undefined) setChartOrderNum(data.order_num);
       showSaveStatus();
@@ -1111,23 +1119,31 @@ function _autoThemeCheck() {
 setInterval(_autoThemeCheck, 60_000);
 
 // ── Notepad ───────────────────────────────────────────────────────────────
+function _notepadKey()        { return currentChartId ? `notepad_chart_${currentChartId}` : 'notepad_new'; }
+function _notepadIncludeKey() { return currentChartId ? `notepad_include_${currentChartId}` : 'notepad_include_new'; }
+
+function _refreshNotepad() {
+  const ta  = document.getElementById('notepad-textarea');
+  const chk = document.getElementById('notepad-include-toggle');
+  if (ta)  ta.value   = localStorage.getItem(_notepadKey()) || '';
+  if (chk) chk.checked = localStorage.getItem(_notepadIncludeKey()) === '1';
+}
+
 function toggleNotepad() {
   const panel = document.getElementById('notepad-panel');
   const isOpen = panel.style.display !== 'none';
   panel.style.display = isOpen ? 'none' : 'flex';
   if (!isOpen) {
-    const ta = document.getElementById('notepad-textarea');
-    ta.value = localStorage.getItem('notepad') || '';
-    document.getElementById('notepad-include-toggle').checked =
-      localStorage.getItem('notepad-include') === '1';
-    ta.focus();
+    _refreshNotepad();
+    document.getElementById('notepad-textarea').focus();
   }
 }
 
 function saveNotepad() {
-  localStorage.setItem('notepad', document.getElementById('notepad-textarea').value);
-  localStorage.setItem('notepad-include',
-    document.getElementById('notepad-include-toggle').checked ? '1' : '0');
+  const ta  = document.getElementById('notepad-textarea');
+  const chk = document.getElementById('notepad-include-toggle');
+  if (ta)  localStorage.setItem(_notepadKey(), ta.value);
+  if (chk) localStorage.setItem(_notepadIncludeKey(), chk.checked ? '1' : '0');
 }
 
 let _notepadOnRight = false;
@@ -1153,8 +1169,8 @@ function moveNotepad() {
 }
 
 function _getNotepadContext() {
-  if (localStorage.getItem('notepad-include') !== '1') return '';
-  return (localStorage.getItem('notepad') || '').trim();
+  if (localStorage.getItem(_notepadIncludeKey()) !== '1') return '';
+  return (localStorage.getItem(_notepadKey()) || '').trim();
 }
 
 // ── Privacy Screen ────────────────────────────────────────────────────────
@@ -1548,6 +1564,7 @@ async function loadChartRecord(chartId, patientName) {
     showChart(data.chart_text, data.patient_name || patientName);
     if (data.order_num !== undefined && data.order_num !== null) setChartOrderNum(data.order_num);
     currentChartId = chartId;
+    _refreshNotepad();
   } catch (e) {
     alert('Error loading chart: ' + e.message);
   }
