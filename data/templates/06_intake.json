@@ -5,9 +5,58 @@
   "generator": "intake",
   "abn_groups": [
     {
-      "label": "Intake Notes",
+      "label": "Patient Info",
       "fields": [
-        {"key": "placeholder", "label": "Notes (coming soon)", "type": "textarea"}
+        {"key": "age", "label": "Age"},
+        {"key": "sex", "label": "Sex"}
+      ]
+    },
+    {
+      "label": "Reason for Consultation",
+      "fields": [
+        {"key": "reason",          "label": "Reason / Interest for Consultation", "type": "textarea"},
+        {"key": "depression_onset","label": "When Was Depression Onset"},
+        {"key": "episodic",        "label": "Is Depression Episodic",             "type": "yesno", "expandable": true},
+        {"key": "tx_history",      "label": "Medications / Therapy Helpful Historically", "type": "textarea"}
+      ]
+    },
+    {
+      "label": "Depressive Symptoms",
+      "fields": [
+        {"key": "low_mood",       "label": "Low / Sad Mood",                          "type": "yesno"},
+        {"key": "sleep_change",   "label": "Change to Sleep",                         "type": "yesno", "expandable": true},
+        {"key": "low_energy",     "label": "Low Energy",                              "type": "yesno"},
+        {"key": "suicidal",       "label": "SI",                                      "type": "yesno", "expandable": true},
+        {"key": "self_harm",      "label": "Self Harm",                               "type": "yesno", "expandable": true},
+        {"key": "anhedonia",      "label": "Anhedonia",                               "type": "yesno"},
+        {"key": "low_motivation", "label": "Low Motivation",                          "type": "yesno"},
+        {"key": "rumination",     "label": "Negative Rumination / Worthlessness",     "type": "yesno"},
+        {"key": "appetite",       "label": "Appetite Impacted by Depression",         "type": "yesno"},
+        {"key": "concentration",  "label": "Concentration Impacted",                  "type": "yesno"},
+        {"key": "work_impacted",  "label": "Work Impacted",                           "type": "yesno"},
+        {"key": "social_iso",     "label": "Social Isolation",                        "type": "yesno"},
+        {"key": "adl_impact",     "label": "Impact to Activities of Daily Living",    "type": "yesno"}
+      ]
+    },
+    {
+      "label": "Psychiatric History",
+      "fields": [
+        {"key": "mania",          "label": "History of Mania / Hypomania",            "type": "yesno", "expandable": true},
+        {"key": "psychosis",      "label": "History of Psychotic Symptoms",           "type": "yesno", "expandable": true},
+        {"key": "ocd",            "label": "History of OCD Symptoms",                 "type": "yesno", "expandable": true},
+        {"key": "trauma",         "label": "History of Trauma",                       "type": "yesno", "expandable": true},
+        {"key": "adhd",           "label": "History of ADHD / Learning Disability",   "type": "yesno"},
+        {"key": "eating_disorder","label": "History of Eating Disorder"},
+        {"key": "anxiety_hx",    "label": "History of Anxiety"}
+      ]
+    },
+    {
+      "label": "Anxiety Symptoms",
+      "fields": [
+        {"key": "worry",          "label": "Feel You Can't Stop Worrying",            "type": "yesno"},
+        {"key": "anxiety_phys",   "label": "Physical Symptoms of Anxiety",            "type": "yesno", "expandable": true},
+        {"key": "generalized",    "label": "Anxiety About Generalized Themes",        "type": "yesno"},
+        {"key": "panic",          "label": "Have You Had Panic Attacks",              "type": "yesno"}
       ]
     }
   ]
