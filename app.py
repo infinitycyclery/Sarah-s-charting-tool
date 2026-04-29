@@ -529,8 +529,156 @@ def generate_tms(fields):
     return '\n\n'.join(paragraphs)
 
 
+def generate_intake(fields):
+    paragraphs = []
+
+    age    = _v(fields, 'age')
+    sex    = _v(fields, 'sex')
+    reason = _v(fields, 'reason')
+    onset  = _v(fields, 'depression_onset')
+    tx_hx  = _v(fields, 'tx_history')
+
+    demo_parts = [p for p in [f'{age} yo' if age else '', sex] if p]
+    demo = ' '.join(demo_parts) + ' patient' if demo_parts else 'Patient'
+
+    p1 = f'{demo} presents for initial psychiatric evaluation.'
+    if reason:
+        p1 += f' Reason for consultation: {reason}.'
+    if onset:
+        p1 += f' Depression onset reported as {onset}.'
+    episodic_v = _v(fields, 'episodic')
+    if episodic_v:
+        if _is_yes(episodic_v):
+            p1 += ' Depression is episodic in nature.'
+        elif _is_no(episodic_v):
+            p1 += ' Depression is not episodic.'
+        else:
+            p1 += f' Regarding episodic course: {episodic_v}.'
+    if tx_hx:
+        p1 += f' Treatment history: {tx_hx}.'
+    paragraphs.append(p1)
+
+    # ── Depressive symptoms ──
+    sym_yes, sym_no = [], []
+    sym_map = [
+        ('low_mood',      'low/sad mood'),
+        ('low_energy',    'low energy'),
+        ('anhedonia',     'anhedonia'),
+        ('low_motivation','low motivation'),
+        ('rumination',    'negative rumination and feelings of worthlessness'),
+        ('appetite',      'appetite changes related to depression'),
+        ('concentration', 'concentration difficulties'),
+        ('work_impacted', 'occupational impairment'),
+        ('social_iso',    'social isolation'),
+        ('adl_impact',    'impact to activities of daily living'),
+    ]
+    for key, label in sym_map:
+        v = _v(fields, key)
+        if _is_yes(v):
+            sym_yes.append(label)
+        elif _is_no(v):
+            sym_no.append(label)
+
+    sleep_v = _v(fields, 'sleep_change')
+    p2 = 'Review of depressive symptoms:'
+    if sym_yes:
+        p2 += f' Patient endorses {", ".join(sym_yes)}.'
+    if sleep_v:
+        if _is_yes(sleep_v):
+            p2 += ' Patient reports change in sleep.'
+        elif _is_no(sleep_v):
+            p2 += ' Sleep is not impacted.'
+        else:
+            p2 += f' Sleep: {sleep_v}.'
+    if sym_no:
+        p2 += f' Patient denies {", ".join(sym_no)}.'
+    if p2 == 'Review of depressive symptoms:':
+        p2 += ' No specific depressive symptoms endorsed.'
+    paragraphs.append(p2)
+
+    # ── Safety ──
+    si_v  = _v(fields, 'suicidal')
+    sib_v = _v(fields, 'self_harm')
+    si  = f'Reports suicidal ideation: {si_v}.' if _is_yes(si_v) else \
+          ('Denies suicidal ideation, plan, or intent.' if _is_no(si_v) else
+           (f'Regarding suicidal ideation: {si_v}.' if si_v else 'Denies suicidal ideation, plan, or intent.'))
+    sib = f'Reports self-injurious behavior: {sib_v}.' if _is_yes(sib_v) else \
+          ('Denies self-injurious behavior.' if _is_no(sib_v) else
+           (f'Regarding self-harm: {sib_v}.' if sib_v else 'Denies self-injurious behavior.'))
+    paragraphs.append(f'{si} {sib}')
+
+    # ── Psychiatric history ──
+    hx_parts = []
+    hx_map = [
+        ('mania',    'mania/hypomania'),
+        ('psychosis','psychotic symptoms'),
+        ('ocd',      'OCD symptoms'),
+        ('trauma',   'trauma history'),
+    ]
+    for key, label in hx_map:
+        v = _v(fields, key)
+        if _is_yes(v):
+            hx_parts.append(f'history of {label}')
+        elif v and not _is_no(v):
+            hx_parts.append(f'{label}: {v}')
+
+    adhd_v = _v(fields, 'adhd')
+    if _is_yes(adhd_v):
+        hx_parts.append('history of ADHD/learning disability')
+
+    ed_v  = _v(fields, 'eating_disorder')
+    anx_v = _v(fields, 'anxiety_hx')
+    if ed_v:
+        hx_parts.append(f'eating disorder history: {ed_v}')
+    if anx_v:
+        hx_parts.append(f'anxiety history: {anx_v}')
+
+    p4 = 'Psychiatric history is significant for ' + '; '.join(hx_parts) + '.' if hx_parts else \
+         'No significant psychiatric history reported.'
+    paragraphs.append(p4)
+
+    # ── Anxiety symptoms ──
+    anx_yes, anx_no = [], []
+    anx_sym_map = [
+        ('worry',      'difficulty stopping worry'),
+        ('generalized','generalized anxiety themes'),
+        ('panic',      'panic attacks'),
+    ]
+    for key, label in anx_sym_map:
+        v = _v(fields, key)
+        if _is_yes(v):
+            anx_yes.append(label)
+        elif _is_no(v):
+            anx_no.append(label)
+
+    phys_v = _v(fields, 'anxiety_phys')
+    p5 = 'Review of anxiety symptoms:'
+    if anx_yes:
+        p5 += f' Patient endorses {", ".join(anx_yes)}.'
+    if phys_v and not _is_no(phys_v):
+        if _is_yes(phys_v):
+            p5 += ' Physical symptoms of anxiety are present.'
+        else:
+            p5 += f' Physical symptoms of anxiety: {phys_v}.'
+    elif _is_no(phys_v):
+        anx_no.append('physical symptoms of anxiety')
+    if anx_no:
+        p5 += f' Patient denies {", ".join(anx_no)}.'
+    if p5 == 'Review of anxiety symptoms:':
+        p5 += ' No significant anxiety symptoms endorsed.'
+    paragraphs.append(p5)
+
+    paragraphs.append(
+        'Assessment and Plan: Initial psychiatric evaluation completed. Will review findings, '
+        'discuss diagnostic impressions, and formulate an individualized treatment plan with the patient.'
+    )
+
+    return '\n\n'.join(paragraphs)
+
+
 GENERATORS = {
-    'tms': generate_tms,
+    'tms':    generate_tms,
+    'intake': generate_intake,
 }
 
 
@@ -626,6 +774,7 @@ def _is_ollama_available():
 def _build_ollama_prompt(fields, template, chart_rules=''):
     patient_name  = fields.get('patient_name', 'the patient')
     template_name = template.get('name', template.get('id', 'visit'))
+    is_intake     = template.get('id') == 'INTAKE'
 
     lines = []
     for group in template.get('abn_groups', []):
@@ -637,6 +786,26 @@ def _build_ollama_prompt(fields, template, chart_rules=''):
 
     data_section  = '\n'.join(lines) if lines else '(No additional data provided)'
     rules_section = f'\nYou MUST follow these rules exactly — they override everything else:\n{chart_rules.strip()}\n' if chart_rules.strip() else ''
+
+    if is_intake:
+        return f"""You are a licensed psychiatric nurse practitioner writing an initial psychiatric evaluation note after a new patient consultation.
+
+Write a detailed, professional initial evaluation in flowing prose paragraphs. Rules:
+- No bullet points, no section headers, no markdown formatting
+- Write in third person referring to the patient as "the patient" (never use the patient's name)
+- Use natural clinical language a clinician would use
+- Cover reason for consultation, relevant history, review of depressive and anxiety symptoms, psychiatric history, and safety
+- Include every detail provided below — do not omit anything
+- Do not invent information that was not provided
+- End with a Diagnostic Impression and Plan paragraph
+{rules_section}
+Patient: {patient_name}
+Visit Type: {template_name}
+
+Clinical data from today's evaluation:
+{data_section}
+
+Write the complete initial evaluation note now (4-6 paragraphs):"""
 
     return f"""You are a licensed psychiatric nurse practitioner writing a clinical progress note after a patient visit.
 
